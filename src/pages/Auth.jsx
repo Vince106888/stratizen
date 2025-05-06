@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -7,6 +7,7 @@ import {
 import { doc, getDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../services/firebase'; // ✅ corrected import path
+import '../styles/Auth.css'; // adjust the path if needed
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -80,78 +81,80 @@ const Auth = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md text-center">
-      {/* Signup Form */}
-      <h2 className="text-xl font-semibold">Sign Up</h2>
-      <input
-        type="email"
-        name="signupEmail"
-        value={form.signupEmail}
-        onChange={handleChange}
-        placeholder="Email"
-        className="w-full px-4 py-2 mt-2 border rounded"
-      />
-      <div className="relative mt-2">
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 via-blue-100 to-indigo-200 flex items-center justify-center px-4">
+      <div className="max-w-md w-full p-8 bg-white/70 backdrop-blur-md rounded-2xl shadow-lg border border-gray-200">
+        {/* Signup Form */}
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">Sign Up</h2>
         <input
-          type={visibility.signup ? 'text' : 'password'}
-          name="signupPassword"
-          value={form.signupPassword}
+          type="email"
+          name="signupEmail"
+          value={form.signupEmail}
           onChange={handleChange}
-          placeholder="Password"
-          className="w-full px-4 py-2 border rounded"
+          placeholder="Email"
+          className="w-full px-4 py-3 mt-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
         />
-        <span
-          className="absolute right-3 top-2 cursor-pointer"
-          onClick={() => toggleVisibility('signup')}
+        <div className="relative mt-2">
+          <input
+            type={visibility.signup ? 'text' : 'password'}
+            name="signupPassword"
+            value={form.signupPassword}
+            onChange={handleChange}
+            placeholder="Password"
+            className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
+          />
+          <span
+            className="absolute right-4 top-3 text-gray-500 hover:text-blue-500 transition-colors cursor-pointer"
+            onClick={() => toggleVisibility('signup')}
+          >
+            {visibility.signup ? '🙈' : '👁️'}
+          </span>
+        </div>
+        <button
+          onClick={() => handleAuth(true)}
+          className="w-full mt-4 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold rounded-lg shadow-md hover:opacity-90 transition"
+          disabled={loading}
         >
-          {visibility.signup ? '🙈' : '👁️'}
-        </span>
-      </div>
-      <button
-        onClick={() => handleAuth(true)}
-        className="w-full mt-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-        disabled={loading}
-      >
-        Sign Up
-      </button>
+          Sign Up
+        </button>
 
-      {/* Login Form */}
-      <h2 className="text-xl font-semibold mt-6">Login</h2>
-      <input
-        type="email"
-        name="loginEmail"
-        value={form.loginEmail}
-        onChange={handleChange}
-        placeholder="Email"
-        className="w-full px-4 py-2 mt-2 border rounded"
-      />
-      <div className="relative mt-2">
+        {/* Login Form */}
+        <h2 className="text-2xl font-bold text-gray-800 mt-8 mb-4">Login</h2>
         <input
-          type={visibility.login ? 'text' : 'password'}
-          name="loginPassword"
-          value={form.loginPassword}
+          type="email"
+          name="loginEmail"
+          value={form.loginEmail}
           onChange={handleChange}
-          placeholder="Password"
-          className="w-full px-4 py-2 border rounded"
+          placeholder="Email"
+          className="w-full px-4 py-3 mt-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
         />
-        <span
-          className="absolute right-3 top-2 cursor-pointer"
-          onClick={() => toggleVisibility('login')}
+        <div className="relative mt-2">
+          <input
+            type={visibility.login ? 'text' : 'password'}
+            name="loginPassword"
+            value={form.loginPassword}
+            onChange={handleChange}
+            placeholder="Password"
+            className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
+          />
+          <span
+            className="absolute right-4 top-3 text-gray-500 hover:text-blue-500 transition-colors cursor-pointer"
+            onClick={() => toggleVisibility('login')}
+          >
+            {visibility.login ? '🙈' : '👁️'}
+          </span>
+        </div>
+        <button
+          onClick={() => handleAuth(false)}
+          className="w-full mt-4 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold rounded-lg shadow-md hover:opacity-90 transition"
+          disabled={loading}
         >
-          {visibility.login ? '🙈' : '👁️'}
-        </span>
-      </div>
-      <button
-        onClick={() => handleAuth(false)}
-        className="w-full mt-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-        disabled={loading}
-      >
-        Login
-      </button>
+          Login
+        </button>
 
-      {/* Feedback */}
-      {message && <p className="text-red-500 mt-4">{message}</p>}
-      {loading && <p className="text-green-500 mt-2">Processing...</p>}
+        {/* Feedback */}
+        {message && <p className="text-sm text-red-600 mt-4">{message}</p>}
+        {loading && <p className="text-sm text-blue-500 mt-2 animate-pulse">Processing...</p>}
+      </div>
     </div>
   );
 };

@@ -1,9 +1,8 @@
-// src/firebaseConfig.js
-
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
+// Firebase configuration object (keep this safe, but okay for dev use)
 const firebaseConfig = {
   apiKey: "REDACTED_FIREBASE_API_KEY",
   authDomain: "p2p-student-platform.firebaseapp.com",
@@ -16,8 +15,9 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Optionally export initialized services if needed elsewhere
+// Initialize Firebase Auth and Firestore
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+// Optionally export initialized services for use in other parts of the app
 export { app, auth, db };
