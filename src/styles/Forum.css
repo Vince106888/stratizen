@@ -1,0 +1,110 @@
+.forum-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .forum-header {
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  
+  .success-message {
+    color: green;
+    margin-bottom: 1rem;
+  }
+  
+  .error-message {
+    color: red;
+    margin-bottom: 1rem;
+  }
+  
+  .new-topic-section,
+  .add-post-section {
+    margin-bottom: 2rem;
+  }
+  
+  .input-field {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+  
+  .btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+    border: none;
+  }
+  
+  .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  .btn-primary {
+    background-color: #2563eb;
+    color: white;
+  }
+  
+  .btn-primary:hover {
+    background-color: #1d4ed8;
+  }
+  
+  .btn-success {
+    background-color: #16a34a;
+    color: white;
+  }
+  
+  .btn-success:hover {
+    background-color: #15803d;
+  }
+  
+  .topics-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .topic-card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 1.5rem;
+    background-color: #fafafa;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+  
+  .topic-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
+  
+  .topic-meta {
+    font-size: 0.9rem;
+    color: #666;
+  }
+  
+  .view-posts-link {
+    color: #2563eb;
+    margin-top: 0.5rem;
+    display: inline-block;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+  

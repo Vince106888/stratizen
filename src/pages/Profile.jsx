@@ -1,17 +1,9 @@
 import React, { useEffect, useState } from "react";
-import {
-  getAuth,
-  onAuthStateChanged,
-} from "firebase/auth";
-import {
-  getFirestore,
-  doc,
-  getDoc,
-  setDoc,
-  serverTimestamp,
-} from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 import { app } from "../services/firebase";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import "../styles/Profile.css"; // Custom CSS
 
 const db = getFirestore(app);
 const auth = getAuth(app);
@@ -68,7 +60,22 @@ const Profile = () => {
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
-        setForm((prev) => ({ ...prev, profilePicture: reader.result }));
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+          const size = 100;
+          canvas.width = size;
+          canvas.height = size;
+          ctx.beginPath();
+          ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+          ctx.closePath();
+          ctx.clip();
+          ctx.drawImage(img, 0, 0, size, size);
+          const preview = canvas.toDataURL("image/png");
+          setForm((prev) => ({ ...prev, profilePicture: preview }));
+        };
+        img.src = reader.result;
       };
       reader.readAsDataURL(file);
     }
@@ -95,7 +102,6 @@ const Profile = () => {
       setSuccess("✅ Profile saved successfully!");
       window.scrollTo({ top: 0, behavior: "smooth" });
       setTimeout(() => {
-        // Redirect after profile update
         navigate("/dashboard");
       }, 1000);
     } catch (err) {
@@ -106,22 +112,22 @@ const Profile = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-10 bg-white rounded-2xl shadow-xl mt-10">
-      <h2 className="text-3xl font-bold mb-6 text-gray-800">Update Your Profile</h2>
+    <div className="profile-container">
+      <h2 className="profile-title">Update Your Profile</h2>
 
-      <div className="flex items-center space-x-4 mb-6">
+      <div className="profile-avatar-section">
         <img
           src={form.profilePicture}
           alt="Profile Preview"
-          className="w-24 h-24 rounded-full object-cover border"
+          className="profile-avatar"
         />
         <div>
-          <label className="block text-sm font-medium text-gray-700">Upload Profile Picture</label>
-          <input type="file" accept="image/*" onChange={handleImageChange} className="mt-1 text-sm" />
+          <label className="input-label">Upload Profile Picture</label>
+          <input type="file" accept="image/*" onChange={handleImageChange} className="input-file" />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="form-grid">
         <FormInput id="fullName" label="Full Name *" value={form.fullName} onChange={handleChange} />
         <FormInput id="username" label="Username *" value={form.username} onChange={handleChange} />
         <FormInput id="school" label="School" value={form.school} onChange={handleChange} />
@@ -141,52 +147,52 @@ const Profile = () => {
 
       <button
         onClick={handleSubmit}
-        className={`mt-6 w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300 ${loading && "opacity-60 cursor-not-allowed"}`}
+        className={`submit-button ${loading ? "disabled" : ""}`}
         disabled={loading}
       >
         {loading ? "Saving..." : "Save Profile"}
       </button>
 
-      {success && <p className="text-green-600 font-medium mt-4">{success}</p>}
-      {error && <p className="text-red-600 font-medium mt-4">{error}</p>}
+      {success && <p className="success-message">{success}</p>}
+      {error && <p className="error-message">{error}</p>}
     </div>
   );
 };
 
 const FormInput = ({ id, label, value, onChange }) => (
-  <div>
-    <label htmlFor={id} className="block text-sm font-medium text-gray-700">{label}</label>
+  <div className="form-field">
+    <label htmlFor={id} className="input-label">{label}</label>
     <input
       type="text"
       id={id}
       value={value}
       onChange={onChange}
-      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+      className="input-text"
     />
   </div>
 );
 
 const FormTextarea = ({ id, label, value, onChange }) => (
-  <div className="mt-4">
-    <label htmlFor={id} className="block text-sm font-medium text-gray-700">{label}</label>
+  <div className="form-textarea">
+    <label htmlFor={id} className="input-label">{label}</label>
     <textarea
       id={id}
       value={value}
       onChange={onChange}
       rows={3}
-      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+      className="textarea-field"
     />
   </div>
 );
 
 const FormSelect = ({ id, label, value, onChange, options }) => (
-  <div>
-    <label htmlFor={id} className="block text-sm font-medium text-gray-700">{label}</label>
+  <div className="form-field">
+    <label htmlFor={id} className="input-label">{label}</label>
     <select
       id={id}
       value={value}
       onChange={onChange}
-      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+      className="select-field"
     >
       <option value="">Select...</option>
       {options.map(opt => <option key={opt} value={opt}>{opt}</option>)}

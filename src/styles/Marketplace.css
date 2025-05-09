@@ -1,0 +1,144 @@
+/* Marketplace.css */
+
+/* General Layout */
+.marketplace-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .marketplace-title {
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  
+  /* Alerts */
+  .alert {
+    padding: 0.75rem;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+  }
+  
+  .alert.success {
+    background-color: #d4edda;
+    color: #155724;
+  }
+  
+  .alert.error {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+  
+  /* Filter and Search */
+  .filter-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .search-input, .filter-select {
+    padding: 0.75rem;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    width: 45%;
+  }
+  
+  .create-btn {
+    background-color: #007bff;
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .create-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Create Listing Form */
+  .create-listing-form {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+  }
+  
+  .create-listing-form h3 {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  
+  .form-input, .form-textarea, .form-select {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+  }
+  
+  .create-listing-btn {
+    background-color: #28a745;
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .create-listing-btn:hover {
+    background-color: #218838;
+  }
+  
+  /* Listing Cards */
+  .listing-container {
+    margin-top: 2rem;
+  }
+  
+  .listing-card {
+    padding: 1.5rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.5rem;
+  }
+  
+  .listing-card h4 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  
+  .price {
+    color: #28a745;
+    font-weight: bold;
+  }
+  
+  .category, .seller {
+    color: #6c757d;
+    font-size: 0.875rem;
+  }
+  
+  .message-btn {
+    background-color: #007bff;
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .message-btn:hover {
+    background-color: #0056b3;
+  }
+  

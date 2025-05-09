@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { getFirestore, collection, getDocs, addDoc, serverTimestamp } from "firebase/firestore";
-import { app } from "../services/firebase";
-import { useNavigate } from 'react-router-dom';
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  addDoc,
+  serverTimestamp,
+} from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
+import { app } from "../services/firebase";
+import "../styles/Forum.css";
 
 const db = getFirestore(app);
 const auth = getAuth(app);
@@ -14,16 +21,29 @@ const Forum = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  
+
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchTopics();
   }, []);
 
+  useEffect(() => {
+    if (error || success) {
+      const timer = setTimeout(() => {
+        setError("");
+        setSuccess("");
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [error, success]);
+
   const fetchTopics = async () => {
     const querySnapshot = await getDocs(collection(db, "forumTopics"));
-    const topicsArray = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const topicsArray = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
     setTopics(topicsArray);
   };
 
@@ -37,7 +57,7 @@ const Forum = () => {
     try {
       const user = auth.currentUser;
       if (!user) {
-        window.location.href = "/auth";
+        navigate("/auth");
         return;
       }
 
@@ -68,7 +88,7 @@ const Forum = () => {
     try {
       const user = auth.currentUser;
       if (!user) {
-        window.location.href = "/auth";
+        navigate("/auth");
         return;
       }
 
@@ -90,55 +110,56 @@ const Forum = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto bg-white p-8 mt-10 rounded-lg shadow-md">
-      <h2 className="text-3xl font-bold mb-6 text-center">Student Forum</h2>
+    <div className="forum-container">
+      <h2 className="forum-header">Student Forum</h2>
 
-      {success && <p className="text-green-600 mb-4">{success}</p>}
-      {error && <p className="text-red-600 mb-4">{error}</p>}
+      {success && <p className="success-message">{success}</p>}
+      {error && <p className="error-message">{error}</p>}
 
-      <div className="mb-6">
-        <h3 className="text-2xl font-semibold mb-2">Create a New Topic</h3>
+      <div className="new-topic-section">
+        <h3 className="section-title">Create a New Topic</h3>
         <input
           type="text"
+          aria-label="New topic name"
           placeholder="Enter the topic name..."
           value={newTopic}
           onChange={(e) => setNewTopic(e.target.value)}
-          className="w-full p-4 border rounded-lg mb-2"
+          className="input-field"
         />
         <button
           onClick={handleCreateTopic}
-          className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-800 transition"
+          className="btn btn-primary"
           disabled={loading}
         >
           {loading ? "Creating..." : "Create Topic"}
         </button>
       </div>
 
-      <h3 className="text-2xl font-semibold mb-4">Forum Topics</h3>
-      <div className="space-y-4">
+      <h3 className="section-title">Forum Topics</h3>
+      <div className="topics-list">
         {topics.map((topic) => (
-          <div key={topic.id} className="p-4 border rounded-lg shadow-md">
-            <h4 className="text-xl font-semibold">{topic.title}</h4>
-            <p className="text-gray-500">Created by {topic.createdBy}</p>
+          <div key={topic.id} className="topic-card">
+            <h4 className="topic-title">{topic.title}</h4>
+            <p className="topic-meta">Created by {topic.createdBy}</p>
             <button
               onClick={() => navigate(`/forum/${topic.id}`)}
-              className="mt-2 text-blue-600 hover:underline"
+              className="view-posts-link"
             >
               View Posts
             </button>
 
-            <div className="mt-4">
-              <h4 className="text-lg font-semibold">Add a Post</h4>
+            <div className="add-post-section">
+              <h4 className="post-title">Add a Post</h4>
               <textarea
                 value={newPost}
                 onChange={(e) => setNewPost(e.target.value)}
                 placeholder="Write a post..."
                 rows="3"
-                className="w-full p-4 border rounded-lg mt-2"
+                className="input-field"
               />
               <button
                 onClick={() => handleCreatePost(topic.id)}
-                className="bg-green-600 text-white px-6 py-2 mt-2 rounded hover:bg-green-800 transition"
+                className="btn btn-success"
                 disabled={loading}
               >
                 {loading ? "Posting..." : "Post"}

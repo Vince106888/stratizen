@@ -1,27 +1,106 @@
-/* auth.css */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+.auth-container {
+  min-height: 100vh;
+  background: linear-gradient(to bottom right, #e5e7eb, #68739c, #394270);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
 
-@layer utilities {
-  .fade-in {
-    animation: fadeIn 0.8s ease-in-out forwards;
-  }
+.auth-box {
+  max-width: 400px;
+  width: 100%;
+  padding: 2rem;
+  background-color: rgba(163, 172, 201, 0.75);
+  backdrop-filter: blur(12px);
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+}
 
-  @keyframes fadeIn {
-    0% {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
+.auth-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1rem;
+  margin-top: 2rem;
+}
 
-  .glass-bg {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-  }
+.auth-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #e4e1e1;
+  border-radius: 0.5rem;
+  background-color: #4a80c7;
+  transition: border-color 0.3s;
+}
+
+.auth-input:focus {
+  border-color: #3b82f6;
+  outline: none;
+}
+
+.auth-input-wrapper {
+  position: relative;
+  margin-top: 0.5rem;
+}
+
+.toggle-visibility {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #6b7280;
+  transition: color 0.2s;
+}
+
+.toggle-visibility:hover {
+  color: #3b82f6;
+}
+
+.auth-button {
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+
+.auth-button.signup {
+  background: linear-gradient(to right, #05affd, #059669);
+}
+
+.auth-button.login {
+  background: linear-gradient(to right, #4f8ff7, #4663e5);
+}
+
+.auth-button:hover {
+  opacity: 0.9;
+}
+
+.auth-message {
+  color: #ee7272;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+.auth-loading {
+  color: #3b82f6;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
 }

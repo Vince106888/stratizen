@@ -3,6 +3,7 @@ import { getFirestore, collection, getDocs, addDoc, query, orderBy, where } from
 import { app } from "../services/firebase";
 import { getAuth } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import '../styles/Marketplace.css';  // Import the CSS for styling
 
 const db = getFirestore(app);
 const auth = getAuth(app);
@@ -24,7 +25,7 @@ const Marketplace = () => {
 
   useEffect(() => {
     fetchListings();
-  }, []);
+  }, [filterCategory]);
 
   const fetchListings = async () => {
     try {
@@ -76,65 +77,57 @@ const Marketplace = () => {
 
   const handleFilterChange = (e) => {
     setFilterCategory(e.target.value);
-    fetchListings();
-  };
-
-  const handleMessageSeller = (sellerId) => {
-    // Future messaging feature: navigate to a message thread with the seller
-    console.log("Message seller with ID: ", sellerId);
   };
 
   return (
-    <div className="max-w-4xl mx-auto bg-white p-8 mt-10 rounded-lg shadow-md">
-      <h2 className="text-3xl font-bold mb-6 text-center">Marketplace</h2>
+    <div className="marketplace-container">
+      <h2 className="marketplace-title">Marketplace</h2>
 
-      {success && <p className="text-green-600 mb-4">{success}</p>}
-      {error && <p className="text-red-600 mb-4">{error}</p>}
+      {success && <p className="alert success">{success}</p>}
+      {error && <p className="alert error">{error}</p>}
 
-      <div className="mb-6 flex justify-between items-center">
-        <div className="flex space-x-4">
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={handleSearch}
-            placeholder="Search listings..."
-            className="p-2 border rounded"
-          />
-          <select
-            value={filterCategory}
-            onChange={handleFilterChange}
-            className="p-2 border rounded"
-          >
-            <option value="All">All Categories</option>
-            <option value="General">General</option>
-            <option value="Books">Books</option>
-            <option value="Electronics">Electronics</option>
-            <option value="Services">Services</option>
-          </select>
-        </div>
+      <div className="filter-container">
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={handleSearch}
+          placeholder="Search listings..."
+          className="search-input"
+        />
+        <select
+          value={filterCategory}
+          onChange={handleFilterChange}
+          className="filter-select"
+        >
+          <option value="All">All Categories</option>
+          <option value="General">General</option>
+          <option value="Books">Books</option>
+          <option value="Electronics">Electronics</option>
+          <option value="Services">Services</option>
+        </select>
         <button
           onClick={() => setNewListing({ title: "", description: "", price: "", category: "General" })}
-          className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-800 transition"
+          className="create-btn"
         >
           Create New Listing
         </button>
       </div>
 
       {newListing && (
-        <div className="mb-6 p-6 border rounded-lg shadow-md">
-          <h3 className="text-xl font-semibold">Create New Listing</h3>
+        <div className="create-listing-form">
+          <h3>Create New Listing</h3>
           <input
             type="text"
             placeholder="Title"
             value={newListing.title}
             onChange={(e) => setNewListing({ ...newListing, title: e.target.value })}
-            className="w-full p-2 border mt-2 rounded"
+            className="form-input"
           />
           <textarea
             placeholder="Description"
             value={newListing.description}
             onChange={(e) => setNewListing({ ...newListing, description: e.target.value })}
-            className="w-full p-2 border mt-2 rounded"
+            className="form-textarea"
             rows="4"
           />
           <input
@@ -142,12 +135,12 @@ const Marketplace = () => {
             placeholder="Price"
             value={newListing.price}
             onChange={(e) => setNewListing({ ...newListing, price: e.target.value })}
-            className="w-full p-2 border mt-2 rounded"
+            className="form-input"
           />
           <select
             value={newListing.category}
             onChange={(e) => setNewListing({ ...newListing, category: e.target.value })}
-            className="w-full p-2 border mt-2 rounded"
+            className="form-select"
           >
             <option value="General">General</option>
             <option value="Books">Books</option>
@@ -156,7 +149,7 @@ const Marketplace = () => {
           </select>
           <button
             onClick={handleCreateListing}
-            className="bg-green-600 text-white px-6 py-2 mt-4 rounded hover:bg-green-800 transition"
+            className="create-listing-btn"
             disabled={loading}
           >
             {loading ? "Creating..." : "Create Listing"}
@@ -164,7 +157,7 @@ const Marketplace = () => {
         </div>
       )}
 
-      <div className="space-y-4">
+      <div className="listing-container">
         {listings.length === 0 ? (
           <p>No listings available. Start by creating your own!</p>
         ) : (
@@ -173,15 +166,15 @@ const Marketplace = () => {
               listing.title.toLowerCase().includes(searchTerm.toLowerCase())
             )
             .map((listing) => (
-              <div key={listing.id} className="p-4 border rounded-lg shadow-md">
-                <h4 className="text-xl font-semibold">{listing.title}</h4>
+              <div key={listing.id} className="listing-card">
+                <h4>{listing.title}</h4>
                 <p>{listing.description}</p>
-                <p className="text-green-600 font-semibold">${listing.price}</p>
-                <p className="text-sm text-gray-500">Category: {listing.category}</p>
-                <p className="text-sm text-gray-500">Posted by: {listing.userName}</p>
+                <p className="price">${listing.price}</p>
+                <p className="category">Category: {listing.category}</p>
+                <p className="seller">Posted by: {listing.userName}</p>
                 <button
-                  onClick={() => handleMessageSeller(listing.userId)}
-                  className="bg-blue-600 text-white px-6 py-2 mt-4 rounded hover:bg-blue-800 transition"
+                  onClick={() => console.log("Message seller with ID:", listing.userId)}
+                  className="message-btn"
                 >
                   Message Seller
                 </button>

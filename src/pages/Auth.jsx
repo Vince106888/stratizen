@@ -6,8 +6,8 @@ import {
 } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
-import { auth, db } from '../services/firebase'; // ✅ corrected import path
-import '../styles/Auth.css'; // adjust the path if needed
+import { auth, db } from '../services/firebase';
+import '../styles/Auth.css'; // Ensure the path is correct
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -27,7 +27,6 @@ const Auth = () => {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Redirect user if already authenticated
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -81,79 +80,73 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 via-blue-100 to-indigo-200 flex items-center justify-center px-4">
-      <div className="max-w-md w-full p-8 bg-white/70 backdrop-blur-md rounded-2xl shadow-lg border border-gray-200">
+    <div className="auth-container">
+      <div className="auth-box">
         {/* Signup Form */}
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Sign Up</h2>
+        <h2 className="auth-title">Sign Up</h2>
         <input
           type="email"
           name="signupEmail"
           value={form.signupEmail}
           onChange={handleChange}
           placeholder="Email"
-          className="w-full px-4 py-3 mt-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
+          className="auth-input"
         />
-        <div className="relative mt-2">
+        <div className="auth-input-wrapper">
           <input
             type={visibility.signup ? 'text' : 'password'}
             name="signupPassword"
             value={form.signupPassword}
             onChange={handleChange}
             placeholder="Password"
-            className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
+            className="auth-input"
           />
-          <span
-            className="absolute right-4 top-3 text-gray-500 hover:text-blue-500 transition-colors cursor-pointer"
-            onClick={() => toggleVisibility('signup')}
-          >
+          <span className="toggle-visibility" onClick={() => toggleVisibility('signup')}>
             {visibility.signup ? '🙈' : '👁️'}
           </span>
         </div>
         <button
           onClick={() => handleAuth(true)}
-          className="w-full mt-4 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold rounded-lg shadow-md hover:opacity-90 transition"
+          className="auth-button signup"
           disabled={loading}
         >
           Sign Up
         </button>
 
         {/* Login Form */}
-        <h2 className="text-2xl font-bold text-gray-800 mt-8 mb-4">Login</h2>
+        <h2 className="auth-title">Login</h2>
         <input
           type="email"
           name="loginEmail"
           value={form.loginEmail}
           onChange={handleChange}
           placeholder="Email"
-          className="w-full px-4 py-3 mt-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
+          className="auth-input"
         />
-        <div className="relative mt-2">
+        <div className="auth-input-wrapper">
           <input
             type={visibility.login ? 'text' : 'password'}
             name="loginPassword"
             value={form.loginPassword}
             onChange={handleChange}
             placeholder="Password"
-            className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
+            className="auth-input"
           />
-          <span
-            className="absolute right-4 top-3 text-gray-500 hover:text-blue-500 transition-colors cursor-pointer"
-            onClick={() => toggleVisibility('login')}
-          >
+          <span className="toggle-visibility" onClick={() => toggleVisibility('login')}>
             {visibility.login ? '🙈' : '👁️'}
           </span>
         </div>
         <button
           onClick={() => handleAuth(false)}
-          className="w-full mt-4 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold rounded-lg shadow-md hover:opacity-90 transition"
+          className="auth-button login"
           disabled={loading}
         >
           Login
         </button>
 
         {/* Feedback */}
-        {message && <p className="text-sm text-red-600 mt-4">{message}</p>}
-        {loading && <p className="text-sm text-blue-500 mt-2 animate-pulse">Processing...</p>}
+        {message && <p className="auth-message">{message}</p>}
+        {loading && <p className="auth-loading">Processing...</p>}
       </div>
     </div>
   );

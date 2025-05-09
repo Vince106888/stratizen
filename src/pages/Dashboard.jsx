@@ -1,17 +1,15 @@
+// Dashboard.js
 import React, { useEffect, useState } from 'react';
 import { auth, db } from "../services/firebase";
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, collection, getDoc, getDocs } from 'firebase/firestore';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import SidebarLinks from '../components/SidebarLinks'; // Import SidebarLinks component
+import '../styles/Dashboard.css'; // Import custom CSS
 
 export default function Dashboard() {
   const [userData, setUserData] = useState(null);
-  const [stats, setStats] = useState({
-    messages: 0,
-    forum: 0,
-    marketplace: 0,
-  });
-
+  const [stats, setStats] = useState({ messages: 0, forum: 0, marketplace: 0 });
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -67,44 +65,29 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex">
       {/* Sidebar */}
-      <aside className={`bg-white w-64 p-6 shadow-md fixed z-20 inset-y-0 left-0 transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out sm:relative sm:translate-x-0`}>
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-purple-800">Stratizen</h2>
-          <button className="sm:hidden text-purple-600" onClick={() => setSidebarOpen(false)}>✕</button>
+      <aside className={`bg-[#1f2937] w-64 p-6 shadow-md fixed z-20 inset-y-0 left-0 transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out sm:relative sm:translate-x-0`}>
+        <div className="sidebar-header flex flex-col items-center mb-6">
+          <img src={userData.profilePic} alt="Profile" className="profile-img w-16 h-16 rounded-full object-cover" />
+          <p className="profile-name text-white mt-2">{userData.username}</p>
         </div>
-        <nav className="space-y-4">
-          {[
-            { to: '/profile', label: 'Profile' },
-            { to: '/forum', label: 'Forum' },
-            { to: '/messages', label: 'Messages' },
-            { to: '/marketplace', label: 'Marketplace' },
-          ].map(({ to, label }) => (
-            <Link key={to} to={to} className="block text-gray-700 hover:text-purple-700 transition font-medium">
-              {label}
-            </Link>
-          ))}
-          <button onClick={handleLogout} className="text-red-500 font-semibold hover:text-red-700">
-            Logout
-          </button>
-        </nav>
+
+        {/* Sidebar Links */}
+        <SidebarLinks handleLogout={handleLogout} />
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 p-6 sm:ml-64 w-full">
-        <button
-          onClick={() => setSidebarOpen(true)}
-          className="sm:hidden text-purple-600 text-2xl mb-4"
-        >
+      <main className={`dashboard-main w-full bg-[#f0f2f5] min-h-screen ${sidebarOpen ? 'ml-64' : ''}`}>
+        <button onClick={() => setSidebarOpen(!sidebarOpen)} className="sm:hidden text-purple-600 text-2xl mb-4">
           ☰
         </button>
 
-        <section className="flex items-center gap-6 bg-white shadow-md rounded-xl p-6 mb-8">
+        <section className="flex items-center gap-6 dashboard-card p-6 mb-8 bg-white rounded-lg shadow-md">
           <img
             src={userData.profilePic}
             alt="Profile"
-            className="w-20 h-20 rounded-full border-4 border-purple-300"
+            className="dashboard-profile-img w-20 h-20 rounded-full object-cover"
           />
           <div>
             <h2 className="text-2xl font-semibold text-gray-800">{userData.username}</h2>
@@ -114,22 +97,21 @@ export default function Dashboard() {
         </section>
 
         <section className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          {[
-            { title: 'Messages', value: stats.messages },
+          {[{ title: 'Messages', value: stats.messages },
             { title: 'Forum Posts', value: stats.forum },
-            { title: 'Marketplace Items', value: stats.marketplace },
+            { title: 'Marketplace Items', value: stats.marketplace }
           ].map(({ title, value }) => (
-            <div key={title} className="bg-white p-6 rounded-xl shadow text-center">
+            <div key={title} className="dashboard-card p-6 text-center bg-white rounded-lg shadow-md">
               <h3 className="text-lg font-bold text-purple-700">{title}</h3>
               <p className="text-3xl text-purple-900 font-extrabold">{value}</p>
             </div>
           ))}
         </section>
 
-        <footer className="mt-12 text-center text-sm text-gray-500">
+        <footer className="dashboard-footer text-center text-gray-500 mt-8">
           &copy; 2025 Stratizen. All rights reserved.
         </footer>
-      </div>
+      </main>
     </div>
   );
 }
