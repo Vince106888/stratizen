@@ -1,0 +1,42 @@
+/* Sidebar Links */
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    margin-top: 16px;
+  }
+  
+  .sidebar-link {
+    display: block;
+    color: #d1d5db;
+    font-size: 1rem;
+    padding: 12px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+  
+  /* Sidebar Link Hover Effect */
+  .sidebar-link:hover {
+    background-color: #4f46e5;
+    color: white;
+    transform: scale(1.05); /* Slight scale effect on hover */
+  }
+  
+  /* Active Sidebar Link */
+  .sidebar-link.active {
+    background-color: #6b3eaf;
+    color: white;
+    font-weight: bold;
+    border-left: 4px solid #4f46e5; /* Adds a left border to indicate active status */
+  }
+  
+  /* Additional Link Styling for icons (if any) */
+  .sidebar-link .icon {
+    margin-right: 12px;
+    display: inline-block;
+    font-size: 1.25rem;
+    color: inherit; /* Ensures icon color is inherited from link */
+  }
+  

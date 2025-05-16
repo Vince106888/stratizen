@@ -1,9 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  serverTimestamp,
+} from "firebase/firestore";
 import { app } from "../services/firebase";
 import { useNavigate } from "react-router-dom";
-import "../styles/Profile.css"; // Custom CSS
+import "../styles/Profile.css";
 
 const db = getFirestore(app);
 const auth = getAuth(app);
@@ -47,6 +53,7 @@ const Profile = () => {
         setForm((prev) => ({ ...prev, ...docSnap.data() }));
       }
     });
+
     return () => unsubscribe();
   }, [navigate]);
 
@@ -55,31 +62,33 @@ const Profile = () => {
     setForm((prev) => ({ ...prev, [id]: value }));
   };
 
-  const handleImageChange = (e) => {
+  const handleImageChange = useCallback((e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement("canvas");
-          const ctx = canvas.getContext("2d");
-          const size = 100;
-          canvas.width = size;
-          canvas.height = size;
-          ctx.beginPath();
-          ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
-          ctx.closePath();
-          ctx.clip();
-          ctx.drawImage(img, 0, 0, size, size);
-          const preview = canvas.toDataURL("image/png");
-          setForm((prev) => ({ ...prev, profilePicture: preview }));
-        };
-        img.src = reader.result;
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        const size = 100;
+        canvas.width = size;
+        canvas.height = size;
+
+        ctx.beginPath();
+        ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.clip();
+        ctx.drawImage(img, 0, 0, size, size);
+
+        const preview = canvas.toDataURL("image/png");
+        setForm((prev) => ({ ...prev, profilePicture: preview }));
       };
-      reader.readAsDataURL(file);
-    }
-  };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  }, []);
 
   const handleSubmit = async () => {
     setSuccess("");
@@ -87,7 +96,7 @@ const Profile = () => {
 
     const { fullName, username, purpose } = form;
     if (!fullName || !username || !purpose) {
-      setError("Please fill out all required fields.");
+      setError("⚠️ Please fill out all required fields.");
       return;
     }
 
@@ -101,9 +110,7 @@ const Profile = () => {
       );
       setSuccess("✅ Profile saved successfully!");
       window.scrollTo({ top: 0, behavior: "smooth" });
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 1000);
+      setTimeout(() => navigate("/dashboard"), 1000);
     } catch (err) {
       setError("❌ Error saving profile: " + err.message);
     } finally {
@@ -112,8 +119,12 @@ const Profile = () => {
   };
 
   return (
+    <div className="profile-page-wrapper with-sidebar"> {/* or without-sidebar */}
     <div className="profile-container">
       <h2 className="profile-title">Update Your Profile</h2>
+
+      {success && <div className="success-message">{success}</div>}
+      {error && <div className="error-message">{error}</div>}
 
       <div className="profile-avatar-section">
         <img
@@ -123,7 +134,12 @@ const Profile = () => {
         />
         <div>
           <label className="input-label">Upload Profile Picture</label>
-          <input type="file" accept="image/*" onChange={handleImageChange} className="input-file" />
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="input-file"
+          />
         </div>
       </div>
 
@@ -152,13 +168,12 @@ const Profile = () => {
       >
         {loading ? "Saving..." : "Save Profile"}
       </button>
-
-      {success && <p className="success-message">{success}</p>}
-      {error && <p className="error-message">{error}</p>}
+    </div>
     </div>
   );
 };
 
+// Reusable form components
 const FormInput = ({ id, label, value, onChange }) => (
   <div className="form-field">
     <label htmlFor={id} className="input-label">{label}</label>
@@ -195,7 +210,11 @@ const FormSelect = ({ id, label, value, onChange, options }) => (
       className="select-field"
     >
       <option value="">Select...</option>
-      {options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+      {options.map((opt) => (
+        <option key={opt} value={opt}>
+          {opt}
+        </option>
+      ))}
     </select>
   </div>
 );

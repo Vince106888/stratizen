@@ -3,20 +3,24 @@
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
-  text-align: center;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 .app-header {
+  text-align: center;
   margin-bottom: 2rem;
 }
 
 .app-main {
-  min-height: 60vh;
+  flex: 1;
 }
 
 .app-footer {
   margin-top: 2rem;
+  text-align: center;
   font-size: 0.9rem;
   color: #666;
 }
@@ -46,12 +50,6 @@
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .logo.react {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
 /* Card styling if reused elsewhere */
 .card {
   padding: 2em;
@@ -65,4 +63,30 @@
 /* Footer text */
 .read-the-docs {
   color: #888;
+}
+
+/* Main layout with sidebar */
+.main-layout {
+  display: flex;
+  min-height: 100%;
+}
+
+/* Sidebar (basic) */
+.sidebar {
+  width: 240px;
+  background-color: #f1f1f1;
+  padding: 1rem;
+  border-right: 1px solid #ddd;
+}
+
+@media screen and (max-width: 768px) {
+  .main-layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+  }
 }

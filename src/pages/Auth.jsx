@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  onAuthStateChanged,
 } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
-import { auth, db } from '../services/firebase';
+import { auth } from '../services/firebase';
 import '../styles/Auth.css'; // Ensure the path is correct
 
 const Auth = () => {
@@ -26,22 +24,6 @@ const Auth = () => {
 
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        try {
-          const userRef = doc(db, 'users', user.uid);
-          const docSnap = await getDoc(userRef);
-          const profileComplete = docSnap.exists() && docSnap.data().profileComplete;
-          navigate(profileComplete ? '/dashboard' : '/profile');
-        } catch (err) {
-          console.error('Failed to fetch user profile:', err);
-        }
-      }
-    });
-    return () => unsubscribe();
-  }, [navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -64,13 +46,15 @@ const Auth = () => {
     setLoading(true);
     try {
       if (isSignup) {
+        // Sign up user
         await createUserWithEmailAndPassword(auth, email, password);
         setMessage('Signup successful! Redirecting...');
-        navigate('/profile');
+        navigate('/profile'); // Redirect to profile after successful signup
       } else {
+        // Log in user
         await signInWithEmailAndPassword(auth, email, password);
         setMessage('Login successful! Redirecting...');
-        navigate('/dashboard');
+        navigate('/dashboard'); // Redirect to dashboard after successful login
       }
     } catch (error) {
       setMessage(`${isSignup ? 'Signup' : 'Login'} failed: ${error.message}`);

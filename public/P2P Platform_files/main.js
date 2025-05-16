@@ -1,0 +1,10 @@
+import __vite__cjsImport0_react from "/node_modules/.vite/deps/react.js?v=cb40f325"; const React = __vite__cjsImport0_react.__esModule ? __vite__cjsImport0_react.default : __vite__cjsImport0_react; const Suspense = __vite__cjsImport0_react["Suspense"];
+import __vite__cjsImport1_reactDom_client from "/node_modules/.vite/deps/react-dom_client.js?v=cb40f325"; const ReactDOM = __vite__cjsImport1_reactDom_client.__esModule ? __vite__cjsImport1_reactDom_client.default : __vite__cjsImport1_reactDom_client;
+import { BrowserRouter } from "/node_modules/.vite/deps/react-router-dom.js?v=cb40f325";
+import App from "/src/App.jsx?t=1747250584434";
+import "/src/index.css";
+ReactDOM.createRoot(document.getElementById("root")).render(
+  /* @__PURE__ */ React.createElement(BrowserRouter, null, /* @__PURE__ */ React.createElement(Suspense, { fallback: /* @__PURE__ */ React.createElement("div", null, "Loading...") }, /* @__PURE__ */ React.createElement(App, null)))
+);
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIm1haW4uanN4Il0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBSZWFjdCwgeyBTdXNwZW5zZSB9IGZyb20gJ3JlYWN0JztcbmltcG9ydCBSZWFjdERPTSBmcm9tICdyZWFjdC1kb20vY2xpZW50JztcbmltcG9ydCB7IEJyb3dzZXJSb3V0ZXIgfSBmcm9tICdyZWFjdC1yb3V0ZXItZG9tJztcbmltcG9ydCBBcHAgZnJvbSAnLi9BcHAnO1xuaW1wb3J0ICcuL2luZGV4LmNzcyc7XG5cblJlYWN0RE9NLmNyZWF0ZVJvb3QoZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3Jvb3QnKSkucmVuZGVyKFxuICA8QnJvd3NlclJvdXRlcj5cbiAgICA8U3VzcGVuc2UgZmFsbGJhY2s9ezxkaXY+TG9hZGluZy4uLjwvZGl2Pn0+XG4gICAgICA8QXBwIC8+XG4gICAgPC9TdXNwZW5zZT5cbiAgPC9Ccm93c2VyUm91dGVyPlxuKTtcbiJdLCJtYXBwaW5ncyI6IkFBQUEsT0FBTyxTQUFTLGdCQUFnQjtBQUNoQyxPQUFPLGNBQWM7QUFDckIsU0FBUyxxQkFBcUI7QUFDOUIsT0FBTyxTQUFTO0FBQ2hCLE9BQU87QUFFUCxTQUFTLFdBQVcsU0FBUyxlQUFlLE1BQU0sQ0FBQyxFQUFFO0FBQUEsRUFDbkQsb0NBQUMscUJBQ0Msb0NBQUMsWUFBUyxVQUFVLG9DQUFDLGFBQUksWUFBVSxLQUNqQyxvQ0FBQyxTQUFJLENBQ1AsQ0FDRjtBQUNGOyIsIm5hbWVzIjpbXX0=

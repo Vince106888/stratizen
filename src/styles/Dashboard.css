@@ -1,100 +1,176 @@
-/* Dashboard Sidebar */
-.sidebar {
-  background-color: #1f2937;
-  padding: 24px;
-  width: 256px;
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  z-index: 20;
-  transition: transform 0.3s ease-in-out;
+/* Wrapper to center the content */
+.dashboard-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
-.sidebar-header {
+/* === MAIN DASHBOARD LAYOUT === */
+.dashboard-main {
+  max-width: 900px;
+  width: 100%; /* Ensure it uses full width within the max-width */
+  margin: 0;
+  padding: 32px;
+  background-color: #9eb7dd;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  min-height: 80vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 24px;
 }
 
-.profile-img {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
+/* If a sidebar exists, give space on the left */
+@media (min-width: 1024px) {
+  .profile-page-wrapper.with-sidebar {
+    justify-content: flex-start;
+    padding-left: 280px; /* Adjust depending on your sidebar width */
+  }
 }
 
-.profile-name {
-  color: white;
-  margin-top: 8px;
-  font-weight: bold;
-}
-
-.sidebar-link {
-  display: block;
-  color: #d1d5db;
-  font-size: 1rem;
-  padding: 12px;
-  transition: color 0.3s ease;
-  font-weight: 500;
-}
-
-.sidebar-link:hover {
-  color: #9b8cff;
-}
-
-.sidebar-footer {
-  margin-top: 32px;
-  font-size: 0.875rem;
-  color: #b4b7b4;
-}
-
-/* Dashboard Main Content */
-.dashboard-main {
-  background-color: #f0f2f5;
-  margin-left: 256px;
-  padding: 24px;
-  min-height: 100vh;
-}
-
-.dashboard-card {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.dashboard-footer {
-  margin-top: 32px;
+/* === LOADING SCREEN === */
+.loading-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 1.25rem;
   color: #6b7280;
 }
 
+/* === PROFILE SECTION === */
 .dashboard-profile-img {
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #7c3aed;
+  margin-bottom: 16px;
+  transition: transform 0.3s ease;
+}
+
+.dashboard-profile-img:hover {
+  transform: scale(1.08);
+}
+
+.dashboard-card h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 8px;
+}
+
+.dashboard-card p {
+  font-size: 1.1rem;
+  color: #4b5563;
+  text-align: center;
+  max-width: 600px;
+  line-height: 1.6;
+}
+
+.dashboard-card .italic {
+  font-style: italic;
+  color: #7c3aed;
+}
+
+/* === STATS GRID === */
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  width: 100%;
+  margin-top: 40px;
+}
+
+.dashboard-card {
+  background-color: #b9cde0;
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
 }
 
 .dashboard-card h3 {
   font-size: 1.125rem;
-  color: #6b3eaf;
+  color: #6b21a8;
+  margin-bottom: 6px;
+  font-weight: 600;
 }
 
 .dashboard-card p {
-  font-size: 2.5rem;
+  font-size: 2rem;
   color: #4f46e5;
-  font-weight: 800;
+  font-weight: 700;
 }
 
-/* Mobile View (Responsive) */
+/* === FOOTER === */
+.dashboard-footer {
+  margin-top: 48px;
+  color: #6b7280;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+/* === RESPONSIVE === */
 @media (max-width: 640px) {
-  .sidebar {
-    transform: translateX(-100%);
-  }
-
   .dashboard-main {
-    margin-left: 0;
+    margin: 20px 16px;
+    padding: 24px;
   }
 
-  .sm\\:hidden {
-    display: block;
+  .dashboard-profile-img {
+    width: 80px;
+    height: 80px;
+  }
+
+  .dashboard-card p {
+    font-size: 1.75rem;
+  }
+
+  /* Ensure cards take full width and are properly spaced */
+  .dashboard-cards {
+    grid-template-columns: 1fr; /* Stack cards on smaller screens */
+  }
+}
+
+/* === PROFILE CARD ALIGNMENT === */
+.dashboard-profile-img,
+.dashboard-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* === Fixing text centering for profile section */
+.dashboard-profile-img + div {
+  text-align: center;
+}
+
+/* === Loading screen improvements === */
+.loading-screen p {
+  font-size: 1.5rem;
+  color: #000000;
+  font-weight: bold;
+  animation: pulse 1.5s infinite;
+}
+
+/* === Pulse animation for loading state === */
+@keyframes pulse {
+  0% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.7;
   }
 }
