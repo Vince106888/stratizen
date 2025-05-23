@@ -3,12 +3,14 @@ import { Routes, Route } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import Forum from './pages/Forum';
-import TopicPage from "./pages/TopicPage"; // 🆕
+import TopicPage from './pages/TopicPage';
 import Messages from './pages/Messages';
 import Marketplace from './pages/Marketplace';
 import Auth from './pages/Auth';
 import MainLayout from './layouts/MainLayout';
-import Mentorship from "./pages/Mentorship";
+import Mentorship from './pages/Mentorship';
+import StudyHub from './pages/StudyHub'; // 🆕 StudyHub main page
+import QuestionPage from './pages/QuestionPage'; // 🆕 Q&A view
 import './styles/App.css';
 
 function App() {
@@ -28,12 +30,14 @@ function App() {
           {/* Protected/Internal Routes with Sidebar */}
           <Route element={<MainLayout />}>
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/studyhub" element={<StudyHub />} /> {/* ✅ ADD THIS HERE */}
             <Route path="/profile" element={<Profile />} />
             <Route path="/forum" element={<Forum />} />
             <Route path="/forum/:topicId" element={<TopicPage />} />
             <Route path="/messages" element={<Messages />} />
             <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/mentorship" element={<Mentorship />} />
+            <Route path="/questions/:id" element={<QuestionPage />} /> {/* 🆕 Q&A Page */}
           </Route>
 
           {/* Fallback */}

@@ -15,6 +15,11 @@ const Sidebar = ({ handleLogout }) => {
         <span className="icon">🏠</span> Dashboard
       </Link>
 
+      {/* Study Hub Link */}
+      <Link to="/studyhub" className="sidebar-link">
+        <span className="icon">📚</span> Study Hub
+      </Link>
+
       {/* Forum Link */}
       <Link to="/forum" className="sidebar-link">
         <span className="icon">💬</span> Forum

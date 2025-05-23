@@ -1,0 +1,16 @@
+.studyhub-question-item {
+  background-color: #8999b8;
+  padding: 1rem;
+  border: 1px solid #8999b6;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  display: block;
+  text-decoration: none; /* Link styles */
+  color: inherit;
+}
+
+.studyhub-question-item:hover {
+  background-color: #8999b8;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
