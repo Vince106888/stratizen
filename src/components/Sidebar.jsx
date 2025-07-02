@@ -15,9 +15,18 @@ const Sidebar = ({ handleLogout }) => {
         <span className="icon">🏠</span> Dashboard
       </Link>
 
+      <Link to="/stratizen" className="sidebar-link">
+        <span className="icon">🌐</span> Stratizen
+      </Link>
+
       {/* Study Hub Link */}
       <Link to="/studyhub" className="sidebar-link">
-        <span className="icon">📚</span> Study Hub
+        <span className="icon">📚</span> Study
+      </Link>
+
+      {/* Mentorship Link */}
+      <Link to="/mentorship" className="sidebar-link">
+        <span className="icon">🎓</span> Mentorship
       </Link>
 
       {/* Forum Link */}
@@ -32,13 +41,22 @@ const Sidebar = ({ handleLogout }) => {
 
       {/* Marketplace Link */}
       <Link to="/marketplace" className="sidebar-link">
-        <span className="icon">🛒</span> Marketplace
+        <span className="icon">🛒</span> Market
       </Link>
 
-      {/* Mentorship Link */}
-      <Link to="/mentorship" className="sidebar-link">
-        <span className="icon">🎓</span> Mentorship
+      {/*Resources Link */}
+      <Link to="/resource-library" className="sidebar-link">
+        <span className="icon">📚</span> Resources
       </Link>
+
+      <Link to="/innovation" className="sidebar-link">
+        <span className="icon">🚀</span> Innovation Hub
+      </Link>
+
+      <Link to="/careers" className="sidebar-link">
+        <span className="icon">💼</span> Careers
+      </Link>
+
 
       {/* Logout Button */}
       <button

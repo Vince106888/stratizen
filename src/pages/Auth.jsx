@@ -5,7 +5,13 @@ import {
 } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../services/firebase';
-import '../styles/Auth.css'; // Ensure the path is correct
+import '../styles/Auth.css';
+
+// Firestore and Dexie
+import { getFirestore, doc, setDoc } from 'firebase/firestore';
+import { addProfile } from '../services/db'; // Make sure this path is correct
+
+const firestore = getFirestore();
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -46,15 +52,35 @@ const Auth = () => {
     setLoading(true);
     try {
       if (isSignup) {
-        // Sign up user
-        await createUserWithEmailAndPassword(auth, email, password);
+        // ✅ Sign up user
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // ✅ Create Firestore user document
+        await setDoc(doc(firestore, 'users', user.uid), {
+          uid: user.uid,
+          email: user.email,
+          createdAt: new Date().toISOString(),
+          displayName: email.split('@')[0],
+          role: 'student',
+        });
+
+        // ✅ Add user to Dexie local DB
+        await addProfile({
+          id: user.uid,
+          email: user.email,
+          name: email.split('@')[0],
+          bio: '',
+          username: email.split('@')[0],
+        });
+
         setMessage('Signup successful! Redirecting...');
-        navigate('/profile'); // Redirect to profile after successful signup
+        navigate('/profile');
       } else {
-        // Log in user
+        // ✅ Log in user
         await signInWithEmailAndPassword(auth, email, password);
         setMessage('Login successful! Redirecting...');
-        navigate('/dashboard'); // Redirect to dashboard after successful login
+        navigate('/dashboard');
       }
     } catch (error) {
       setMessage(`${isSignup ? 'Signup' : 'Login'} failed: ${error.message}`);

@@ -2,7 +2,14 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../services/firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { doc, collection, getDoc, getDocs } from 'firebase/firestore';
+import {
+  doc,
+  collection,
+  getDoc,
+  getDocs,
+  query,
+  where
+} from 'firebase/firestore';
 import '../styles/Dashboard.css';
 
 export default function Dashboard() {
@@ -18,8 +25,8 @@ export default function Dashboard() {
 
       const [messagesSnap, forumSnap, marketplaceSnap] = await Promise.all([
         getDocs(collection(db, 'messages', user.uid, 'conversations')),
-        getDocs(collection(db, 'forum', user.uid, 'posts')),
-        getDocs(collection(db, 'marketplace', user.uid, 'items')),
+        getDocs(query(collection(db, 'forumTopics'), where('userId', '==', user.uid))),
+        getDocs(query(collection(db, 'marketplace'), where('userId', '==', user.uid))),
       ]);
 
       setUserData({
@@ -79,7 +86,6 @@ export default function Dashboard() {
   return (
     <div className="dashboard-wrapper">
       <main className="dashboard-main">
-        {/* Profile Card */}
         <section className="flex flex-col sm:flex-row items-center gap-6 dashboard-card p-6 mb-8 bg-white rounded-xl shadow-md hover:shadow-lg transition">
           <img
             src={userData.profilePic}
@@ -99,8 +105,6 @@ export default function Dashboard() {
           <StatCard title="Marketplace Items" value={stats.marketplace} />
         </section>
 
-
-        {/* Footer */}
         <footer className="dashboard-footer mt-10 text-center text-gray-500 text-sm">
           &copy; {new Date().getFullYear()} Stratizen. All rights reserved.
         </footer>

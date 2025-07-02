@@ -1,6 +1,6 @@
 import Dexie from 'dexie';
-import firebase from 'firebase/app';
-import 'firebase/firestore';
+import { db as cloudDB } from './firebase.js';
+import { doc, setDoc } from 'firebase/firestore';
 
 // Initialize the Dexie database
 export const db = new Dexie('P2PPlatformDB');

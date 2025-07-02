@@ -1,0 +1,56 @@
+/* src/styles/Stratizen.css */
+/* Container */
+.stratizen-container {
+  padding: 1.5rem;
+}
+
+/* Title */
+.stratizen-title {
+  font-size: 1.875rem; /* text-3xl */
+  font-weight: 700; /* font-bold */
+  margin-bottom: 1rem;
+  color: #4338ca; /* indigo-700 */
+}
+
+/* Subtitle */
+.stratizen-subtitle {
+  color: #4b5563; /* gray-600 */
+  margin-bottom: 1.5rem;
+}
+
+/* Grid layout */
+.stratizen-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .stratizen-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Card */
+.stratizen-card {
+  background-color: #ffffff;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+.stratizen-card:hover {
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.stratizen-card h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #1f2937; /* gray-800 */
+}
+
+.stratizen-card p {
+  color: #6b7280; /* gray-500 */
+}
