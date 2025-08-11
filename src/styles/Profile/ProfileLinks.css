@@ -1,0 +1,189 @@
+.profile-links-page {
+  max-width: 900px;
+  margin: auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Card container */
+.card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  transition: box-shadow 0.2s ease, transform 0.15s ease;
+}
+.card:hover {
+  box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+  transform: translateY(-1px);
+}
+
+/* Section titles */
+.section-title {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #2563eb;
+  margin-bottom: 1rem;
+}
+
+/* Section headers */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* Inputs */
+.input-text {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+.input-text:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.2);
+  outline: none;
+}
+
+/* Links list rows */
+.personal-link-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  background: #f9fafb;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+.personal-link-row:hover {
+  background: #f3f4f6;
+}
+
+.personal-link-label {
+  flex: 2;
+  font-weight: 500;
+  min-width: 80px;
+}
+
+.personal-link-url {
+  flex: 4;
+  overflow-wrap: anywhere;
+}
+
+/* Add button */
+.btn-add-link {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.55rem 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+.btn-add-link:hover {
+  background-color: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+/* Remove button */
+.btn-remove-link {
+  background: transparent;
+  border: none;
+  color: #dc2626;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+.btn-remove-link:hover {
+  color: #b91c1c;
+  background: rgba(220,38,38,0.08);
+}
+
+/* Edit / Save buttons */
+.btn-edit-link,
+.btn-save-link {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+.btn-edit-link:hover,
+.btn-save-link:hover {
+  background-color: #1e40af;
+  transform: translateY(-1px);
+}
+
+/* Clickable links */
+.clickable-link {
+  color: #2563eb;
+  font-weight: 500;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+}
+.clickable-link:hover {
+  text-decoration: underline;
+}
+
+/* Invalid link text */
+.invalid-link-text {
+  color: #9ca3af;
+  font-style: italic;
+}
+
+/* Error message */
+.error-text {
+  color: #dc2626;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+/* Animation for adding/removing */
+.animated-row {
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .profilepage-container {
+    padding: 1rem;
+  }
+  .profilepage-title {
+    font-size: 1.5rem;
+  }
+  .profilepage-tab {
+    padding: 0.5rem 1rem;
+    font-size: 0.95rem;
+  }
+}

@@ -1,71 +1,41 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import '../styles/Sidebar.css';
 
 const Sidebar = ({ handleLogout }) => {
+  const links = [
+    { to: '/dashboard', label: 'Dashboard', icon: '🏠' },
+    { to: '/profile', label: 'Profile', icon: '👤' },
+    { to: '/stratizen', label: 'Stratizen', icon: '🌐' },
+    { to: '/studyhub', label: 'Study', icon: '📚' },
+    { to: '/mentorship', label: 'Mentorship', icon: '🎓' },
+    { to: '/forum', label: 'Forum', icon: '💬' },
+    { to: '/messages', label: 'Messages', icon: '📩' },
+    { to: '/marketplace', label: 'Market', icon: '🛒' },
+    { to: '/resource-library', label: 'Resources', icon: '📚' },
+    { to: '/innovation', label: 'Innovation Hub', icon: '🚀' },
+    { to: '/careers', label: 'Careers', icon: '💼' }
+  ];
+
   return (
-    <nav className="sidebar-nav">
-      {/* Profile Link */}
-      <Link to="/profile" className="sidebar-link">
-        <span className="icon">👤</span> Profile
-      </Link>
-
-      {/* Dashboard Link */}
-      <Link to="/dashboard" className="sidebar-link">
-        <span className="icon">🏠</span> Dashboard
-      </Link>
-
-      <Link to="/stratizen" className="sidebar-link">
-        <span className="icon">🌐</span> Stratizen
-      </Link>
-
-      {/* Study Hub Link */}
-      <Link to="/studyhub" className="sidebar-link">
-        <span className="icon">📚</span> Study
-      </Link>
-
-      {/* Mentorship Link */}
-      <Link to="/mentorship" className="sidebar-link">
-        <span className="icon">🎓</span> Mentorship
-      </Link>
-
-      {/* Forum Link */}
-      <Link to="/forum" className="sidebar-link">
-        <span className="icon">💬</span> Forum
-      </Link>
-
-      {/* Messages Link */}
-      <Link to="/messages" className="sidebar-link">
-        <span className="icon">📩</span> Messages
-      </Link>
-
-      {/* Marketplace Link */}
-      <Link to="/marketplace" className="sidebar-link">
-        <span className="icon">🛒</span> Market
-      </Link>
-
-      {/*Resources Link */}
-      <Link to="/resource-library" className="sidebar-link">
-        <span className="icon">📚</span> Resources
-      </Link>
-
-      <Link to="/innovation" className="sidebar-link">
-        <span className="icon">🚀</span> Innovation Hub
-      </Link>
-
-      <Link to="/careers" className="sidebar-link">
-        <span className="icon">💼</span> Careers
-      </Link>
-
-
-      {/* Logout Button */}
-      <button
-        onClick={handleLogout}
-        className="sidebar-link text-red-500"
-      >
-        <span className="icon">🚪</span> Logout
-      </button>
-    </nav>
+    <aside className="sidebar">
+      <nav className="sidebar-nav">
+        {links.map(link => (
+          <NavLink
+            key={link.to}
+            to={link.to}
+            className={({ isActive }) =>
+              `sidebar-link ${isActive ? 'active' : ''}`
+            }
+          >
+            <span className="icon">{link.icon}</span> {link.label}
+          </NavLink>
+        ))}
+        <button onClick={handleLogout} className="sidebar-link logout-btn">
+          <span className="icon">🚪</span> Logout
+        </button>
+      </nav>
+    </aside>
   );
 };
 

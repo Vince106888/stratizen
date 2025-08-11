@@ -1,45 +1,82 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import {
-  getFirestore,
-  doc,
-  getDoc,
-  setDoc,
-  serverTimestamp,
-} from "firebase/firestore";
+import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 import { app } from "../services/firebase";
 import { useNavigate } from "react-router-dom";
+import { TabGroup, TabList, Tab, TabPanels, TabPanel } from "@headlessui/react";
+
+import ProfileOverview from "../components/Profile/ProfileOverview";
+import ProfileLinks from "../components/Profile/ProfileLinks";
+import ProfileTimetable from "../components/Profile/ProfileTimetable";
+import ProfileSkills from "../components/Profile/ProfileSkills";
+import ProfileMessaging from "../components/Profile/ProfileMessaging";
+import ProfilePreferences from "../components/Profile/ProfilePreferences";
+
 import "../styles/Profile.css";
 
-const db = getFirestore(app);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
-const Profile = () => {
-  const [form, setForm] = useState({
-    fullName: "",
-    username: "",
-    bio: "",
-    purpose: "",
-    school: "",
-    program: "",
-    year: "",
-    skills: "",
-    linkedin: "",
-    github: "",
-    website: "",
-    interests: "",
-    availability: "",
-    supportNeeds: "",
-    profilePicture: "https://via.placeholder.com/100",
-  });
+const profilePageTabs = [
+  "Overview",
+  "Links",
+  "Timetable",
+  "Skills",
+  "Messaging",
+  "Preferences",
+];
 
+const initialProfilePageForm = {
+  fullName: "",
+  username: "",
+  bio: "",
+  purpose: "",
+  school: "",
+  year: "",
+  group: "",
+  skills: [],
+  linkedin: "",
+  github: "",
+  website: "",
+  interests: [],
+  availability: "",
+  supportNeeds: "",
+  profilePicture: "https://via.placeholder.com/100",
+  coverImage: "",
+  notificationsEnabled: true,
+  themePreference: "auto",
+  contactNumber: "",
+  discordId: "",
+  twitterHandle: "",
+  graduationStatus: "enrolled",
+  expectedGraduationYear: "",
+  campusResidence: "",
+  residenceCode: "",
+  mentorshipSeeking: false,
+  projects: "",
+  availabilityHours: "",
+  preferredCommunication: "",
+};
+
+export default function ProfilePage() {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState("");
+  const [form, setForm] = useState(initialProfilePageForm);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [dataLoaded, setDataLoaded] = useState(false);
+  const [dirty, setDirty] = useState(false);
+  const [selectedTab, setSelectedTab] = useState(
+    Number(localStorage.getItem("profileActiveTab")) || 0
+  );
 
   const navigate = useNavigate();
 
+  const requiredFields = ["fullName", "username", "school", "year"];
+  const missingFields = requiredFields.filter((field) => !form[field]?.trim());
+
+  // Auth + load profile
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (!currentUser) {
@@ -47,176 +84,140 @@ const Profile = () => {
         return;
       }
       setUser(currentUser);
-      const docRef = doc(db, "users", currentUser.uid);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        setForm((prev) => ({ ...prev, ...docSnap.data() }));
+      setLoading(true);
+      try {
+        const docRef = doc(db, "users", currentUser.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setForm((prev) => ({ ...prev, ...docSnap.data() }));
+        }
+      } catch (err) {
+        console.error("Profile load error:", err);
+        setError("Unable to load profile data.");
+      } finally {
+        setLoading(false);
+        setDataLoaded(true);
       }
     });
-
     return () => unsubscribe();
   }, [navigate]);
 
-  const handleChange = (e) => {
-    const { id, value } = e.target;
-    setForm((prev) => ({ ...prev, [id]: value }));
-  };
-
-  const handleImageChange = useCallback((e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-        const size = 100;
-        canvas.width = size;
-        canvas.height = size;
-
-        ctx.beginPath();
-        ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
-        ctx.closePath();
-        ctx.clip();
-        ctx.drawImage(img, 0, 0, size, size);
-
-        const preview = canvas.toDataURL("image/png");
-        setForm((prev) => ({ ...prev, profilePicture: preview }));
-      };
-      img.src = reader.result;
-    };
-    reader.readAsDataURL(file);
+  const handleFormChange = useCallback((field, value) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+    setDirty(true);
   }, []);
 
-  const handleSubmit = async () => {
-    setSuccess("");
-    setError("");
-
-    const { fullName, username, purpose } = form;
-    if (!fullName || !username || !purpose) {
-      setError("⚠️ Please fill out all required fields.");
+  const handleSave = async () => {
+    if (!user) return;
+    if (missingFields.length > 0) {
+      setError("Please fill in all required fields.");
       return;
     }
+    if (!dirty) {
+      setError("No changes to save.");
+      return;
+    }
+    if (!window.confirm("Save changes to your profile?")) return;
 
-    setLoading(true);
+    setSaving(true);
+    setSaveSuccess(false);
+    setError("");
     try {
-      const userRef = doc(db, "users", user.uid);
-      await setDoc(
-        userRef,
-        { ...form, updatedAt: serverTimestamp(), createdAt: serverTimestamp() },
-        { merge: true }
-      );
-      setSuccess("✅ Profile saved successfully!");
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      setTimeout(() => navigate("/dashboard"), 1000);
+      await setDoc(doc(db, "users", user.uid), {
+        ...form,
+        updatedAt: serverTimestamp(),
+      }, { merge: true });
+      setDirty(false);
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000); // auto-hide after 3s
     } catch (err) {
-      setError("❌ Error saving profile: " + err.message);
+      console.error("Save error:", err);
+      setError("Failed to save profile.");
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
+  if (loading && !dataLoaded) {
+    return <div className="profilepage-status profilepage-loading">⏳ Loading profile...</div>;
+  }
+
   return (
-    <div className="profile-page-wrapper with-sidebar"> {/* or without-sidebar */}
-    <div className="profile-container">
-      <h2 className="profile-title">Update Your Profile</h2>
+    <div className="profilepage-container">
+      <h1 className="profilepage-title">
+        Welcome to your profile{user?.displayName ? `, ${user.displayName}` : ""}
+      </h1>
 
-      {success && <div className="success-message">{success}</div>}
-      {error && <div className="error-message">{error}</div>}
+      {/* Status messages */}
+      {loading && (
+        <div className="profilepage-status profilepage-loading">⏳ Loading profile...</div>
+      )}
+      {error && (
+        <div className="profilepage-status profilepage-error">❌ {error}</div>
+      )}
+      {saving && (
+        <div className="profilepage-status profilepage-warning">💾 Saving your changes...</div>
+      )}
+      {saveSuccess && (
+        <div className="profilepage-status profilepage-success">✅ Profile updated successfully!</div>
+      )}
 
-      <div className="profile-avatar-section">
-        <img
-          src={form.profilePicture}
-          alt="Profile Preview"
-          className="profile-avatar"
-        />
-        <div>
-          <label className="input-label">Upload Profile Picture</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="input-file"
-          />
-        </div>
-      </div>
-
-      <div className="form-grid">
-        <FormInput id="fullName" label="Full Name *" value={form.fullName} onChange={handleChange} />
-        <FormInput id="username" label="Username *" value={form.username} onChange={handleChange} />
-        <FormInput id="school" label="School" value={form.school} onChange={handleChange} />
-        <FormInput id="program" label="Program" value={form.program} onChange={handleChange} />
-        <FormSelect id="year" label="Year" value={form.year} onChange={handleChange} options={["1", "2", "3", "4", "Postgraduate"]} />
-        <FormSelect id="availability" label="Availability" value={form.availability} onChange={handleChange} options={["full-time", "part-time", "weekends", "not-available"]} />
-        <FormInput id="linkedin" label="LinkedIn" value={form.linkedin} onChange={handleChange} />
-        <FormInput id="github" label="GitHub" value={form.github} onChange={handleChange} />
-        <FormInput id="website" label="Website" value={form.website} onChange={handleChange} />
-        <FormInput id="interests" label="Interests" value={form.interests} onChange={handleChange} />
-      </div>
-
-      <FormTextarea id="bio" label="Bio" value={form.bio} onChange={handleChange} />
-      <FormTextarea id="purpose" label="What problem are you solving? *" value={form.purpose} onChange={handleChange} />
-      <FormTextarea id="skills" label="Skills" value={form.skills} onChange={handleChange} />
-      <FormTextarea id="supportNeeds" label="What kind of help do you need?" value={form.supportNeeds} onChange={handleChange} />
-
-      <button
-        onClick={handleSubmit}
-        className={`submit-button ${loading ? "disabled" : ""}`}
-        disabled={loading}
+      <TabGroup
+        selectedIndex={selectedTab}
+        onChange={(index) => {
+          setSelectedTab(index);
+          localStorage.setItem("profileActiveTab", index);
+        }}
       >
-        {loading ? "Saving..." : "Save Profile"}
-      </button>
-    </div>
+        <TabList className="profilepage-tab-list">
+          {profilePageTabs.map((tab) => (
+            <Tab
+              key={tab}
+              className={({ selected }) =>
+                `profilepage-tab ${selected ? "profilepage-tab-selected" : ""}`
+              }
+            >
+              {tab}
+              {requiredFields.includes(tab.toLowerCase()) && missingFields.includes(tab) && (
+                <span style={{ color: "red", marginLeft: 4 }}>*</span>
+              )}
+            </Tab>
+          ))}
+        </TabList>
+
+        <TabPanels className="profilepage-tab-panels">
+          <TabPanel><ProfileOverview form={form} onChange={handleFormChange} /></TabPanel>
+          <TabPanel><ProfileLinks form={form} onChange={handleFormChange} /></TabPanel>
+          <TabPanel><ProfileTimetable userId={user.uid} /></TabPanel>
+          <TabPanel><ProfileSkills form={form} onChange={handleFormChange} /></TabPanel>
+          <TabPanel><ProfileMessaging userId={user.uid} /></TabPanel>
+          <TabPanel><ProfilePreferences form={form} onChange={handleFormChange} /></TabPanel>
+        </TabPanels>
+      </TabGroup>
+
+      {/* Centered Save Button */}
+      <div className="profilepage-action-container">
+        <button
+          className="profilepage-save-btn"
+          onClick={handleSave}
+          disabled={!dataLoaded || saving}
+        >
+          {saving ? "Saving..." : "Save Profile"}
+        </button>
+        {!saving && missingFields.length > 0 && (
+          <p className="profilepage-status-message error">
+            <span style={{ color: "red" }}>*</span> Please fill in all required fields.
+          </p>
+        )}
+      </div>
+
+      <p className="profilepage-disclaimer fancy-disclaimer">
+        All information collected is used solely for Stratizen features. Your data is securely stored and will not be shared without your consent.  
+        By using this service, you agree to our{" "}
+        <a href="/privacy-policy" target="_blank" rel="noopener noreferrer">
+          Privacy Policy
+        </a>.
+      </p>
     </div>
   );
-};
-
-// Reusable form components
-const FormInput = ({ id, label, value, onChange }) => (
-  <div className="form-field">
-    <label htmlFor={id} className="input-label">{label}</label>
-    <input
-      type="text"
-      id={id}
-      value={value}
-      onChange={onChange}
-      className="input-text"
-    />
-  </div>
-);
-
-const FormTextarea = ({ id, label, value, onChange }) => (
-  <div className="form-textarea">
-    <label htmlFor={id} className="input-label">{label}</label>
-    <textarea
-      id={id}
-      value={value}
-      onChange={onChange}
-      rows={3}
-      className="textarea-field"
-    />
-  </div>
-);
-
-const FormSelect = ({ id, label, value, onChange, options }) => (
-  <div className="form-field">
-    <label htmlFor={id} className="input-label">{label}</label>
-    <select
-      id={id}
-      value={value}
-      onChange={onChange}
-      className="select-field"
-    >
-      <option value="">Select...</option>
-      {options.map((opt) => (
-        <option key={opt} value={opt}>
-          {opt}
-        </option>
-      ))}
-    </select>
-  </div>
-);
-
-export default Profile;
+}

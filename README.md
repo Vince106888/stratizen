@@ -2,7 +2,7 @@
 
 **Empower the Campus. Shape the Future.**
 
-Stratizen is a decentralized, offline-first peer-to-peer platform for academic collaboration, peer support, and student-driven innovation at **Strathmore University**.
+Stratizen is a **decentralized, offline-first peer-to-peer platform** for academic collaboration, peer support, and student-driven innovation at **Strathmore University**.
 
 It’s built to **connect students**, **decentralize resources**, and foster **a thriving campus economy and learning network**.
 
@@ -12,23 +12,40 @@ It’s built to **connect students**, **decentralize resources**, and foster **a
 
 Stratizen enables:
 
-- 🔐 **User Authentication and Profile Management** via Firebase.
-- 💬 **Real-time and Offline Messaging** using [Socket.io](http://socket.io/) and IndexedDB (Dexie.js).
-- 🧠 **Discussion Forums and Study Groups** for academic collaboration.
-- 🛒 **Student Marketplace** for services, products, and mentorship.
-- 🚀 **Decentralized Innovation Hub** to support student-led projects.
-- 🗂️ **Resource Library** for shared academic materials.
+* 🔐 **User Authentication & Profile Management** — Secure sign-in and personalized profiles.
+* 💬 **Real-time & Offline Messaging** — Chat and collaborate anytime.
+* 🧠 **Discussion Forums & Study Groups** — Q\&A and knowledge sharing.
+* 🛒 **Student Marketplace** — Buy, sell, and trade services & products.
+* 🚀 **Innovation Hub** — Support for student-led projects.
+* 🗂️ **Resource Library** — Shared academic materials.
+
+---
+
+## 🎯 Current MVP (v1.0)
+
+**Live in `release/mvp-v1` branch & student testing**
+
+This version includes:
+
+* 🔐 **Firebase Auth** (Email/Password)
+* 🧠 **StudyHub** — Forum & Q\&A
+* 🛒 **Marketplace** — Basic listings
+* 💬 **Messages** — Direct chat
+* 🗂️ **Resource Library** — Upload & view files
+* 📱 **Responsive UI** (desktop + mobile)
+
+> Decentralization, DAO governance, NFT-based passes, and tokenized rewards are **planned for future releases**.
 
 ---
 
 ## 🔧 Tech Stack
 
-- **Framework & Bundler:** React + Vite
-- **Styling:** Tailwind CSS
-- **Authentication & Data Sync:** Firebase (Auth & Firestore)
-- **Offline Storage:** Dexie.js (IndexedDB)
-- **Real-Time Communication:** Node.js + [Socket.io](http://socket.io/) (local lab)
-- **State Management:** React Context API
+* **Frontend:** React + Vite
+* **Styling:** Tailwind CSS
+* **Backend/Auth/DB:** Firebase (Auth, Firestore, Storage)
+* **Offline:** Dexie.js (IndexedDB)
+* **Real-Time Messaging:** Socket.io (lab testing)
+* **State Management:** React Context API
 
 ---
 
@@ -36,85 +53,111 @@ Stratizen enables:
 
 ```
 ├── public               # Static assets
-│   ├── logo.png
-│   └── static/          # Client JS, main bundle, logos
 ├── src                  # Application source
-│   ├── assets           # SVGs and images used in components
-│   ├── components       # Reusable UI components (Chat, Sidebar, ResourceCard, etc.)
-│   ├── context          # React Context providers (Auth, Theme)
-│   ├── layouts          # Page layout structures
-│   ├── pages            # Route-able pages (Forum, Marketplace, Mentorship, Dashboard, etc.)
-│   ├── services         # Firebase config, Dexie DB, MessageService
-│   ├── styles           # Page-specific CSS files
-│   ├── App.jsx          # Root component with Router
-│   └── main.jsx         # App entry point
+│   ├── assets           # SVGs/images
+│   ├── components       # Reusable UI parts
+│   ├── context          # State providers
+│   ├── layouts          # Layouts
+│   ├── pages            # Page views
+│   ├── services         # Firebase/Dexie/Socket
+│   ├── styles           # CSS files
+│   ├── App.jsx          # Root component
+│   └── main.jsx         # App entry
 ├── README.md            # Project documentation
-└── tailwind.config.js   # Tailwind CSS configuration
+└── tailwind.config.js   # Tailwind CSS config
 ```
+
+---
 
 ## 🚀 Getting Started
 
-1. Clone the Repository
-git clone <https://github.com/Vince106888/stratizen.git>
+**Clone & Install**
+
+```bash
+git clone https://github.com/Vince106888/stratizen.git
 cd stratizen
-
-2. Install Dependencies
 npm install
+```
 
-3. Configure Environment
-Create a .env file with your Firebase project configuration and socket server URL.
+**Configure Environment**
 
-4. Run in Development Mode
+```env
+# .env
+VITE_FIREBASE_API_KEY=...
+VITE_FIREBASE_AUTH_DOMAIN=...
+VITE_FIREBASE_PROJECT_ID=...
+VITE_SOCKET_SERVER_URL=http://localhost:5000
+```
+
+**Run in Dev**
+
+```bash
 npm run dev
+```
 
-5. Build for Production
+**Build for Production**
+
+```bash
 npm run build
+```
 
-## 🔮 Future Roadmap
+---
 
-✅ Full offline change queueing and conflict resolution
-✅ NFT-based campus passes and credentialing
-✅ Decentralized event planning and student DAOs
-✅ Token-based student marketplace with secure payments
-✅ Mobile-friendly PWA deployment
-✅ Expansion to other universities (multi-campus support)
+## 🧪 How to Test Stratizen MVP
 
-## 💡 Project Vision
+1. Visit: [https://stratizen.web.app](https://stratizen.web.app) *(after deployment)*
+2. Sign up with your **Strathmore email**
+3. Test features:
 
-Stratizen is more than a platform — it’s a student movement.
+   * Post in StudyHub
+   * Upload a resource
+   * Add a marketplace listing
+   * Send a message
+4. Give feedback via the [Feedback Form](#)
 
-We aim to:
+---
 
-Decentralize access to academic and economic resources.
-Empower students to support each other through peer-driven solutions.
-Build a scalable system that can integrate blockchain, tokenized incentives, and decentralized governance (DAOs) in future versions.
+## 🔮 Roadmap
 
-Every student is a citizen of Stratizen — a builder, a collaborator, and an innovator.
+📅 **Next Releases**
+
+* IPFS storage for decentralized resources
+* DAO governance & tokenized rewards
+* NFT-based campus passes
+* Mobile-first PWA deployment
+* Multi-campus network
+
+---
+
+## 💡 Vision
+
+Stratizen is more than a platform — it’s a **student movement** to:
+
+* Decentralize access to academic & economic resources
+* Enable peer-driven problem solving
+* Build scalable, self-governing student communities
+
+---
 
 ## 🤝 Contributing
 
-We welcome contributions from the student community!
+We welcome contributions from students & the open-source community!
 
-How to Contribute:
-Fork the repository.
+**Branching Model**
 
-Create a feature branch:
+* `main` — Development
+* `release/mvp-v1` — Stable release for testing
+* `feature/*` — New features
 
-git checkout -b feat/my-feature
-Commit your changes:
+---
 
-git commit -m "feat: add my new feature"
-Push to GitHub:
+## 📄 License
 
-git push origin feat/my-feature
-Open a Pull Request and describe your changes.
+MIT License — free to use, build, and improve.
 
-### 📄 License
+---
 
-This project is licensed under the MIT License – free to use and build upon.
+## 📫 Contact
 
-### 📫 Contact
-
-For collaborations, contributions, or feedback:
-Email: vincent.nyamao@strathmore.edu
-GitHub: Vince106888
+* **Email:** [vincent.nyamao@strathmore.edu](mailto:vincent.nyamao@strathmore.edu)
+* **GitHub:** [Vince106888](https://github.com/Vince106888)

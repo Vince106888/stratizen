@@ -1,92 +1,124 @@
-/* Layout styling */
-.app-container {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+:root {
+  --color-primary: #002147;
+  --color-accent: #d22630;
+  --color-gold: #fdb813;
+  --color-bg: #f9f9f9;
+  --color-text: #333;
+}
+
+/* App Shell */
+.app-shell {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
 }
 
-.app-header {
-  text-align: center;
-  margin-bottom: 2rem;
+/* Top Navbar */
+.top-nav {
+  background-color: var(--color-primary);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
 }
 
-.app-main {
-  flex: 1;
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
-.app-footer {
-  margin-top: 2rem;
-  text-align: center;
-  font-size: 0.9rem;
-  color: #666;
+.menu-toggle {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
 }
 
-/* Logo animation */
 .logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms ease;
+  height: 40px;
 }
 
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+.brand-name {
+  font-weight: bold;
+  font-size: 1.2rem;
 }
 
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.nav-btn {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 1.2rem;
 }
 
-/* Card styling if reused elsewhere */
-.card {
-  padding: 2em;
-  margin: 1em auto;
-  max-width: 600px;
-  border-radius: 10px;
-  background-color: #f9f9f9;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+.profile-img {
+  border-radius: 50%;
+  height: 40px;
+  width: 40px;
 }
 
-/* Footer text */
-.read-the-docs {
-  color: #888;
-}
-
-/* Main layout with sidebar */
+/* Layout Body */
 .main-layout {
   display: flex;
-  min-height: 100%;
+  flex: 1;
+  background-color: var(--color-bg);
 }
 
-/* Sidebar (basic) */
+.main-content {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+/* Sidebar */
 .sidebar {
   width: 240px;
-  background-color: #f1f1f1;
-  padding: 1rem;
+  background-color: #fff;
   border-right: 1px solid #ddd;
+  padding: 1rem;
 }
 
-@media screen and (max-width: 768px) {
-  .main-layout {
-    flex-direction: column;
-  }
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
 
-  .sidebar {
-    width: 100%;
-    border-right: none;
-    border-bottom: 1px solid #ddd;
-  }
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  color: var(--color-text);
+  font-weight: 500;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.sidebar-link:hover {
+  background-color: rgba(0, 33, 71, 0.05);
+  transform: translateX(4px);
+}
+
+.sidebar-link.active {
+  background-color: var(--color-accent);
+  color: white;
+}
+
+.logout-btn {
+  color: var(--color-accent);
+}
+
+.logout-btn:hover {
+  background-color: rgba(210, 38, 48, 0.15);
 }

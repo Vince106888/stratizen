@@ -1,0 +1,95 @@
+.profile-preferences-container {
+  max-width: 700px;
+  margin: auto;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  padding: 1rem;
+}
+
+.preference-section {
+  margin-bottom: 2rem;
+}
+
+.switch-label {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  font-size: 1.1rem;
+  position: relative;
+}
+
+.switch-label input[type="checkbox"] {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.slider {
+  position: relative;
+  width: 50px;
+  height: 26px;
+  background-color: #ccc;
+  border-radius: 34px;
+  margin-right: 10px;
+  transition: background-color 0.4s;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  left: 2px;
+  top: 2px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.4s;
+}
+
+.switch-label input[type="checkbox"]:checked + .slider {
+  background-color: #2563eb;
+}
+
+.switch-label input[type="checkbox"]:checked + .slider::before {
+  transform: translateX(24px);
+}
+
+.helper-text {
+  font-size: 0.9rem;
+  color: #555;
+  margin-top: 0.25rem;
+}
+
+.select-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.select-field {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline-offset: 2px;
+  transition: border-color 0.3s ease;
+}
+
+.select-field:hover,
+.select-field:focus {
+  border-color: #2563eb;
+}
+
+.disclaimer-section {
+  font-size: 0.9rem;
+  color: #666;
+  background-color: #f9fafb;
+  padding: 1rem;
+  border-left: 4px solid #2563eb;
+  border-radius: 4px;
+}

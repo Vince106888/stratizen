@@ -1,106 +1,161 @@
 .auth-container {
-  min-height: 100vh;
-  background: linear-gradient(to bottom right, #e5e7eb, #68739c, #394270);
   display: flex;
-  align-items: center;
   justify-content: center;
-  padding: 2rem;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #002147, #f4b41a);
+  padding: 1rem;
 }
 
-.auth-box {
-  max-width: 400px;
+.auth-card {
+  background: white;
+  padding: 2rem;
+  max-width: 380px;
   width: 100%;
-  padding: 2rem;
-  background-color: rgba(163, 172, 201, 0.75);
-  backdrop-filter: blur(12px);
-  border-radius: 1rem;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  animation: fadeIn 0.4s ease;
 }
 
-.auth-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #1f2937;
+.auth-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.auth-logo {
+  width: 90px; /* increased logo size */
+  height: auto;
+  margin-bottom: 0.5rem;
+}
+
+.auth-brand {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #002147;
+}
+
+.auth-subtitle {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.auth-tabs {
+  display: flex;
+  justify-content: center;  /* center tabs */
+  gap: 2rem;                /* space between tabs */
   margin-bottom: 1rem;
-  margin-top: 2rem;
+  user-select: none;
+}
+
+.auth-tab {
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: bold;
+  padding-bottom: 0.4rem;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  color: #555;              /* default tab color */
+  transition: color 0.3s, border-color 0.3s;
+}
+
+.auth-tab:hover {
+  color: #002147;           /* hover color */
+}
+
+.auth-tab.active {
+  color: #f4b41a;           /* active tab color (gold) */
+  border-bottom: 3px solid #f4b41a;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .auth-input {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  margin-top: 0.5rem;
-  font-size: 1rem;
-  border: 1px solid #e4e1e1;
-  border-radius: 0.5rem;
-  background-color: #4a80c7;
-  transition: border-color 0.3s;
+  padding: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 0.95rem;
 }
 
 .auth-input:focus {
-  border-color: #3b82f6;
+  border-color: #002147;
   outline: none;
 }
 
 .auth-input-wrapper {
   position: relative;
-  margin-top: 0.5rem;
 }
 
 .toggle-visibility {
   position: absolute;
+  right: 10px;
   top: 50%;
-  right: 1rem;
   transform: translateY(-50%);
   cursor: pointer;
-  color: #6b7280;
-  transition: color 0.2s;
+  font-size: 1.3rem; /* larger eye icon */
+  user-select: none;
 }
 
-.toggle-visibility:hover {
-  color: #3b82f6;
+.forgot-password {
+  font-size: 0.85rem;
+  text-align: right;
+  color: #002147;
+  cursor: pointer;
+  margin-top: -0.4rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
 }
 
 .auth-button {
-  width: 100%;
-  padding: 0.75rem;
-  margin-top: 1rem;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #ffffff;
+  background: #002147;
+  color: white;
+  padding: 0.8rem;
+  border-radius: 8px;
   border: none;
-  border-radius: 0.5rem;
+  font-weight: bold;
   cursor: pointer;
-  transition: opacity 0.3s;
-}
-
-.auth-button.signup {
-  background: linear-gradient(to right, #05affd, #059669);
-}
-
-.auth-button.login {
-  background: linear-gradient(to right, #4f8ff7, #059669);
+  transition: background 0.3s, color 0.3s;
 }
 
 .auth-button:hover {
-  opacity: 0.9;
+  background: #f4b41a;
+  color: #002147;
 }
 
 .auth-message {
-  color: #ee7272;
   margin-top: 1rem;
+  text-align: center;
   font-size: 0.9rem;
+  color: #002147;
 }
 
-.auth-loading {
-  color: #3b82f6;
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
-  animation: pulse 1.5s infinite;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-@keyframes pulse {
-  0% { opacity: 0.5; }
-  50% { opacity: 1; }
-  100% { opacity: 0.5; }
+/* Responsive */
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 1.5rem;
+  }
+
+  .auth-logo {
+    width: 70px;
+  }
+
+  .auth-tab {
+    font-size: 1rem;
+    gap: 1rem;
+  }
 }

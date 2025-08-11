@@ -1,0 +1,44 @@
+.skill-radar-chart-section {
+  width: 100%;
+  max-width: 550px; /* increased max width */
+  height: 450px; /* increased height */
+  margin: 0 auto 2.5rem auto;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12); /* slightly stronger shadow */
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  user-select: none;
+}
+
+.skill-radar-chart-title {
+  text-align: center;
+  margin-bottom: 1.25rem;
+  font-weight: 700;
+  font-size: 1.6rem;
+  color: #2563eb; /* Primary color */
+  letter-spacing: 0.02em;
+}
+
+.recharts-polar-angle-axis-tick text {
+  font-size: 14px !important;
+  fill: #2a2a2a !important;
+  font-weight: 700 !important;
+}
+
+.recharts-polar-radius-axis-tick text {
+  font-size: 12px !important;
+  fill: #555 !important;
+  font-weight: 500 !important;
+}
+
+/* Increase thickness of radar stroke and area */
+.recharts-radar-dot {
+  stroke-width: 3 !important; /* thicker dots on vertices */
+}
+
+.recharts-radar-area {
+  stroke-width: 3 !important; /* thicker radar stroke */
+  opacity: 0.7 !important; /* slight increase in opacity for better visibility */
+}

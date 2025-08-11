@@ -1,176 +1,85 @@
-/* Wrapper to center the content */
-.dashboard-wrapper {
-  display: flex;
-  justify-content: center;
-  padding: 40px 20px;
-  min-height: 100vh;
-  box-sizing: border-box;
+/* Grid layout */
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 2rem;
+  padding: 2rem;
+  max-width: 1300px;
+  margin: 0 auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #1a1a1a;
+  min-height: 85vh;
+  user-select: none;
+
+  background-color: #f9f7fc;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgb(126 87 194 / 0.15);
 }
 
-/* === MAIN DASHBOARD LAYOUT === */
-.dashboard-main {
-  max-width: 900px;
-  width: 100%; /* Ensure it uses full width within the max-width */
-  margin: 0;
-  padding: 32px;
-  background-color: #9eb7dd;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  min-height: 80vh;
+@media (max-width: 900px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+  }
+}
+
+.dashboard-left,
+.dashboard-right {
   display: flex;
   flex-direction: column;
-  align-items: center;
-}
+  gap: 2rem;
 
-/* If a sidebar exists, give space on the left */
-@media (min-width: 1024px) {
-  .profile-page-wrapper.with-sidebar {
-    justify-content: flex-start;
-    padding-left: 280px; /* Adjust depending on your sidebar width */
-  }
-}
-
-/* === LOADING SCREEN === */
-.loading-screen {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  font-size: 1.25rem;
-  color: #6b7280;
-}
-
-/* === PROFILE SECTION === */
-.dashboard-profile-img {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid #7c3aed;
-  margin-bottom: 16px;
-  transition: transform 0.3s ease;
-}
-
-.dashboard-profile-img:hover {
-  transform: scale(1.08);
-}
-
-.dashboard-card h2 {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #1f2937;
-  margin-bottom: 8px;
-}
-
-.dashboard-card p {
-  font-size: 1.1rem;
-  color: #4b5563;
-  text-align: center;
-  max-width: 600px;
-  line-height: 1.6;
-}
-
-.dashboard-card .italic {
-  font-style: italic;
-  color: #7c3aed;
-}
-
-/* === STATS GRID === */
-.dashboard-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 24px;
-  width: 100%;
-  margin-top: 40px;
-}
-
-.dashboard-card {
-  background-color: #b9cde0;
+  background-color: #fff;
   border-radius: 12px;
-  padding: 24px;
-  text-align: center;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 1.5rem;
+  box-shadow: 0 4px 15px rgb(126 87 194 / 0.1);
 }
 
-.dashboard-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+.dashboard-right {
+  position: sticky;
+  top: 2rem;
 }
 
-.dashboard-card h3 {
-  font-size: 1.125rem;
-  color: #6b21a8;
-  margin-bottom: 6px;
-  font-weight: 600;
-}
+/* Loading & Error screens styles unchanged */
 
-.dashboard-card p {
-  font-size: 2rem;
-  color: #4f46e5;
-  font-weight: 700;
-}
-
-/* === FOOTER === */
-.dashboard-footer {
-  margin-top: 48px;
-  color: #6b7280;
-  text-align: center;
-  font-size: 0.9rem;
-}
-
-/* === RESPONSIVE === */
-@media (max-width: 640px) {
-  .dashboard-main {
-    margin: 20px 16px;
-    padding: 24px;
-  }
-
-  .dashboard-profile-img {
-    width: 80px;
-    height: 80px;
-  }
-
-  .dashboard-card p {
-    font-size: 1.75rem;
-  }
-
-  /* Ensure cards take full width and are properly spaced */
-  .dashboard-cards {
-    grid-template-columns: 1fr; /* Stack cards on smaller screens */
-  }
-}
-
-/* === PROFILE CARD ALIGNMENT === */
-.dashboard-profile-img,
-.dashboard-card {
+.loading-screen,
+.error-screen,
+.no-data-screen {
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 50vh;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #6a1b9a;
 }
 
-/* === Fixing text centering for profile section */
-.dashboard-profile-img + div {
-  text-align: center;
+/* Scrollbar styles unchanged */
+
+.recent-activity, 
+.chatbot-messages {
+  scrollbar-width: thin;
+  scrollbar-color: #7e57c2 #f4f0fb;
 }
 
-/* === Loading screen improvements === */
-.loading-screen p {
-  font-size: 1.5rem;
-  color: #000000;
-  font-weight: bold;
-  animation: pulse 1.5s infinite;
+.recent-activity::-webkit-scrollbar, 
+.chatbot-messages::-webkit-scrollbar {
+  width: 8px;
 }
 
-/* === Pulse animation for loading state === */
-@keyframes pulse {
-  0% {
-    opacity: 0.7;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0.7;
-  }
+.recent-activity::-webkit-scrollbar-thumb, 
+.chatbot-messages::-webkit-scrollbar-thumb {
+  background-color: #7e57c2;
+  border-radius: 4px;
+}
+
+/* Accessibility focus unchanged */
+
+a:focus,
+button:focus,
+input:focus,
+textarea:focus {
+  outline: 3px solid #5e35b1;
+  outline-offset: 2px;
 }

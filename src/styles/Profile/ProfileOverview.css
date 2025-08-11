@@ -1,0 +1,157 @@
+/* src/styles/Profile/ProfileOverview.css */
+
+.profile-overview-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1.5rem 2rem;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #1f2937; /* Tailwind gray-800 */
+}
+
+.profile-images {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.profile-avatar-wrapper {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  flex-shrink: 0;
+}
+
+.profile-avatar {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #ffffff; /* Tailwind blue-600 */
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.5);
+}
+
+.avatar-upload-label {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #ffffff;
+  color: rgb(85, 75, 223);
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  user-select: none;
+  box-shadow: 0 0 4px rgba(37, 99, 235, 0.7);
+  transition: background-color 0.3s ease;
+}
+
+.avatar-upload-label:hover,
+.avatar-upload-label:focus {
+  background: #1e40af; /* Tailwind blue-800 */
+  outline: none;
+}
+
+.cover-image-wrapper {
+  position: relative;
+  flex: 1 1 300px;
+  max-width: 600px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  height: 100px; /* Fixed height */
+}
+
+.cover-image {
+  width: 100%;
+  height: 100%; /* Fill container */
+  display: block;
+  border-radius: 12px;
+  object-fit: cover;
+  max-height: none;
+}
+
+.cover-upload-label {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: rgba(37, 99, 235, 0.85);
+  color: white;
+  padding: 0.3rem 0.75rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+}
+
+.cover-upload-label:hover,
+.cover-upload-label:focus {
+  background: rgba(30, 64, 175, 0.85);
+  outline: none;
+}
+
+/* Form groups */
+.form-group {
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  color: #374151; /* Tailwind gray-700 */
+}
+
+.input-text,
+.textarea-field {
+  padding: 0.5rem 0.75rem;
+  border: 1.5px solid #d1d5db; /* Tailwind gray-300 */
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  outline-offset: 2px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.input-text:focus,
+.textarea-field:focus {
+  border-color: #2563eb; /* Tailwind blue-600 */
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+.textarea-field {
+  min-height: 80px;
+  max-height: 150px;
+  line-height: 1.4;
+}
+
+/* Additional fields styling */
+.input-text.short {
+  max-width: 300px;
+}
+
+@media (max-width: 480px) {
+  .profile-images {
+    flex-direction: column;
+  }
+
+  .cover-image-wrapper {
+    max-width: 100%;
+    height: 180px;
+  }
+}

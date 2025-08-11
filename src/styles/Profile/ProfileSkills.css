@@ -1,0 +1,92 @@
+.profile-skills-container {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: #2563eb;
+}
+
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  border: 2px solid #cbd5e1;
+  padding: 0.6rem 0.75rem;
+  border-radius: 10px;
+  background: #f9fafb;
+  position: relative;
+}
+
+.tag {
+  background-color: #2563eb;
+  color: white;
+  padding: 0.3rem 0.6rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  cursor: default;
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+.tag-interest {
+  background-color: #10b981; /* emerald-500 */
+}
+
+.remove-btn {
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-weight: 900;
+  font-size: 1.2rem;
+  line-height: 1;
+  padding: 0 0.15rem;
+  margin-left: 0.25rem;
+  transition: color 0.2s ease;
+}
+
+.remove-btn:hover {
+  color: #d1d5db;
+}
+
+.tag-input {
+  border: none;
+  flex-grow: 1;
+  font-size: 1rem;
+  padding: 0.3rem 0.5rem;
+  outline: none;
+  background: transparent;
+  min-width: 140px;
+}
+
+.autocomplete-list {
+  position: absolute;
+  background: white;
+  box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
+  max-width: 350px;
+  margin-top: 0.2rem;
+  border-radius: 8px;
+  list-style: none;
+  padding: 0.3rem 0;
+  z-index: 1000;
+  width: 100%;
+}
+
+.autocomplete-item {
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: 0.95rem;
+  color: #374151;
+}
+
+.autocomplete-item:hover {
+  background-color: #e0e7ff;
+}
