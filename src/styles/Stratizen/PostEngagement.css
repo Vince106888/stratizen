@@ -1,0 +1,41 @@
+.post-engagement {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  font-size: 0.9rem;
+  color: #475569;
+  padding-top: 0.5rem;
+  border-top: 1px solid #e2e8f0;
+  margin-top: 0.75rem;
+}
+
+/* Reactions */
+.reactions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.reaction-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  user-select: none;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.reaction-btn:hover {
+  background-color: #e0e7ff;
+  color: #2563eb;
+}
+
+.reaction-btn.active {
+  background-color: #2563eb;
+  color: white;
+}

@@ -1,0 +1,172 @@
+/* Strathmore inspired colors */
+:root {
+  --primary-blue: #003366;
+  --primary-red: #e10600;
+  --text-dark: #1e293b;
+  --text-muted: #64748b;
+  --bg-light: #f8fafc;
+  --border-color: #cbd5e1;
+  --shadow-light: rgba(0, 0, 0, 0.1);
+  --shadow-focus: rgba(37, 99, 235, 0.4);
+}
+
+/* Container */
+.post-list-container {
+  max-width: 720px;
+  margin: 2rem auto;
+  background: var(--bg-light);
+  border-radius: 14px;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 4px 24px var(--shadow-light);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Header */
+.post-list-header {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  position: sticky;
+  top: 0;
+  background: var(--bg-light);
+  padding-bottom: 0.75rem;
+  z-index: 10;
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Buttons */
+button {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 600;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem 1.25rem;
+  transition: background-color 0.25s ease, color 0.25s ease;
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.btn-check-new {
+  background-color: var(--primary-blue);
+  color: white;
+}
+
+.btn-check-new:hover:not(:disabled),
+.btn-check-new:focus-visible:not(:disabled) {
+  background-color: #002244;
+  outline: none;
+  box-shadow: 0 0 8px var(--shadow-focus);
+}
+
+.btn-refresh {
+  background-color: var(--primary-red);
+  color: white;
+}
+
+.btn-refresh:hover:not(:disabled),
+.btn-refresh:focus-visible:not(:disabled) {
+  background-color: #a80400;
+  outline: none;
+  box-shadow: 0 0 8px var(--primary-red);
+}
+
+.btn-load-more {
+  background-color: var(--primary-blue);
+  color: white;
+  margin: 1rem auto;
+  display: block;
+  min-width: 140px;
+}
+
+.btn-load-more:hover:not(:disabled),
+.btn-load-more:focus-visible:not(:disabled) {
+  background-color: #002244;
+  outline: none;
+  box-shadow: 0 0 8px var(--shadow-focus);
+}
+
+button:disabled,
+button[disabled] {
+  cursor: not-allowed;
+  background-color: #94a3b8;
+  color: #e2e8f0;
+}
+
+/* Post List */
+.post-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Loading */
+.post-list-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--primary-blue);
+}
+
+.loader {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid var(--primary-blue);
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Empty state */
+.post-list-empty {
+  text-align: center;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin: 2rem 0;
+}
+
+/* Error message */
+.post-list-error {
+  color: var(--primary-red);
+  font-weight: 700;
+  text-align: center;
+  margin: 0.5rem 0;
+}
+
+/* Load more container */
+.load-more-container {
+  display: flex;
+  justify-content: center;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .post-list-container {
+    padding: 1rem;
+    margin: 1rem;
+  }
+
+  .post-list-header {
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  button {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+}

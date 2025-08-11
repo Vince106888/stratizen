@@ -1,0 +1,263 @@
+/* Post List */
+.post-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+/* Single Post */
+.post-item {
+  background: white;
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 1px 6px rgb(0 0 0 / 0.1);
+  transition: box-shadow 0.3s ease;
+  user-select: none;
+}
+
+.post-item:hover {
+  box-shadow: 0 4px 14px rgb(37 99 235 / 0.25);
+}
+
+/* Post Header */
+.post-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #334155; /* dark slate */
+}
+
+.post-header small {
+  color: #64748b;
+  font-weight: 400;
+}
+
+/* Post Content */
+.post-content {
+  font-size: 1rem;
+  color: #1e293b;
+  margin-bottom: 1rem;
+  white-space: pre-wrap;
+}
+
+.post-link {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.post-link:hover {
+  color: #1d4ed8;
+}
+
+/* Tagged Users */
+.post-tags {
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  color: #475569;
+}
+
+.tagged-user {
+  color: #2563eb;
+  font-weight: 500;
+}
+
+/* Post Media */
+.post-media {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.post-media img,
+.post-media video {
+  max-width: 100%;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+/* Post Engagement (Reactions + Comments) */
+.post-engagement {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  font-size: 0.9rem;
+  color: #475569;
+  padding-top: 0.5rem;
+  border-top: 1px solid #e2e8f0;
+  margin-top: 0.75rem;
+}
+
+/* Reaction Buttons */
+.reactions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.reaction-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  user-select: none;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.reaction-btn:hover {
+  background-color: #e0e7ff;
+  color: #2563eb;
+}
+
+.reaction-btn.active {
+  background-color: #2563eb;
+  color: white;
+}
+
+/* Comments Preview Button */
+.comments-preview-btn {
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  font-weight: 500;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  user-select: none;
+  transition: color 0.3s ease;
+}
+
+.comments-preview-btn:hover {
+  color: #2563eb;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .post-item {
+    padding: 1rem;
+  }
+
+  .post-engagement {
+    gap: 1rem;
+    font-size: 0.85rem;
+  }
+
+  .reaction-btn {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.85rem;
+  }
+}
+
+/* Post Editor */
+.post-editor {
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.post-editor textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 90px;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 2px solid #cbd5e1;
+  border-radius: 8px;
+  font-family: inherit;
+}
+
+.post-editor textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 8px #93c5fd;
+}
+
+.post-editor-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.media-upload-label {
+  cursor: pointer;
+  color: #2563eb;
+  font-weight: 600;
+  user-select: none;
+}
+
+.media-preview {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.media-thumb {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 6px rgb(0 0 0 / 0.1);
+}
+
+.media-thumb img,
+.media-thumb video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.media-thumb button {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  color: white;
+  font-size: 18px;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.post-editor button[type="submit"] {
+  padding: 0.5rem 1.5rem;
+  border-radius: 9999px;
+  background-color: #2563eb;
+  border: none;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.25s ease;
+}
+
+.post-editor button[type="submit"]:disabled {
+  background-color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.post-editor button[type="submit"]:not(:disabled):hover {
+  background-color: #1d4ed8;
+}
+
+/* Error Message */
+.error-message {
+  color: #b91c1c;
+  font-weight: 600;
+  margin-top: 0.5rem;
+}

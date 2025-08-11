@@ -1,0 +1,212 @@
+/* GroupList.css */
+
+/* Container and layout */
+.create-group-form,
+.group-search {
+  max-width: 480px;
+  margin: 1.5rem auto;
+  padding: 1rem;
+  border: 1px solid #e2e8f0; /* light gray */
+  border-radius: 8px;
+  background-color: #f9fafb;
+}
+
+.create-group-form h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #2563eb; /* Strathmore blue */
+  user-select: none;
+}
+
+.create-group-form input[type="text"],
+.create-group-form textarea,
+.group-search input[type="search"] {
+  width: 100%;
+  border: 1.5px solid #cbd5e1; /* light border */
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border-color 0.3s ease;
+  margin-bottom: 1rem;
+  resize: vertical;
+}
+
+.create-group-form input[type="text"]:focus,
+.create-group-form textarea:focus,
+.group-search input[type="search"]:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 6px #93c5fd;
+}
+
+.create-group-form button {
+  background-color: #2563eb;
+  color: white;
+  font-weight: 600;
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.25s ease;
+}
+
+.create-group-form button:disabled {
+  background-color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.create-group-form button:not(:disabled):hover {
+  background-color: #1d4ed8;
+}
+
+/* Heading */
+.grouplist-heading {
+  max-width: 900px;
+  margin: 2rem auto 1rem;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2563eb;
+  text-align: center;
+  user-select: none;
+}
+
+/* Groups grid */
+.group-cards-grid {
+  max-width: 900px;
+  margin: 0 auto 3rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Individual group card */
+.group-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: white;
+  transition: box-shadow 0.3s ease;
+}
+
+.group-card:hover {
+  box-shadow: 0 4px 12px rgb(37 99 235 / 0.25);
+}
+
+/* Title and badges */
+.group-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b; /* dark slate */
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  user-select: text;
+}
+
+.group-official-badge {
+  background-color: #e0e7ff;
+  color: #4338ca;
+  font-size: 0.75rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  user-select: none;
+}
+
+/* Description */
+.group-description {
+  color: #475569;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  min-height: 3rem;
+  user-select: text;
+}
+
+/* Member count */
+.group-member-count {
+  color: #64748b;
+  font-size: 0.875rem;
+  user-select: none;
+}
+
+/* Buttons container */
+.group-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+/* Join / Leave buttons */
+.btn-join,
+.btn-leave {
+  flex: 1;
+  padding: 0.5rem 0;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  user-select: none;
+  transition: background-color 0.25s ease;
+}
+
+.btn-join {
+  background-color: #16a34a; /* green-600 */
+  color: white;
+}
+
+.btn-join:hover:not(:disabled) {
+  background-color: #15803d; /* green-700 */
+}
+
+.btn-leave {
+  background-color: #dc2626; /* red-600 */
+  color: white;
+}
+
+.btn-leave:hover:not(:disabled) {
+  background-color: #b91c1c; /* red-700 */
+}
+
+.btn-join:disabled,
+.btn-leave:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Delete button */
+.btn-delete {
+  padding: 0.5rem 1rem;
+  background-color: #e5e7eb; /* gray-300 */
+  color: #374151; /* gray-700 */
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+.btn-delete:hover:not(:disabled) {
+  background-color: #d1d5db; /* gray-400 */
+}
+
+.btn-delete:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .group-buttons {
+    flex-direction: column;
+  }
+  .btn-delete {
+    width: 100%;
+  }
+}

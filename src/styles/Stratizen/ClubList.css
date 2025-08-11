@@ -1,0 +1,239 @@
+/* Container & Layout */
+.clublist-container {
+  max-width: 1200px;
+  margin: 2rem auto 4rem;
+  padding: 0 1rem;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #1e293b; /* dark slate */
+}
+
+/* Create Club Form */
+.create-club-form {
+  max-width: 480px;
+  margin: 0 auto 2rem;
+  padding: 1.5rem;
+  border: 1px solid #e2e8f0; /* light border */
+  border-radius: 10px;
+  box-shadow: 0 3px 6px rgb(0 0 0 / 0.1);
+  background-color: #ffffff;
+}
+
+.create-club-form h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #2563eb; /* Strathmore Blue */
+  user-select: none;
+}
+
+.create-club-form input[type="text"],
+.create-club-form textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  border: 2px solid #cbd5e1;
+  border-radius: 8px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.create-club-form input[type="text"]:focus,
+.create-club-form textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 8px #93c5fd;
+}
+
+.create-club-form button {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+  user-select: none;
+}
+
+.create-club-form button:hover:not(:disabled) {
+  background-color: #1d4ed8;
+}
+
+.create-club-form button:disabled {
+  background-color: #94a3b8;
+  cursor: not-allowed;
+}
+
+/* Search Input */
+.club-search {
+  max-width: 600px;
+  margin: 0 auto 2rem;
+  padding: 0 1rem;
+}
+
+.club-search input[type="search"] {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border-radius: 10px;
+  border: 2px solid #cbd5e1;
+  font-family: inherit;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.club-search input[type="search"]:focus {
+  outline: none;
+  border-color: #6366f1; /* Indigo */
+  box-shadow: 0 0 8px #a5b4fc;
+}
+
+/* Heading */
+.clublist-heading {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #1e293b;
+  user-select: none;
+}
+
+/* Club Cards Grid */
+.club-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Club Card */
+.club-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgb(0 0 0 / 0.1);
+  border: 1px solid #e2e8f0;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: box-shadow 0.3s ease;
+}
+
+.club-card:hover {
+  box-shadow: 0 10px 25px rgb(0 0 0 / 0.15);
+}
+
+/* Club Title */
+.club-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  user-select: none;
+}
+
+/* Official Badge */
+.club-official-badge {
+  background-color: #e0e7ff;
+  color: #4338ca;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  user-select: none;
+}
+
+/* Description */
+.club-description {
+  font-size: 1rem;
+  color: #475569;
+  margin-bottom: 1rem;
+  min-height: 3rem;
+}
+
+/* Member Count */
+.club-member-count {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-bottom: 1rem;
+}
+
+/* Buttons Container */
+.club-buttons {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+/* Join/Leave Buttons */
+.btn-join,
+.btn-leave {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+  user-select: none;
+  color: white;
+}
+
+.btn-join {
+  background-color: #16a34a; /* green */
+}
+
+.btn-join:hover:not(:disabled) {
+  background-color: #15803d;
+}
+
+.btn-leave {
+  background-color: #dc2626; /* red */
+}
+
+.btn-leave:hover:not(:disabled) {
+  background-color: #b91c1c;
+}
+
+.btn-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Delete Button */
+.btn-delete {
+  padding: 0.6rem 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background-color: #e5e7eb;
+  color: #374151;
+  transition: background-color 0.25s ease;
+  user-select: none;
+}
+
+.btn-delete:hover:not(:disabled) {
+  background-color: #d1d5db;
+}
+
+/* Responsive tweaks */
+@media (max-width: 640px) {
+  .club-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .create-club-form {
+    max-width: 100%;
+  }
+
+  .club-search {
+    max-width: 100%;
+  }
+}
