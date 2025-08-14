@@ -1,222 +1,201 @@
-import Dexie from 'dexie';
-import { db as cloudDB } from './firebase.js';
-import { doc, setDoc } from 'firebase/firestore';
+/* ------------------------------------------------------------------ */
+/* src/services/db.js                                                  */
+/* - Implements unified per-user subcollection: users/{uid}/events       */
+/* - Exposes sync-friendly helpers (get, listen, add, update, delete)    */
+/* ------------------------------------------------------------------ */
 
-// Initialize the Dexie database
-export const db = new Dexie('P2PPlatformDB');
+// File: src/services/db.js
+import {
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  deleteDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+  addDoc,
+  onSnapshot,
+  orderBy,
+} from "firebase/firestore";
+import { db } from "./firebase"; // your initialized Firestore
 
-// Define the schema for the database with indexes
-db.version(1).stores({
-  profiles: '++id, name, email, bio, username', // Added username index for profile
-  marketplace: '++id, title, description, price, userId, timestamp', // Indexed by userId for better queries
-  messages: '++id, senderId, receiverId, content, timestamp' // Indexed by senderId, receiverId for better querying
-});
-
-// Helper functions for CRUD operations
-
-// Profiles CRUD Operations
-
-// Add a new profile
-export const addProfile = async (profile) => {
-  try {
-    const id = await db.profiles.add(profile);
-    console.log(`Profile added with ID: ${id}`);
-    return id;
-  } catch (error) {
-    console.error("Error adding profile: ", error);
-  }
+// -----------------------------
+// User profile helpers (unchanged)
+// -----------------------------
+export const createUserProfile = async (user, extraData = {}) => {
+  if (!user?.uid || !user?.email) throw new Error("Invalid user object");
+  const userRef = doc(db, "users", user.uid);
+  const profileData = {
+    uid: user.uid,
+    email: user.email,
+    username: extraData.username || user.email.split("@")[0],
+    displayName: user.displayName || extraData.username || user.email.split("@")[0],
+    role: "student",
+    bio: "",
+    profilePicture: "",
+    coverPhoto: "",
+    phone: "",
+    gender: "",
+    dob: "",
+    location: "",
+    school: "",
+    course: "",
+    yearOfStudy: "",
+    interests: [],
+    skills: [],
+    xp: 0,
+    level: 1,
+    reputation: 0,
+    badges: [],
+    messagesCount: 0,
+    forumPostsCount: 0,
+    marketplaceItemsCount: 0,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    ...extraData,
+  };
+  await setDoc(userRef, profileData);
+  return profileData;
 };
 
-// Get a profile by ID
-export const getProfile = async (id) => {
-  try {
-    const profile = await db.profiles.get(id);
-    return profile;
-  } catch (error) {
-    console.error("Error fetching profile: ", error);
-  }
+export const getUserProfile = async (userId) => {
+  if (!userId) throw new Error("userId is required");
+  const userRef = doc(db, "users", userId);
+  const snap = await getDoc(userRef);
+  return snap.exists() ? { uid: snap.id, ...snap.data() } : null;
 };
 
-// Update a profile
-export const updateProfile = async (id, updatedProfile) => {
-  try {
-    const updated = await db.profiles.update(id, updatedProfile);
-    return updated;
-  } catch (error) {
-    console.error("Error updating profile: ", error);
-  }
+export const updateUserProfile = async (userId, updates) => {
+  if (!userId) throw new Error("userId is required");
+  const userRef = doc(db, "users", userId);
+  await updateDoc(userRef, { ...updates, updatedAt: new Date().toISOString() });
 };
 
-// Delete a profile
-export const deleteProfile = async (id) => {
-  try {
-    await db.profiles.delete(id);
-    console.log(`Profile with ID ${id} deleted.`);
-  } catch (error) {
-    console.error("Error deleting profile: ", error);
-  }
+export const deleteUserProfile = async (userId) => {
+  if (!userId) throw new Error("userId is required");
+  const userRef = doc(db, "users", userId);
+  await deleteDoc(userRef);
 };
 
-// Marketplace CRUD Operations
-
-// Add a new marketplace listing
-export const addListing = async (listing) => {
-  try {
-    const id = await db.marketplace.add(listing);
-    console.log(`Listing added with ID: ${id}`);
-    return id;
-  } catch (error) {
-    console.error("Error adding listing: ", error);
-  }
+export const getUsersByRole = async (role) => {
+  const usersRef = collection(db, "users");
+  const q = query(usersRef, where("role", "==", role));
+  const res = await getDocs(q);
+  return res.docs.map(d => ({ uid: d.id, ...d.data() }));
 };
 
-// Get all marketplace listings
-export const getAllListings = async () => {
+/* ============================
+   EVENTS LOGIC (USER SUBCOLLECTIONS)
+============================ */
+import { serverTimestamp } from "firebase/firestore";
+
+/**
+ * Add a new event to a user's subcollection: users/{uid}/events
+ * @param {string} userId
+ * @param {object} eventData
+ * @returns {Promise<string>} The created document ID
+ */
+export async function addUserEvent(userId, eventData) {
+  if (!userId) throw new Error("No userId provided");
+  if (!eventData) throw new Error("No event data provided");
+
   try {
-    const listings = await db.marketplace.toArray();
-    return listings;
-  } catch (error) {
-    console.error("Error fetching listings: ", error);
-  }
-};
-
-// Get marketplace listing by ID
-export const getListingById = async (id) => {
-  try {
-    const listing = await db.marketplace.get(id);
-    return listing;
-  } catch (error) {
-    console.error("Error fetching listing: ", error);
-  }
-};
-
-// Delete a marketplace listing
-export const deleteListing = async (id) => {
-  try {
-    await db.marketplace.delete(id);
-    console.log(`Listing with ID ${id} deleted.`);
-  } catch (error) {
-    console.error("Error deleting listing: ", error);
-  }
-};
-
-// Messages CRUD Operations
-
-// Add a new message
-export const addMessage = async (message) => {
-  try {
-    const id = await db.messages.add(message);
-    console.log(`Message added with ID: ${id}`);
-    return id;
-  } catch (error) {
-    console.error("Error adding message: ", error);
-  }
-};
-
-// Get messages between two users
-export const getMessagesBetweenUsers = async (userId1, userId2) => {
-  try {
-    const messages = await db.messages
-      .where('senderId')
-      .equals(userId1)
-      .and((message) => message.receiverId === userId2)
-      .toArray();
-    return messages;
-  } catch (error) {
-    console.error("Error fetching messages: ", error);
-  }
-};
-
-// Get all messages of a user (sent or received)
-export const getMessagesByUser = async (userId) => {
-  try {
-    const messages = await db.messages
-      .where('senderId')
-      .equals(userId)
-      .or('receiverId')
-      .equals(userId)
-      .toArray();
-    return messages;
-  } catch (error) {
-    console.error("Error fetching user's messages: ", error);
-  }
-};
-
-// Delete a message
-export const deleteMessage = async (id) => {
-  try {
-    await db.messages.delete(id);
-    console.log(`Message with ID ${id} deleted.`);
-  } catch (error) {
-    console.error("Error deleting message: ", error);
-  }
-};
-
-// Sync with Cloud (Firebase)
-
-export const syncWithCloud = async () => {
-  try {
-    // Sync Profiles
-    const profiles = await db.profiles.toArray();
-    profiles.forEach(async (profile) => {
-      await firebase.firestore().collection('profiles').doc(profile.id.toString()).set(profile);
+    const ref = await addDoc(collection(db, "users", userId, "events"), {
+      ...eventData,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
     });
-
-    // Sync Marketplace Listings
-    const listings = await db.marketplace.toArray();
-    listings.forEach(async (listing) => {
-      await firebase.firestore().collection('marketplace').doc(listing.id.toString()).set(listing);
-    });
-
-    // Sync Messages
-    const messages = await db.messages.toArray();
-    messages.forEach(async (message) => {
-      await firebase.firestore().collection('messages').doc(message.id.toString()).set(message);
-    });
-
-    console.log('Data synced with cloud');
-  } catch (error) {
-    console.error('Error syncing with cloud:', error);
+    return ref.id;
+  } catch (err) {
+    console.error("Error adding user event:", err);
+    throw err;
   }
-};
+}
 
-// Offline Sync Queue
+/**
+ * Update an existing event in a user's subcollection
+ * @param {string} userId
+ * @param {string} eventId
+ * @param {object} updates
+ */
+export async function updateUserEvent(userId, eventId, updates) {
+  if (!userId) throw new Error("No userId provided");
+  if (!eventId) throw new Error("No eventId provided");
 
-const offlineQueue = [];
-
-// Add to the offline queue if there's no internet connection
-export const addToOfflineQueue = (operation, data) => {
-  offlineQueue.push({ operation, data });
-  console.log(`Added operation to offline queue: ${operation}`);
-};
-
-// Retry syncing offline operations once the connection is restored
-export const retryOfflineQueue = async () => {
-  if (navigator.onLine) {
-    while (offlineQueue.length > 0) {
-      const { operation, data } = offlineQueue.shift();
-      try {
-        switch (operation) {
-          case 'addProfile':
-            await addProfile(data);
-            break;
-          case 'addListing':
-            await addListing(data);
-            break;
-          case 'addMessage':
-            await addMessage(data);
-            break;
-          // Add other operations as necessary
-          default:
-            console.error('Unknown operation:', operation);
-        }
-      } catch (error) {
-        console.error('Error retrying operation from offline queue:', error);
-      }
-    }
+  try {
+    const ref = doc(db, "users", userId, "events", eventId);
+    await updateDoc(ref, { ...updates, updatedAt: serverTimestamp() });
+  } catch (err) {
+    console.error("Error updating user event:", err);
+    throw err;
   }
-};
+}
 
-// Monitor network status and retry syncing when back online
-window.addEventListener('online', retryOfflineQueue);
-window.addEventListener('offline', () => console.log('You are offline, data will sync once back online.'));
+/**
+ * Delete an event from a user's subcollection
+ * @param {string} userId
+ * @param {string} eventId
+ */
+export async function deleteUserEvent(userId, eventId) {
+  if (!userId) throw new Error("No userId provided");
+  if (!eventId) throw new Error("No eventId provided");
+
+  try {
+    const ref = doc(db, "users", userId, "events", eventId);
+    await deleteDoc(ref);
+  } catch (err) {
+    console.error("Error deleting user event:", err);
+    throw err;
+  }
+}
+
+/**
+ * Listen in real-time for all events belonging to a user
+ * @param {string} userId
+ * @param {(events: object[]) => void} callback
+ * @returns {() => void} Unsubscribe function
+ */
+export function listenToUserEvents(userId, callback) {
+  if (!userId) throw new Error("No userId provided");
+
+  const q = query(
+    collection(db, "users", userId, "events"),
+    orderBy("createdAt", "desc") // newest first
+  );
+
+  const unsubscribe = onSnapshot(q, (snapshot) => {
+    const events = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    callback(events);
+  });
+
+  return unsubscribe;
+}
+
+/**
+ * Fetch all events for a user once
+ * @param {string} userId
+ * @returns {Promise<object[]>}
+ */
+export async function getUserEventsOnce(userId) {
+  if (!userId) throw new Error("No userId provided");
+
+  try {
+    const snapshot = await getDocs(
+      query(collection(db, "users", userId, "events"), orderBy("createdAt", "desc"))
+    );
+    return snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+  } catch (err) {
+    console.error("Error fetching user events:", err);
+    throw err;
+  }
+}
+
+export { db };

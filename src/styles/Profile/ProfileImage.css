@@ -1,0 +1,164 @@
+/* src/styles/Profile/ProfileImage.css */
+
+/* Container for profile image section */
+.profile-images {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Avatar and initials container */
+.profile-avatar,
+.initials-avatar {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #00205B; /* Strathmore Blue */
+  box-shadow: 0 6px 18px rgba(0, 32, 91, 0.25);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 3.5rem;
+  color: #00205B;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: hsl(210, 70%, 90%); /* Light pastel fallback */
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  user-select: none;
+  position: relative;
+}
+
+.profile-avatar:hover,
+.initials-avatar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 26px rgba(0, 32, 91, 0.35);
+  border-color: #FFC72C; /* Gold on hover */
+}
+
+/* Add Profile Photo overlay text on avatar wrapper */
+.profile-avatar-wrapper::after {
+  content: "Add Profile Photo";
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 0.4rem 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+  background: rgba(0, 32, 91, 0.85); /* Strathmore Blue with opacity */
+  color: #FFC72C; /* Gold text */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  border-bottom-left-radius: 50%;
+  border-bottom-right-radius: 50%;
+  user-select: none;
+}
+
+.profile-avatar-wrapper:hover::after {
+  opacity: 1;
+}
+
+/* Hidden file input */
+input[type="file"] {
+  display: none;
+}
+
+/* Edit Icon Button */
+.icon-button.edit-button {
+  background-color: #00205B; /* Strathmore Blue */
+  color: #FFC72C; /* Gold */
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 32, 91, 0.5);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  user-select: none;
+}
+
+.icon-button.edit-button:hover,
+.icon-button.edit-button:focus {
+  background-color: #FFC72C; /* Gold */
+  color: #00205B; /* Strathmore Blue */
+  transform: scale(1.15) rotate(10deg);
+  outline: none;
+}
+
+/* Remove Icon Button */
+.icon-button.remove-button {
+  background-color: #E31C3D; /* Strathmore Red */
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(227, 28, 61, 0.6);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  user-select: none;
+}
+
+.icon-button.remove-button:hover,
+.icon-button.remove-button:focus {
+  background-color: #00205B; /* Strathmore Blue */
+  color: #FFC72C; /* Gold */
+  transform: scale(1.15) rotate(-10deg);
+  outline: none;
+}
+
+/* Message display for error or success */
+.profile-images > div[role="alert"],
+.profile-images > div[role="status"] {
+  min-width: 200px;
+  font-size: 0.9rem;
+  margin-left: 1rem;
+  user-select: none;
+}
+
+.profile-images p[role="alert"] {
+  color: red;
+}
+
+.profile-images p[role="status"] {
+  color: green;
+}
+
+/* Uploading text */
+.profile-images p {
+  margin-left: 1rem;
+  font-size: 0.9rem;
+  color: #00205B;
+  font-weight: 600;
+  user-select: none;
+}
+
+/* Spinner animation for upload button */
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 199, 44, 0.8); /* Gold */
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

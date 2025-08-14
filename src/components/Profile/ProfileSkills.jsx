@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import SkillRadarChart from "./SkillRadarChart";
 import LevelRankDisplay from "./LevelRankDisplay";
 import { SOFT_SKILLS, TECHNICAL_SKILLS } from "../../constants/skills";
@@ -28,9 +28,19 @@ export default function ProfileSkills({ form, onChange }) {
     score: calculateSkillScore(xpData[key]),
   }));
 
-  // Inform parent of any changes to XP if needed
+  // Keep a ref to previous xpData for comparison
+  const prevXPDataRef = useRef();
+
   useEffect(() => {
-    onChange("xp", xpData);
+    // Simple deep comparison using JSON.stringify (okay for small objects)
+    const prevXPData = prevXPDataRef.current;
+    const prevStr = prevXPData ? JSON.stringify(prevXPData) : null;
+    const currentStr = JSON.stringify(xpData);
+
+    if (prevStr !== currentStr) {
+      onChange("xp", xpData);
+      prevXPDataRef.current = xpData;
+    }
   }, [xpData, onChange]);
 
   return (

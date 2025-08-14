@@ -1,20 +1,18 @@
 // src/components/Profile/ProfileOverview.jsx
 import React, { useState, useEffect, useCallback } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
-import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
-import { app } from "../../services/firebase";
+import { getUserProfile, updateUserProfile } from "../../services/db";
 import { useNavigate } from "react-router-dom";
+import ProfileImage from "./ProfileImage";
 import "../../styles/Profile/ProfileOverview.css";
 
 export default function ProfileOverview() {
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-  const storage = getStorage(app);
+  const auth = getAuth();
   const navigate = useNavigate();
 
   const [user, setUser] = useState(null);
   const [profileData, setProfileData] = useState({
+    username: "",
     fullName: "",
     email: "",
     phone: "",
@@ -23,214 +21,206 @@ export default function ProfileOverview() {
     group: "",
     bio: "",
     interests: "",
-    location: "",
-    profileImageUrl: "/default-avatar.png", // default placeholder
-    coverImageUrl: "/default-cover.jpg",    // default placeholder
+    residence: "",
+    profileImageUrl: "",
   });
-
+  const [initialData, setInitialData] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
 
   const fetchProfile = useCallback(async (uid) => {
+    console.log("[fetchProfile] Fetching profile for UID:", uid);
     try {
-      const ref = doc(db, "users", uid);
-      const snapshot = await getDoc(ref);
-      if (snapshot.exists()) {
-        setProfileData((prev) => ({ ...prev, ...snapshot.data() }));
+      const data = await getUserProfile(uid);
+      console.log("[fetchProfile] Received data:", data);
+
+      if (data) {
+        const filledData = {
+          username: data.username || "",
+          fullName: data.fullName || "",
+          email: data.email || "",
+          phone: data.phone || "",
+          year: data.year || "",
+          school: data.school || "",
+          group: data.group || "",
+          bio: data.bio || "",
+          interests: data.interests || "",
+          residence: data.residence || "",
+          profileImageUrl: data.profileImageUrl || "",
+        };
+        setProfileData(filledData);
+        setInitialData(filledData);
+        console.log("[fetchProfile] Profile state updated.");
+      } else {
+        console.warn("[fetchProfile] No profile data found for user.");
       }
     } catch (error) {
-      console.error("Error fetching profile:", error);
+      console.error("[fetchProfile] Error:", error);
+      setErrorMessage("Failed to load profile data.");
     }
-  }, [db]);
+  }, []);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (currentUser) => {
+    console.log("[useEffect:auth] Setting up auth listener...");
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      console.log("[auth listener] Current user:", currentUser);
       if (!currentUser) {
+        console.warn("[auth listener] No user, redirecting to /login");
         navigate("/login");
       } else {
         setUser(currentUser);
         fetchProfile(currentUser.uid);
       }
     });
-    return () => unsub();
-  }, [auth, navigate, fetchProfile]);
+    return () => {
+      console.log("[useEffect:auth] Cleaning up auth listener...");
+      unsubscribe();
+    };
+  }, [auth, fetchProfile, navigate]);
+
+  useEffect(() => {
+    if (!initialData) return;
+    const changed = Object.keys(profileData).some(
+      (key) => profileData[key] !== initialData[key]
+    );
+    setHasChanges(changed);
+    console.log("[change tracker] hasChanges:", changed);
+  }, [profileData, initialData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProfileData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    console.log(`[handleChange] Field changed: ${name} =`, value);
+    setProfileData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const uploadImage = async (file, pathKey) => {
-    if (!user || !file) return;
-    try {
-      const storageRef = ref(storage, `users/${user.uid}/${pathKey}`);
-      await uploadBytes(storageRef, file);
-      const url = await getDownloadURL(storageRef);
-      setProfileData((prev) => ({ ...prev, [pathKey]: url }));
-      return url;
-    } catch (err) {
-      console.error("Image upload error:", err);
-      setErrorMessage("Failed to upload image.");
+  const validateProfile = () => {
+    console.log("[validateProfile] Validating profile data...");
+    const requiredFields = ["fullName", "email", "phone", "year", "school", "group"];
+    for (const field of requiredFields) {
+      if (!profileData[field]?.trim()) {
+        console.warn(`[validateProfile] Missing required field: ${field}`);
+        setErrorMessage(`Please fill in the required field: ${field}`);
+        return false;
+      }
     }
-  };
-
-  const removeImage = async (pathKey) => {
-    if (!user) return;
-    try {
-      const storageRef = ref(storage, `users/${user.uid}/${pathKey}`);
-      await deleteObject(storageRef);
-      const defaultUrl =
-        pathKey === "profileImageUrl" ? "/default-avatar.png" : "/default-cover.jpg";
-      setProfileData((prev) => ({ ...prev, [pathKey]: defaultUrl }));
-    } catch (err) {
-      console.error("Error removing image:", err);
-    }
+    console.log("[validateProfile] All required fields filled.");
+    setErrorMessage("");
+    return true;
   };
 
   const handleSave = async () => {
-    const requiredFields = ["fullName", "email", "phone", "year", "school", "group"];
-    const isValid = requiredFields.every((field) => profileData[field]?.trim() !== "");
-
-    if (!isValid) {
-      setErrorMessage("Please fill all required (*) fields before saving.");
+    console.log("[handleSave] Save button clicked.");
+    if (!validateProfile()) return;
+    if (!user) {
+      console.error("[handleSave] No authenticated user.");
+      setErrorMessage("No authenticated user.");
       return;
     }
 
-    setErrorMessage("");
     setIsSaving(true);
+    setErrorMessage("");
+    setSuccessMessage("");
 
     try {
-      await setDoc(
-        doc(db, "users", user.uid),
-        {
-          ...profileData,
-          updatedAt: serverTimestamp(),
-        },
-        { merge: true }
-      );
+      console.log("[handleSave] Saving profile to Firestore:", profileData);
+      await updateUserProfile(user.uid, { ...profileData });
+      console.log("[handleSave] Save successful.");
+      setSuccessMessage("Profile saved successfully!");
+      setInitialData(profileData);
+      setHasChanges(false);
     } catch (error) {
-      console.error("Error saving profile:", error);
-      setErrorMessage("An error occurred while saving. Please try again.");
+      console.error("[handleSave] Save error:", error);
+      setErrorMessage("Failed to save profile. Please try again.");
     } finally {
-      setTimeout(() => setIsSaving(false), 800);
+      setIsSaving(false);
     }
   };
 
   return (
-    <div className="profile-overview-container">
-      <h2 style={{ textAlign: "center", marginBottom: "1rem" }}>Profile Overview</h2>
+    <div className="profile-overview-container-wrapper">
+      <div className="profile-overview-container" role="main" aria-label="User Profile Overview">
+        <h2 className="profile-title">Profile Overview</h2>
 
-      {/* Profile images */}
-      <div className="profile-images">
-        <div className="profile-avatar-wrapper">
-          <img src={profileData.profileImageUrl} alt="Profile" className="profile-avatar" />
-          <input
-            type="file"
-            id="profile-upload"
-            style={{ display: "none" }}
-            accept="image/*"
-            onChange={(e) => uploadImage(e.target.files[0], "profileImageUrl")}
-          />
-          <label htmlFor="profile-upload" className="avatar-upload-label">✎</label>
-          {profileData.profileImageUrl !== "/default-avatar.png" && (
-            <button onClick={() => removeImage("profileImageUrl")} className="remove-btn">Remove</button>
-          )}
-        </div>
-
-        <div className="cover-image-wrapper">
-          <img src={profileData.coverImageUrl} alt="Cover" className="cover-image" />
-          <input
-            type="file"
-            id="cover-upload"
-            style={{ display: "none" }}
-            accept="image/*"
-            onChange={(e) => uploadImage(e.target.files[0], "coverImageUrl")}
-          />
-          <label htmlFor="cover-upload" className="cover-upload-label">Change Cover</label>
-          {profileData.coverImageUrl !== "/default-cover.jpg" && (
-            <button onClick={() => removeImage("coverImageUrl")} className="remove-btn">Remove</button>
-          )}
-        </div>
-      </div>
-
-      {/* Form fields */}
-      {[
-        { label: "Full Name*", name: "fullName", type: "text" },
-        { label: "Email*", name: "email", type: "email" },
-        { label: "Phone*", name: "phone", type: "tel" },
-        { label: "Year*", name: "year", type: "text" },
-        { label: "School*", name: "school", type: "text" },
-        { label: "Group*", name: "group", type: "text" },
-      ].map((field) => (
-        <div className="form-group" key={field.name}>
-          <label className="form-label">{field.label}</label>
-          <input
-            type={field.type}
-            name={field.name}
-            className="input-text"
-            value={profileData[field.name]}
-            onChange={handleChange}
-          />
-        </div>
-      ))}
-
-      <div className="form-group">
-        <label className="form-label">Bio</label>
-        <textarea
-          name="bio"
-          className="textarea-field"
-          value={profileData.bio}
-          onChange={handleChange}
-        />
-      </div>
-
-      <div className="form-group">
-        <label className="form-label">Interests</label>
-        <textarea
-          name="interests"
-          className="textarea-field"
-          value={profileData.interests}
-          onChange={handleChange}
-        />
-      </div>
-
-      <div className="form-group">
-        <label className="form-label">Location</label>
-        <input
-          type="text"
-          name="location"
-          className="input-text"
-          value={profileData.location}
-          onChange={handleChange}
-        />
-      </div>
-
-      {/* Save button + messages */}
-      <div style={{ textAlign: "center", marginTop: "1.5rem" }}>
-        <button
-          onClick={handleSave}
-          disabled={isSaving}
-          style={{
-            backgroundColor: "#2563eb",
-            color: "white",
-            padding: "0.6rem 1.2rem",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-            fontSize: "1rem",
+        <ProfileImage
+          uid={user?.uid}
+          initialImageUrl={profileData.profileImageUrl}
+          onChange={(url) => {
+            console.log("[ProfileImage] Updated image URL:", url);
+            setProfileData((prev) => ({ ...prev, profileImageUrl: url }));
           }}
-        >
-          {isSaving ? "Saving..." : "Save Changes"}
-        </button>
+        />
 
-        {errorMessage && (
-          <p style={{ color: "red", marginTop: "0.8rem", fontSize: "0.9rem" }}>
-            {errorMessage}
-          </p>
-        )}
+        <div className="form-fields-container">
+          {[
+            { label: "Preffered-Name", name: "username", type: "text" },
+            { label: "Full Name*", name: "fullName", type: "text" },
+            { label: "Email*", name: "email", type: "email" },
+            { label: "Phone*", name: "phone", type: "tel" },
+            { label: "Year*", name: "year", type: "text" },
+            { label: "School*", name: "school", type: "text" },
+            { label: "Group*", name: "group", type: "text" },
+            { label: "Residence", name: "residence", type: "text" },
+            { label: "Bio", name: "bio", type: "textarea" },
+            { label: "Interests", name: "interests", type: "textarea" },
+          ].map(({ label, name, type }) => (
+            <div className="form-group" key={name}>
+              <label className="form-label" htmlFor={name}>{label}</label>
+              {type === "textarea" ? (
+                <textarea
+                  id={name}
+                  name={name}
+                  className="textarea-field"
+                  value={profileData[name]}
+                  onChange={handleChange}
+                  rows={name === "bio" ? 4 : 3}
+                />
+              ) : (
+                <input
+                  id={name}
+                  type={type}
+                  name={name}
+                  className="input-text"
+                  value={profileData[name]}
+                  onChange={handleChange}
+                  aria-required={name !== "nickname"}
+                  aria-invalid={errorMessage.includes(name) ? "true" : "false"}
+                />
+              )}
+            </div>
+          ))}
+        </div>
+
+        <div className="profile-save-section" style={{ textAlign: "center", marginTop: "1.5rem" }}>
+          <button
+            onClick={handleSave}
+            disabled={isSaving || !hasChanges}
+            style={{
+              backgroundColor: isSaving || !hasChanges ? "#a5b4fc" : "#2563eb",
+              color: "white",
+              padding: "0.6rem 1.2rem",
+              border: "none",
+              borderRadius: "6px",
+              cursor: isSaving || !hasChanges ? "not-allowed" : "pointer",
+              fontSize: "1rem",
+              transition: "background-color 0.3s ease",
+            }}
+          >
+            {isSaving ? "Saving..." : "Save Changes"}
+          </button>
+
+          {errorMessage && (
+            <p style={{ color: "red", marginTop: "0.8rem", fontSize: "0.9rem", fontWeight: "600" }} role="alert">
+              {errorMessage}
+            </p>
+          )}
+          {successMessage && (
+            <p style={{ color: "green", marginTop: "0.8rem", fontSize: "0.9rem", fontWeight: "600" }} role="status">
+              {successMessage}
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );

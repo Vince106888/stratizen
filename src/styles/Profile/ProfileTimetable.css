@@ -1,250 +1,195 @@
+/* ===============================
+   ProfileTimetable.css – Upgraded
+   =============================== */
+
+/* Theme variables */
+:root {
+  --strathmore-primary: #002147;
+  --strathmore-gold: #ffd100;
+  --strathmore-light: #f4f4f4;
+  --strathmore-dark-text: #1f2937;
+  --strathmore-border: #ddd;
+  --tooltip-bg: rgba(0, 33, 71, 0.9);
+  --tooltip-color: #ffd100;
+  --btn-hover-bg: #ffc107;
+}
+
+/* Container */
 .profile-timetable-container {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  margin-top: 1.5rem;
-  background-color: #f4f4f4; /* Strathmore light gray */
-  padding: 1rem 1.5rem;
+  width: 95%;
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 1.5rem;
   border-radius: 12px;
-  box-shadow: 0 6px 15px rgba(0, 33, 71, 0.1);
+  background-color: var(--strathmore-light);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  color: var(--strathmore-dark-text);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Header */
+.timetable-header {
+  text-align: center;
+  margin-bottom: 1rem;
 }
 
 .timetable-title {
-  font-size: 2rem;
+  color: var(--strathmore-primary);
   font-weight: 700;
-  margin-bottom: 0.75rem;
-  color: #002147; /* Strathmore navy */
-  text-align: center;
-  letter-spacing: 0.03em;
-  user-select: none;
+  font-size: 2rem;
+  margin-bottom: 0.25rem;
 }
 
-/* Time management quote style */
-.timetable-quote {
+.quote {
   font-style: italic;
-  color: #555;
-  font-size: 0.9rem;
-  text-align: center;
-  margin-bottom: 1.5rem;
-  user-select: none;
+  color: var(--strathmore-primary);
+  font-size: 1rem;
+}
+
+/* Controls */
+.timetable-controls {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+/* Buttons */
+.btn-add-event, .btn-toggle-view {
+  padding: 0.5rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
 }
 
 .btn-add-event {
-  background-color: #ffd100; /* Strathmore gold */
-  color: #002147;
-  border: none;
-  padding: 0.65rem 1.5rem;
-  font-weight: 700;
-  border-radius: 10px;
-  cursor: pointer;
-  margin-bottom: 1.25rem;
-  transition: background-color 0.3s ease;
-  box-shadow: 0 2px 5px rgba(255, 209, 0, 0.5);
-  display: block;
-  margin-left: auto;
-  margin-right: 0;
-  user-select: none;
+  background-color: var(--strathmore-gold);
+  color: var(--strathmore-primary);
+  box-shadow: 0 3px 6px rgba(255, 209, 0, 0.3);
 }
 
-.btn-add-event:hover,
-.btn-add-event:focus {
-  background-color: #e6c200;
-  outline: none;
-  box-shadow: 0 0 8px #ffd100aa;
+.btn-add-event:hover {
+  background-color: var(--btn-hover-bg);
+  box-shadow: 0 5px 12px rgba(255, 209, 0, 0.6);
 }
 
-.timetable-grid {
-  display: grid;
-  grid-template-columns: 80px repeat(7, 1fr);
-  border: 1.5px solid #c0c6d1;
-  border-radius: 12px;
-  overflow: hidden;
-  user-select: none;
-  background: white;
+.btn-toggle-view {
+  background-color: var(--strathmore-primary);
+  color: white;
 }
 
-.grid-header-time {
-  background: #e7e9f0; /* lighter gray */
-  border-right: 1px solid #c0c6d1;
-  user-select: none;
+.btn-toggle-view:hover {
+  background-color: #00325a;
 }
 
-.grid-header-day {
-  background: #002147; /* Strathmore navy */
-  color: #f3e294; /* gold */
-  font-weight: 700;
-  padding: 0.6rem 0;
+/* Status message */
+.timetable-status-message {
+  margin-top: 1rem;
+  padding: 0.6rem 1rem;
+  background-color: #fff3cd;
+  border: 1px solid #ffeeba;
+  color: #856404;
+  border-radius: 8px;
   text-align: center;
-  border-left: 1px solid white;
-  text-transform: uppercase;
-  font-size: 0.9rem;
-  user-select: none;
+  font-weight: 500;
+  animation: fadeInOut 3s ease forwards;
 }
 
-.grid-time-label {
-  padding: 0.55rem;
-  border-top: 1px solid #c0c6d1;
-  border-right: 1px solid #c0c6d1;
-  font-size: 0.875rem;
-  color: #3b455f;
+@keyframes fadeInOut {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Timetable/Calendar main content */
+.timetable-main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  min-height: 400px;
+}
+
+/* Loading text */
+.loading-text {
   text-align: center;
-  font-weight: 600;
-  background-color: #f9fafb;
-  user-select: none;
+  font-size: 1.2rem;
+  color: var(--strathmore-primary);
 }
 
-.grid-cell {
-  border-top: 1px solid #c0c6d1;
-  border-left: 1px solid #c0c6d1;
-  height: 44px;
-  cursor: pointer;
-  position: relative;
-  transition: background-color 0.3s ease;
-}
-
-.grid-cell:hover {
-  background-color: #fef9e7; /* subtle gold highlight on hover */
-}
-
-.grid-cell-event {
-  background-color: #fff8cc; /* soft gold highlight */
-  cursor: pointer;
-  font-weight: 600;
-  color: #002147; /* navy text */
-  box-shadow: inset 0 0 6px rgba(0, 33, 71, 0.1);
-  border-left: 3px solid #fceda9;
-  transition: background-color 0.3s ease;
-}
-
-.grid-cell-event:hover {
-  background-color: #f8ea97;
-}
-
-.event-title {
-  position: absolute;
-  top: 6px;
-  left: 8px;
-  font-weight: 700;
-  font-size: 0.95rem;
-  color: #002147;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 90%;
-  user-select: text;
-}
-
-/* Modal styles */
+/* Modal */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 33, 71, 0.7); /* Strathmore navy with opacity */
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.55);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
-  backdrop-filter: blur(4px);
+  z-index: 1100;
+  padding: 1rem;
 }
 
 .modal-content {
   background: white;
-  border-radius: 16px;
-  max-width: 460px;
-  width: 95%;
-  padding: 2rem 2.5rem;
-  box-shadow: 0 15px 35px rgba(0, 33, 71, 0.25);
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.modal-content h4 {
-  margin-bottom: 1.25rem;
-  font-weight: 700;
-  color: #002147;
-  user-select: none;
-  text-align: center;
-}
-
-.event-form label {
-  display: block;
-  margin-bottom: 1rem;
-  font-weight: 700;
-  color: #2c3a67;
-  user-select: none;
-}
-
-.event-form input[type="text"],
-.event-form select,
-.event-form textarea {
+  border-radius: 12px;
+  max-width: 600px;
   width: 100%;
-  padding: 0.55rem 0.85rem;
-  border: 2px solid #c0c6d1;
-  border-radius: 10px;
-  font-size: 1rem;
-  font-family: inherit;
-  margin-top: 0.25rem;
-  box-sizing: border-box;
-  transition: border-color 0.3s ease;
-  resize: vertical;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 2rem 1.5rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
-.event-form input[type="text"]:focus,
-.event-form select:focus,
-.event-form textarea:focus {
-  outline: none;
-  border-color: #f3e39e;
-  box-shadow: 0 0 8px #ffd100cc;
+/* Tooltip for events (hover) */
+.event-tooltip {
+  position: absolute;
+  background-color: var(--tooltip-bg);
+  color: var(--tooltip-color);
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  z-index: 2000;
+  pointer-events: none;
+  white-space: nowrap;
+  transition: opacity 0.2s ease;
 }
 
-.form-buttons {
-  margin-top: 1.5rem;
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  user-select: none;
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .timetable-title {
+    font-size: 1.5rem;
+  }
+
+  .btn-add-event, .btn-toggle-view {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  .timetable-main-content {
+    min-height: 300px;
+  }
 }
 
-.btn-save {
-  background-color: #002147; /* navy */
-  color: #f7e285; /* gold */
-  padding: 0.55rem 1.4rem;
-  border-radius: 10px;
-  border: none;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
+@media (max-width: 480px) {
+  .profile-timetable-container {
+    padding: 1rem;
+    width: 100%;
+    margin: 1rem auto;
+  }
 
-.btn-save:hover {
-  background-color: #001832;
-}
-
-.btn-cancel {
-  background-color: #7a8299; /* muted gray */
-  color: white;
-  padding: 0.55rem 1.4rem;
-  border-radius: 10px;
-  border: none;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.btn-cancel:hover {
-  background-color: #5a6070;
-}
-
-.btn-delete {
-  background-color: #b91c1c; /* deep red */
-  color: white;
-  padding: 0.55rem 1.4rem;
-  border-radius: 10px;
-  border: none;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.btn-delete:hover {
-  background-color: #7f1212;
+  .timetable-controls {
+    justify-content: center;
+    gap: 0.5rem;
+  }
 }

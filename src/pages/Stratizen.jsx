@@ -2,8 +2,21 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { getFirestore, collection, query, where, orderBy, limit, onSnapshot, doc, getDoc } from "firebase/firestore";
+import {
+  getAuth,
+  onAuthStateChanged
+} from "firebase/auth";
+import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  orderBy,
+  limit,
+  onSnapshot,
+  doc,
+  getDoc
+} from "firebase/firestore";
 import { app } from "../services/firebase";
 
 // Components
@@ -11,6 +24,7 @@ import PostList from "../components/Stratizen/PostList";
 import PostEditor from "../components/Stratizen/PostEditor";
 import ClubList from "../components/Stratizen/ClubList";
 import GroupList from "../components/Stratizen/GroupList";
+import SearchBar from "../components/Stratizen/SearchBar";
 
 // Styles
 import "../styles/Stratizen.css";
@@ -113,11 +127,9 @@ const Stratizen = () => {
     return () => unsubscribes.forEach(unsub => unsub());
   }, [userProfile]);
 
-  // Status checks
-  if (error) return <div className="status-message error-message">🚨 {error}</div>;
-  if (user === undefined) return <div className="status-message loading-message">Loading Stratizen Hub...</div>;
-  if (!user) return <div className="status-message info-message">Please login to access Stratizen Hub.</div>;
-  if (userProfile === null) return <div className="status-message info-message">No profile found. Please complete your profile.</div>;
+  if (error) return <div className="error-message">🚨 {error}</div>;
+  if (user === undefined || userProfile === null) return <p>Loading Stratizen Hub...</p>;
+  if (!user) return <p>Please login to access Stratizen Hub.</p>;
 
   const renderContent = () => {
     switch (activeTab) {
@@ -125,12 +137,7 @@ const Stratizen = () => {
         return (
           <>
             <PostEditor currentUser={user} onPostCreated={() => setLoadingPosts(true)} />
-            {loadingPosts
-              ? <div className="status-message loading-message">Loading posts...</div>
-              : posts.length > 0
-                ? <PostList posts={posts} currentUser={user} />
-                : <div className="status-message info-message">No posts yet. Be the first to share!</div>
-            }
+            {loadingPosts ? <p>Loading posts...</p> : <PostList posts={posts} currentUser={user} />}
           </>
         );
       case "clubs":
@@ -138,22 +145,29 @@ const Stratizen = () => {
       case "groups":
         return <GroupList />;
       default:
-        return <div className="status-message info-message">🚧 {activeTab} – Coming Soon</div>;
+        return <div className="placeholder">🚧 {activeTab} – Coming Soon</div>;
     }
   };
 
   const menuItems = [
+    { key: "search", label: "Search", icon: "🔍" },
     { key: "community", label: "SU Hub", icon: "🌐" },
+    { key: "people", label: "Networking", icon: "🤝" },
+    { key: "pages", label: "Pages", icon: "📄" },
+    { key: "forum", label: "Forum", icon: "💬" },
+    { key: "newsletters", label: "Newsletters", icon: "📰" },
+    { key: "reels", label: "Reels / Videos", icon: "🎥" },
+    { key: "trending", label: "Trending", icon: "🔥" }, // optional: can keep/remove depending on usage
+    { key: "events", label: "Events", icon: "📅" },
     { key: "clubs", label: "Clubs & Societies", icon: "📚" },
     { key: "groups", label: "Groups", icon: "👥" },
-    { key: "forum", label: "Forum", icon: "💬" },
-    { key: "events", label: "Events", icon: "📅" },
+    { key: "notifications", label: "Notifications", icon: "🔔" },
     { key: "settings", label: "Settings", icon: "⚙️" }
   ];
 
   return (
     <div className={`stratizen-layout ${sidebarCollapsed ? "sidebar-collapsed" : ""}`}>
-      {/* Sidebar */}
+      {/* Left Sidebar */}
       <aside className={`stratizen-sidebar ${sidebarCollapsed ? "collapsed" : ""}`}>
         <div className="sidebar-header">
           {!sidebarCollapsed && <h2 className="sidebar-title">Menu</h2>}
@@ -180,7 +194,7 @@ const Stratizen = () => {
         </div>
       </aside>
 
-      {/* Main */}
+      {/* Main Content */}
       <main className="stratizen-main">
         <div className="stratizen-header">
           <h1>🌐 Stratizen Hub</h1>
@@ -199,7 +213,7 @@ const Stratizen = () => {
           </ul>
         </div>
         <div className="rightpanel-section forum">
-          <h3>🤝 Network & Discover</h3>
+          <h3>🤝 Network; Discover</h3>
           <ul>
             <li>John Doe</li>
             <li>Alice A</li>

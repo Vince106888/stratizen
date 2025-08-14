@@ -18,7 +18,7 @@
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 1.5rem;
-  color: #111827;
+  color: var(--primary, #00205B); /* Strathmore Blue */
   letter-spacing: -0.5px;
   text-align: center;
 }
@@ -59,9 +59,9 @@
   transform: translateY(-1px);
 }
 .profilepage-tab-selected {
-  background: linear-gradient(90deg, #3b82f6, #2563eb);
+  background: linear-gradient(90deg, var(--primary, #00205B), var(--accent, #FFC72C));
   color: white;
-  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 10px rgba(0, 32, 91, 0.3);
 }
 
 /* ---------------------------
@@ -169,7 +169,7 @@
    Disclaimer
 --------------------------- */
 .fancy-disclaimer {
-  background: white;
+  background: #ffffff;
   border: 1px solid #e5e7eb;
   padding: 1rem 1.5rem;
   margin-top: 2rem;
@@ -179,10 +179,13 @@
   color: #374151;
   text-align: center;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  position: relative;
 }
-.fancy-disclaimer strong { color: #111827; }
+.fancy-disclaimer strong {
+  color: var(--primary, #00205B);
+}
 .fancy-disclaimer a {
-  color: #2563eb;
+  color: var(--primary, #00205B);
   font-weight: 600;
   text-decoration: none;
 }

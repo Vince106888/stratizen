@@ -1,5 +1,6 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+// src/pages/Dashboard.jsx
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../services/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import {
@@ -9,8 +10,7 @@ import {
   getDocs,
   query,
   where,
-  orderBy,
-  limit,
+  orderBy
 } from 'firebase/firestore';
 import { motion } from 'framer-motion';
 
@@ -38,82 +38,118 @@ export default function Dashboard() {
     forum: [],
     marketplace: [],
   });
+  const [leaderboard, setLeaderboard] = useState([]);
   const [loading, setLoading] = useState(true);
   const [chatbotOpen, setChatbotOpen] = useState(false);
   const [error, setError] = useState(null);
 
   const navigate = useNavigate();
 
-  const fadeUpVariant = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-  };
+  const fadeUpVariant = useMemo(
+    () => ({
+      hidden: { opacity: 0, y: 20 },
+      visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+    }),
+    []
+  );
 
+  /** Fetch recent items from a given collection */
+  const getRecentItems = useCallback(async (collectionName, userId, sortField) => {
+    const q = query(
+      collection(db, collectionName),
+      where('userId', '==', userId),
+      orderBy(sortField, 'desc')
+    );
+
+    const snap = await getDocs(q);
+    const allItems = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    return {
+      count: allItems.length,
+      recent: allItems.slice(0, 3),
+    };
+  }, []);
+
+  /** Fetch dashboard data */
   const fetchData = useCallback(async (user) => {
+    if (!user) return;
     setLoading(true);
     setError(null);
-    try {
-      const userDoc = await getDoc(doc(db, 'users', user.uid));
-      const userInfo = userDoc.exists() ? userDoc.data() : {};
 
-      const [msgSnap, forumSnap, marketSnap] = await Promise.all([
-        getDocs(collection(db, 'messages', user.uid, 'conversations')),
-        getDocs(query(collection(db, 'forumTopics'), where('userId', '==', user.uid))),
-        getDocs(query(collection(db, 'marketplace'), where('userId', '==', user.uid))),
+    try {
+      // Fetch user profile
+      const userDocSnap = await getDoc(doc(db, 'users', user.uid));
+      const userInfo = userDocSnap.exists() ? userDocSnap.data() : {};
+
+      // Fetch activity data in parallel
+      const [msgs, forum, market] = await Promise.all([
+        getRecentItems(`messages/${user.uid}/conversations`, user.uid, 'lastUpdated'),
+        getRecentItems('forumTopics', user.uid, 'createdAt'),
+        getRecentItems('marketplace', user.uid, 'createdAt'),
       ]);
 
-      const recentMsgSnap = await getDocs(
-        query(collection(db, 'messages', user.uid, 'conversations'), orderBy('lastUpdated', 'desc'), limit(3))
-      );
-      const recentForumSnap = await getDocs(
-        query(collection(db, 'forumTopics'), where('userId', '==', user.uid), orderBy('createdAt', 'desc'), limit(3))
-      );
-      const recentMarketSnap = await getDocs(
-        query(collection(db, 'marketplace'), where('userId', '==', user.uid), orderBy('createdAt', 'desc'), limit(3))
-      );
+      // Dummy leaderboard for now
+      const dummyLeaderboard = [
+        { id: '1', username: 'Alice', xp: 1200, rank: 1 },
+        { id: '2', username: 'Bob', xp: 1100, rank: 2 },
+        { id: '3', username: 'Charlie', xp: 1050, rank: 3 },
+        { id: '4', username: 'David', xp: 980, rank: 4 },
+        { id: '5', username: 'Eve', xp: 940, rank: 5 },
+      ];
+      setLeaderboard(dummyLeaderboard);
 
       setUserData({
-        username: userInfo.username || 'User',
-        bio: userInfo.bio || 'No bio provided.',
-        purpose: userInfo.purpose || 'Just exploring Stratizen!',
-        profilePic: userInfo.profilePic || 'https://via.placeholder.com/120?text=No+Image',
+        username: userInfo.username ?? 'User',
+        bio: userInfo.bio ?? 'No bio provided.',
+        purpose: userInfo.purpose ?? 'Just exploring Stratizen!',
+        profilePic:
+          userInfo.profilePic ?? 'https://via.placeholder.com/120?text=No+Image',
       });
 
       setStats({
-        messages: msgSnap.size,
-        forum: forumSnap.size,
-        marketplace: marketSnap.size,
-        xp: userInfo.xp || 0,
-        rank: userInfo.rank || 999,
+        messages: msgs.count,
+        forum: forum.count,
+        marketplace: market.count,
+        xp: userInfo.xp ?? 0,
+        rank: userInfo.rank ?? 999,
       });
 
       setRecentActivity({
-        messages: recentMsgSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })),
-        forum: recentForumSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })),
-        marketplace: recentMarketSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })),
+        messages: msgs.recent,
+        forum: forum.recent,
+        marketplace: market.recent,
       });
     } catch (err) {
-      console.error(err);
-      setError('Failed to load dashboard data. Please refresh or try again later.');
+      console.error('Dashboard fetch error:', err);
+      setError(`⚠️ Could not load dashboard data: ${err.message || 'Unknown error'}`);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [getRecentItems]);
 
+  /** Listen for auth changes */
   useEffect(() => {
+    let lastUid = null;
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!user) return navigate('/auth');
-      fetchData(user);
+      if (user.uid !== lastUid) {
+        lastUid = user.uid;
+        fetchData(user);
+      }
     });
-    return () => unsubscribe();
+    return unsubscribe;
   }, [fetchData, navigate]);
 
   if (loading) return <LoadingScreen />;
-  if (error) return <ErrorScreen message={error} />;
+  if (error) return <ErrorScreen message={error} onRetry={() => fetchData(auth.currentUser)} />;
   if (!userData) return <NoDataScreen />;
 
   return (
-    <div className="dashboard-grid" role="main" aria-label="User dashboard">
+    <div
+      className="dashboard-grid"
+      role="main"
+      aria-label="User dashboard"
+      aria-busy={loading}
+    >
       {/* Left panel */}
       <motion.section
         className="dashboard-left"
@@ -134,7 +170,7 @@ export default function Dashboard() {
         variants={fadeUpVariant}
         transition={{ delay: 0.2 }}
       >
-        <Leaderboard currentUserRank={stats.rank} />
+        <Leaderboard currentUserRank={stats.rank} leaderboard={leaderboard} />
         <QuickActions />
         <ChatbotLauncher onClick={() => setChatbotOpen(true)} />
       </motion.aside>
@@ -144,8 +180,9 @@ export default function Dashboard() {
   );
 }
 
-// Loading & Error screens
-
+/* ------------------------------
+   Loading, Error & No Data screens
+-------------------------------- */
 function LoadingScreen() {
   return (
     <div className="loading-screen" role="status" aria-live="polite">
@@ -154,10 +191,15 @@ function LoadingScreen() {
   );
 }
 
-function ErrorScreen({ message }) {
+function ErrorScreen({ message, onRetry }) {
   return (
     <div className="error-screen" role="alert" aria-live="assertive">
-      {message}
+      <p>{message}</p>
+      {onRetry && (
+        <button onClick={onRetry} className="retry-btn">
+          Retry
+        </button>
+      )}
     </div>
   );
 }
