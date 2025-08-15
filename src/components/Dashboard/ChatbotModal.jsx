@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+// src/components/Dashboard/ChatbotModal.jsx
+import React, { useState, useRef, useEffect } from 'react';
+import { X, Send } from 'lucide-react';
 import '../../styles/Dashboard/ChatbotModal.css';
 
-const OPENAI_API_KEY = 'YOUR_OPENAI_API_KEY_HERE'; // Replace securely!
+const OPENAI_API_KEY = 'YOUR_OPENAI_API_KEY_HERE'; // Secure in backend in production
 
 export default function ChatbotModal({ onClose }) {
   const [input, setInput] = useState('');
@@ -10,10 +12,14 @@ export default function ChatbotModal({ onClose }) {
   ]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const chatEndRef = useRef(null);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, loading]);
 
   const sendMessage = async () => {
     if (!input.trim()) return;
-
     const userMessage = { sender: 'user', text: input.trim() };
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
@@ -43,7 +49,6 @@ export default function ChatbotModal({ onClose }) {
       });
 
       if (!response.ok) throw new Error('OpenAI API error');
-
       const data = await response.json();
       const botReply = data.choices[0].message.content;
 
@@ -63,39 +68,37 @@ export default function ChatbotModal({ onClose }) {
   };
 
   return (
-    <div className="chatbot-modal-overlay" onClick={onClose} aria-modal="true" role="dialog">
+    <div className="chatbot-modal-overlay" onClick={onClose}>
       <div className="chatbot-modal" onClick={(e) => e.stopPropagation()}>
         <header className="chatbot-header">
           <h2>Stratizen Bot</h2>
-          <button onClick={onClose} aria-label="Close chatbot" className="close-btn">
-            &times;
+          <button onClick={onClose} className="close-btn" aria-label="Close chatbot">
+            <X size={20} />
           </button>
         </header>
-        <section className="chatbot-messages" tabIndex="0">
+
+        <section className="chatbot-messages">
           {messages.map((msg, i) => (
-            <div
-              key={i}
-              className={`chat-message ${msg.sender === 'bot' ? 'bot' : 'user'}`}
-              aria-live="polite"
-            >
+            <div key={i} className={`chat-message ${msg.sender}`}>
               {msg.text}
             </div>
           ))}
           {loading && <div className="chat-message bot">Typing...</div>}
           {error && <div className="chat-error">{error}</div>}
+          <div ref={chatEndRef} />
         </section>
+
         <footer className="chatbot-footer">
           <textarea
-            rows="2"
+            rows="1"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Ask me anything..."
-            aria-label="Chat input"
             disabled={loading}
           />
-          <button onClick={sendMessage} disabled={loading || !input.trim()} aria-label="Send message">
-            ➤
+          <button onClick={sendMessage} disabled={loading || !input.trim()}>
+            <Send size={18} />
           </button>
         </footer>
       </div>

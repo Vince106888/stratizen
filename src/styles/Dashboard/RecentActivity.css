@@ -1,0 +1,87 @@
+/* src/styles/Dashboard/RecentActivity.css */
+
+.recent-activity {
+  background: #fff;
+  border-radius: 14px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  margin-top: 1.5rem;
+}
+
+.recent-activity h2 {
+  margin: 0 0 1rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--primary-color, #5e35b1);
+}
+
+.activity-list {
+  margin-bottom: 1.5rem;
+}
+
+.activity-list h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+  color: var(--primary-color, #7e57c2);
+}
+
+.empty-msg {
+  font-size: 0.95rem;
+  color: #777;
+  font-style: italic;
+  margin: 0.5rem 0 1rem;
+}
+
+.activity-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.activity-list li {
+  margin-bottom: 0.6rem;
+}
+
+.activity-link {
+  display: block;
+  background: #fafafa;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  color: var(--text-color, #333);
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+}
+
+.activity-link:hover {
+  background: #f0f0ff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+}
+
+.activity-link strong {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+  color: var(--primary-color, #5e35b1);
+}
+
+.activity-date {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+/* Mobile adjustments */
+@media (max-width: 500px) {
+  .recent-activity {
+    padding: 1rem;
+  }
+  .activity-link {
+    font-size: 0.9rem;
+    padding: 0.65rem 0.85rem;
+  }
+  .activity-link strong {
+    font-size: 0.95rem;
+  }
+}

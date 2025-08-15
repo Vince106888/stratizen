@@ -1,100 +1,256 @@
-/* Container */
+/* src/styles/StudyHub.css */
+
+/* Root variables for Strathmore color theme */
+:root {
+  --primary-color: #004aad;       /* Deep Strathmore blue */
+  --secondary-color: #ffcc00;     /* Strathmore gold */
+  --accent-color: #006bb3;        /* Slightly lighter blue for accents */
+  --text-color: #1f2937;          /* Dark text for readability */
+  --subtext-color: #4b5563;       /* For secondary text */
+  --tag-bg-color: #e0f2ff;        /* Light blue for tags */
+  --tag-text-color: #004aad;      /* Deep blue for tag text */
+  --card-bg-color: #ffffff;       /* White card background for visibility */
+  --sidepanel-bg: #f3f4f6;        /* Light gray for side panel */
+  --hr-color: #d1d5db;            /* Light gray divider */
+  --hover-shadow: 0 4px 12px rgba(0, 74, 173, 0.15);
+  --border-radius: 12px;
+  --transition: all 0.2s ease;
+}
+
+/* Main container - grid layout for side panel */
 .studyhub-container {
-  max-width: 768px;
-  margin: 2rem auto;
-  padding: 2rem 1.5rem;
-  background-color: #f9fafb; /* light gray */
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  padding: 2rem;
+  font-family: 'Inter', sans-serif;
+  color: var(--text-color);
 }
 
-/* Title */
-.studyhub-title {
-  font-size: 2.25rem; /* 36px */
-  font-weight: 700;
-  margin-bottom: 1.25rem;
-  color: #1f2937; /* slate-800 */
-  text-align: center;
+@media (min-width: 1024px) {
+  .studyhub-container {
+    grid-template-columns: 2fr 1fr;
+  }
 }
 
-/* Horizontal rule */
-.studyhub-hr {
-  margin: 2rem 0;
-  border: 0;
-  border-top: 1px solid #e5e7eb; /* gray-200 */
-}
-
-/* Question List */
-.studyhub-question-list {
+/* Header section */
+.studyhub-header-wrapper {
+  grid-column: 1 / -1;
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.studyhub-header {
+  width: 100%;
+  max-width: 900px;
+}
+
+/* Form Section */
+.studyhub-form-section {
+  display: flex;
+  justify-content: center;
+}
+
+.studyhub-form {
+  width: 100%;
+  max-width: 900px;
+  background-color: var(--card-bg-color);
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--hover-shadow);
+  transition: var(--transition);
+  display: flex;
+  flex-direction: row;
   gap: 1rem;
+  align-items: flex-start;
 }
 
-/* Individual question item */
-.studyhub-question-item {
-  padding: 1rem;
-  border: 1px solid #8a8b8b; /* gray-300 */
-  border-radius: 8px;
-  background-color: #c2defd; /* custom soft blue */
-  color: #fff;
-  font-weight: 500;
-  transition: background-color 0.2s ease, transform 0.2s ease;
-  cursor: pointer;
-}
-
-.studyhub-question-item:hover {
-  background-color: #a6bbfc; /* slightly darker blue */
+.studyhub-form:hover {
   transform: translateY(-2px);
 }
 
-/* Form - Textarea */
-.studyhub-form-textarea {
-  width: 100%;
-  padding: 0.75rem;
+/* Horizontal inputs in form */
+.studyhub-form input,
+.studyhub-form textarea {
+  flex: 1;
+  padding: 0.6rem 0.75rem;
   border: 1px solid #d1d5db;
-  border-radius: 8px;
-  font-size: 1rem;
-  resize: vertical;
-  margin-bottom: 1rem;
-  background-color: rgb(136, 147, 177);
-  font-family: 'Inter', sans-serif;
+  border-radius: var(--border-radius);
+  font-size: 0.95rem;
+  transition: var(--transition);
 }
 
-/* Form - Button */
-.studyhub-form-button {
-  background-color: #3b82f6; /* blue-500 */
-  color: white;
-  padding: 0.6rem 1.5rem;
+.studyhub-form input:focus,
+.studyhub-form textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 74, 173, 0.15);
+}
+
+/* Form button */
+.studyhub-form button {
+  padding: 0.6rem 1.2rem;
+  background-color: var(--primary-color);
+  color: #fff;
   font-weight: 600;
+  border-radius: var(--border-radius);
   border: none;
-  border-radius: 8px;
   cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: var(--transition);
+  height: fit-content;
 }
 
-.studyhub-form-button:hover {
-  background-color: #2563eb; /* blue-600 */
+.studyhub-form button:hover:not(:disabled) {
+  background-color: var(--accent-color);
   transform: translateY(-1px);
 }
 
-/* No Questions */
-.studyhub-no-questions {
-  color: #6b7280; /* gray-500 */
-  text-align: center;
-  font-size: 1rem;
-  margin-top: 1rem;
+.studyhub-form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-/* Responsive */
-@media (max-width: 640px) {
-  .studyhub-container {
-    padding: 1rem;
+/* Divider */
+.studyhub-hr {
+  border: none;
+  height: 1px;
+  background-color: var(--hr-color);
+  margin: 2rem 0;
+  width: 100%;
+}
+
+/* Questions List Section */
+.studyhub-list-section {
+  display: flex;
+  justify-content: center;
+}
+
+.studyhub-questions-wrapper {
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* No questions text */
+.studyhub-no-questions {
+  text-align: center;
+  color: var(--subtext-color);
+  font-style: italic;
+  padding: 1rem;
+}
+
+/* Individual Question Card */
+.studyhub-question-list li,
+.questionitem-card,
+article {
+  background-color: var(--card-bg-color);
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.studyhub-question-list li:hover,
+.questionitem-card:hover,
+article:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--hover-shadow);
+}
+
+/* Question title */
+.studyhub-question-list li .question-title,
+.questionitem-card .questionitem-content,
+article h3 {
+  font-weight: 600;
+  font-size: 1.125rem;
+  color: var(--primary-color);
+}
+
+/* Question content */
+.studyhub-question-list li .question-content,
+.questionitem-card p,
+article p {
+  font-size: 0.95rem;
+  color: var(--text-color);
+}
+
+/* Question tags */
+.studyhub-question-list li .question-tags,
+.questionitem-card .questionitem-tags,
+article .question-tags {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.studyhub-question-list li .question-tags span,
+.questionitem-card .questionitem-tag,
+article .question-tags span {
+  background-color: var(--tag-bg-color);
+  color: var(--tag-text-color);
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+}
+
+/* Side Panel */
+aside {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  aside {
+    display: block;
   }
 
-  .studyhub-title {
-    font-size: 1.75rem;
+  aside div {
+    background-color: var(--sidepanel-bg);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--hover-shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: sticky;
+    top: 1rem;
+  }
+
+  aside h3 {
+    color: var(--primary-color);
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+
+  aside .faq-item p {
+    margin: 0;
+  }
+
+  aside .faq-item p:first-child {
+    font-weight: 500;
+    color: var(--text-color);
+  }
+
+  aside .faq-item p:last-child {
+    color: var(--subtext-color);
+    font-size: 0.875rem;
+  }
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .studyhub-container {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .studyhub-form {
+    flex-direction: column;
   }
 }

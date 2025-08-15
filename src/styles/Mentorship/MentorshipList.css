@@ -1,0 +1,48 @@
+.mentorship-list-container {
+  width: 100%;
+  padding: 1.5rem;
+}
+
+.mentorship-list-header {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.section-title {
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: #004aad; /* Strathmore blue */
+  border-left: 6px solid #ffcc00; /* Strathmore gold */
+  padding-left: 0.5rem;
+  letter-spacing: 0.5px;
+}
+
+.result-count {
+  font-size: 0.9rem;
+  color: #555;
+  background: #f3f4f6;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+}
+
+.topics-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.empty-state {
+  padding: 2rem;
+  text-align: center;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.empty-message {
+  font-size: 1rem;
+  color: #6b7280;
+  font-style: italic;
+}

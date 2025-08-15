@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../services/firebase";
-import ResourceCard from "../components/ResourceCard";
-import ResourceForm from "../components/ResourceForm";
+import ResourceCard from "../components/Resource/ResourceCard";
+import ResourceForm from "../components/Resource/ResourceForm";
 import "../styles/ResourceLibrary.css";
 
 const ResourceLibrary = () => {

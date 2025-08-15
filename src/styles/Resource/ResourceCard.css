@@ -1,0 +1,87 @@
+.resource-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.resource-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.resource-card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #00205b; /* Strathmore Blue */
+}
+
+.resource-card-description {
+  font-size: 0.95rem;
+  color: #4b5563;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+  flex-grow: 1;
+}
+
+.resource-card-meta {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.resource-badge {
+  background: #f3f4f6;
+  color: #1f2937;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.75rem;
+  border-radius: 6px;
+}
+
+.resource-card-link {
+  color: #00205b;
+  font-weight: 500;
+  text-decoration: none;
+  margin-top: auto;
+  transition: color 0.2s;
+}
+
+.resource-card-link:hover {
+  color: #004aad;
+  text-decoration: underline;
+}
+
+/* Hover Overlay Buttons */
+.resource-card-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transition: opacity 0.2s;
+  padding: 0.5rem;
+}
+
+.resource-card-btn {
+  background: #ffc72c;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  margin-bottom: 0.4rem;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.resource-card-btn:hover {
+  background: #e6b500;
+}

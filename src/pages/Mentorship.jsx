@@ -1,107 +1,135 @@
-import React, { useState, useEffect } from "react";
+// src/pages/Mentorship.jsx
+import React, { useEffect, useMemo, useState } from "react";
 import { db, auth } from "../services/firebase";
+import "../styles/Mentorship.css";
+
+import MentorshipForm from "../components/Mentorship/MentorshipForm";
+import MentorshipList from "../components/Mentorship/MentorshipList";
+
 import {
-  collection,
-  addDoc,
-  getDocs,
-  serverTimestamp,
-  query,
-  orderBy,
-  doc,
-  onSnapshot,
-  updateDoc,
-  deleteDoc,
-  where,
-} from "firebase/firestore";
-import '../styles/Mentorship.css';
+  listenMentorshipSubmissions,
+  listenUserConnections,
+  createMentorshipSubmission,
+  updateMentorshipSubmission,
+  deleteMentorshipSubmission,
+  requestConnection,
+  connectionExists,
+  getConnectionStatus,
+  searchMentorshipSubmissions,
+} from "../services/mentorshipService";
 
-
-function Mentorship() {
+export default function MentorshipPage() {
   const [role, setRole] = useState("mentor");
-  const [skills, setSkills] = useState("");
-  const [description, setDescription] = useState("");
   const [submissions, setSubmissions] = useState([]);
   const [connections, setConnections] = useState([]);
+  const [editingEntry, setEditingEntry] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [editingId, setEditingId] = useState(null);
 
   const user = auth.currentUser;
 
-  useEffect(() => {
-    setLoading(true);
-    const q = query(collection(db, "mentorship"), orderBy("createdAt", "desc"));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      setSubmissions(data);
-      setLoading(false);
-    }, (err) => {
-      setError("Failed to load mentorship submissions.");
-      setLoading(false);
-    });
-    return () => unsubscribe();
-  }, []);
+  /** ===== UTILS ===== **/
+  const getStatusFor = (targetUserId) =>
+    getConnectionStatus(connections, user?.uid, targetUserId);
 
+  const sortBySeenFirst = (a, b) => {
+    const statusA = getStatusFor(a.userId);
+    const statusB = getStatusFor(b.userId);
+    // Accepted/seen first, then pending, then null
+    const priority = { accepted: 0, pending: 1, rejected: 2, null: 3, undefined: 3 };
+    return (priority[statusA] ?? 3) - (priority[statusB] ?? 3);
+  };
+
+  /** ===== STREAM: All mentorship submissions ===== **/
+  useEffect(() => {
+    if (searchTerm.trim()) return; // skip live updates if searching
+    setLoading(true);
+    const unsub = listenMentorshipSubmissions(
+      db,
+      (data) => {
+        setSubmissions(data);
+        setLoading(false);
+      },
+      () => {
+        setError("Failed to load mentorship submissions.");
+        setLoading(false);
+      }
+    );
+    return () => unsub();
+  }, [searchTerm]);
+
+  /** ===== STREAM: Current user's connections ===== **/
   useEffect(() => {
     if (!user) return;
-    const q = query(
-      collection(db, "connections"),
-      where("participants", "array-contains", user.uid)
+    const unsub = listenUserConnections(
+      db,
+      user.uid,
+      (data) => setConnections(data),
+      () => {}
     );
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      setConnections(data);
-    });
-    return () => unsubscribe();
+    return () => unsub();
   }, [user]);
 
-  const resetForm = () => {
-    setSkills("");
-    setDescription("");
-    setRole("mentor");
-    setEditingId(null);
-  };
+  /** ===== SEARCH: Debounced query ===== **/
+  useEffect(() => {
+    const term = searchTerm.trim();
+    if (!term) return;
+    setLoading(true);
+    const delay = setTimeout(async () => {
+      try {
+        const results = await searchMentorshipSubmissions(db, term);
+        setSubmissions(results);
+      } catch (err) {
+        console.error("Search failed:", err);
+        setError("Search failed.");
+      } finally {
+        setLoading(false);
+      }
+    }, 400);
+    return () => clearTimeout(delay);
+  }, [searchTerm]);
 
-  const validateForm = () => {
-    if (!skills.trim()) {
-      alert("Please enter at least one skill.");
-      return false;
-    }
-    if (description.trim().length < 10) {
-      alert("Description should be at least 10 characters.");
-      return false;
-    }
-    return true;
-  };
+  const oppositeRole = role === "mentor" ? "mentee" : "mentor";
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!user) return alert("Please log in first");
-    if (!validateForm()) return;
+  /** ===== FILTER: Main list ===== **/
+  const relevantSubmissions = useMemo(
+    () => submissions.filter((e) => e.role === oppositeRole),
+    [submissions, oppositeRole]
+  );
 
+  /** ===== FILTER: Side panels ===== **/
+  const mentors = useMemo(
+    () =>
+      submissions
+        .filter((e) => e.role === "mentor")
+        .sort(sortBySeenFirst),
+    [submissions, connections]
+  );
+
+  const mentees = useMemo(
+    () =>
+      submissions
+        .filter((e) => e.role === "mentee")
+        .sort(sortBySeenFirst),
+    [submissions, connections]
+  );
+
+  /** ===== HANDLERS ===== **/
+  const handleSubmit = async (payload, editingId) => {
     try {
       if (editingId) {
-        const docRef = doc(db, "mentorship", editingId);
-        await updateDoc(docRef, {
-          role,
-          skills: skills.split(",").map((s) => s.trim()),
-          description,
-          updatedAt: serverTimestamp(),
-        });
+        if (user?.uid !== editingEntry?.userId) {
+          alert("You can only edit your own submissions.");
+          return;
+        }
+        await updateMentorshipSubmission(db, editingId, payload);
         alert("Mentorship info updated!");
       } else {
-        await addDoc(collection(db, "mentorship"), {
-          userId: user.uid,
-          name: user.displayName || "Anonymous",
-          email: user.email,
-          role,
-          skills: skills.split(",").map((s) => s.trim()),
-          description,
-          createdAt: serverTimestamp(),
-        });
+        await createMentorshipSubmission(db, payload);
         alert("Mentorship info submitted!");
       }
-      resetForm();
+      setEditingEntry(null);
     } catch (err) {
       console.error("Submission failed:", err);
       alert("Failed to submit mentorship info.");
@@ -113,10 +141,7 @@ function Mentorship() {
       alert("You can only edit your own submissions.");
       return;
     }
-    setRole(entry.role);
-    setSkills(entry.skills.join(", "));
-    setDescription(entry.description);
-    setEditingId(entry.id);
+    setEditingEntry(entry);
   };
 
   const handleDelete = async (id, ownerId) => {
@@ -124,52 +149,25 @@ function Mentorship() {
       alert("You can only delete your own submissions.");
       return;
     }
-    if (window.confirm("Are you sure you want to delete this submission?")) {
-      try {
-        await deleteDoc(doc(db, "mentorship", id));
-        alert("Submission deleted.");
-      } catch (err) {
-        console.error("Delete failed:", err);
-        alert("Failed to delete submission.");
-      }
+    if (!window.confirm("Are you sure you want to delete this submission?")) return;
+    try {
+      await deleteMentorshipSubmission(db, id);
+      alert("Submission deleted.");
+    } catch (err) {
+      console.error("Delete failed:", err);
+      alert("Failed to delete submission.");
     }
-  };
-
-  const connectionExists = (targetUserId) => {
-    return connections.some(
-      (conn) =>
-        (conn.requesterId === user.uid && conn.targetId === targetUserId) ||
-        (conn.requesterId === targetUserId && conn.targetId === user.uid)
-    );
-  };
-
-  const getConnectionStatus = (targetUserId) => {
-    const conn = connections.find(
-      (conn) =>
-        (conn.requesterId === user.uid && conn.targetId === targetUserId) ||
-        (conn.requesterId === targetUserId && conn.targetId === user.uid)
-    );
-    return conn ? conn.status : null;
   };
 
   const handleRequestConnection = async (targetUserId) => {
     if (!user) return alert("Please log in first");
-    if (targetUserId === user.uid) {
-      alert("You cannot connect with yourself.");
-      return;
-    }
-    if (connectionExists(targetUserId)) {
+    if (targetUserId === user.uid) return alert("You cannot connect with yourself.");
+    if (connectionExists(connections, user.uid, targetUserId)) {
       alert("Connection request already exists.");
       return;
     }
     try {
-      await addDoc(collection(db, "connections"), {
-        requesterId: user.uid,
-        targetId: targetUserId,
-        status: "pending",
-        createdAt: serverTimestamp(),
-        participants: [user.uid, targetUserId],
-      });
+      await requestConnection(db, user.uid, targetUserId);
       alert("Connection request sent!");
     } catch (err) {
       console.error("Failed to send connection request:", err);
@@ -177,115 +175,93 @@ function Mentorship() {
     }
   };
 
-  if (loading) return <p>Loading mentorship submissions...</p>;
-  if (error) return <p className="text-red-500">{error}</p>;
-
-  const oppositeRole = role === "mentor" ? "mentee" : "mentor";
-  const relevantSubmissions = submissions.filter((entry) => entry.role === oppositeRole);
+  /** ===== RENDER ===== **/
+  if (loading) return <p className="loading-text">Loading mentorship submissions...</p>;
+  if (error) return <p className="error-text">{error}</p>;
 
   return (
-    <div className="forum-container">
-      <h1 className="forum-header">Mentorship Hub</h1>
+    <div className="mentorship-container">
+      {/* Left Section */}
+      <section className="mentorship-main">
+        <header className="mentorship-header">
+          <h1 className="title">Mentorship Hub</h1>
+        </header>
 
-      <form onSubmit={handleSubmit} className="mb-8">
-        <h2 className="text-xl font-bold mb-4">
-          {role === "mentor" ? "🧑‍🏫 Become a Mentor" : "🎓 Find a Mentor"}
-        </h2>
-
-        <div>
-          <label className="block font-semibold mb-1">I am a:</label>
-          <select
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            className="input-field"
-          >
-            <option value="mentor">Mentor</option>
-            <option value="mentee">Mentee</option>
-          </select>
-        </div>
-
-        <div>
-          <label className="block font-semibold mb-1 mt-4">
-            {role === "mentor" ? "Skills You Can Offer (comma-separated):" : "Skills You Want to Learn (comma-separated):"}
-          </label>
+        {/* Search Bar */}
+        <div className="mentorship-search">
           <input
             type="text"
-            value={skills}
-            onChange={(e) => setSkills(e.target.value)}
-            className="input-field"
-            required
+            placeholder="Search mentors/mentees..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
+          {searchTerm && (
+            <button className="btn-clear" onClick={() => setSearchTerm("")}>
+              ✕
+            </button>
+          )}
         </div>
 
-        <div>
-          <label className="block font-semibold mb-1 mt-4">
-            {role === "mentor" ? "Mentoring Philosophy / Bio:" : "Your Goals / Bio:"}
-          </label>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="input-field"
-            rows={4}
-            required
-          />
+        <MentorshipForm
+          user={user}
+          role={role}
+          setRole={setRole}
+          editingEntry={editingEntry}
+          onSubmit={handleSubmit}
+          onCancelEdit={() => setEditingEntry(null)}
+        />
+
+        <MentorshipList
+          title={role === "mentor" ? "🎓 Available Mentees" : "🧑‍🏫 Available Mentors"}
+          submissions={relevantSubmissions}
+          currentUser={user}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          onRequestConnection={handleRequestConnection}
+          getStatusFor={getStatusFor}
+        />
+      </section>
+
+      {/* Right Panel */}
+      <aside className="mentorship-side">
+        <div className="panel-box">
+          <h3>🧑‍🏫 Mentors</h3>
+          {mentors.length === 0 ? (
+            <p className="empty-text">No mentors yet.</p>
+          ) : (
+            mentors.map((m) => {
+              const status = getStatusFor(m.userId);
+              return (
+                <div key={m.id} className="panel-item">
+                  <span className="name">{m.name || "Unnamed"}</span>
+                  <span className={`status status-${status || "none"}`}>
+                    {status === "accepted" ? "Seen" : "Not Seen"}
+                  </span>
+                </div>
+              );
+            })
+          )}
         </div>
 
-        <button type="submit" className="btn btn-primary mt-4">
-          {editingId ? "Update My Submission" : "Submit as " + role}
-        </button>
-        {editingId && (
-          <button
-            type="button"
-            onClick={resetForm}
-            className="btn btn-secondary mt-4 ml-4"
-          >
-            Cancel
-          </button>
-        )}
-      </form>
-
-      <h2 className="section-title mb-2">
-        {role === "mentor" ? "🎓 Available Mentees" : "🧑‍🏫 Available Mentors"}
-      </h2>
-
-      <div className="topics-list">
-        {relevantSubmissions.length === 0 && <p>No {oppositeRole}s found yet.</p>}
-        {relevantSubmissions.map((entry) => (
-          <div key={entry.id} className="topic-card">
-            <h3 className="topic-title">
-              {entry.name} ({entry.role})
-            </h3>
-            <p className="topic-meta">{entry.email}</p>
-            <p><strong>Skills:</strong> {entry.skills?.join(", ")}</p>
-            <p><strong>About:</strong> {entry.description}</p>
-
-            {user?.uid === entry.userId && (
-              <div className="mt-2 flex gap-2">
-                <button onClick={() => handleEdit(entry)} className="btn btn-sm btn-secondary">
-                  Edit
-                </button>
-                <button onClick={() => handleDelete(entry.id, entry.userId)} className="btn btn-sm btn-danger">
-                  Delete
-                </button>
-              </div>
-            )}
-
-            {user && user.uid !== entry.userId && (
-              !connectionExists(entry.userId) ? (
-                <button onClick={() => handleRequestConnection(entry.userId)} className="btn btn-sm btn-primary mt-2">
-                  Request Connection
-                </button>
-              ) : (
-                <p className="mt-2 text-gray-600">
-                  Connection {getConnectionStatus(entry.userId)}
-                </p>
-              )
-            )}
-          </div>
-        ))}
-      </div>
+        <div className="panel-box">
+          <h3>🎓 Mentees</h3>
+          {mentees.length === 0 ? (
+            <p className="empty-text">No mentees yet.</p>
+          ) : (
+            mentees.map((m) => {
+              const status = getStatusFor(m.userId);
+              return (
+                <div key={m.id} className="panel-item">
+                  <span className="name">{m.name || "Unnamed"}</span>
+                  <span className={`status status-${status || "none"}`}>
+                    {status === "accepted" ? "Seen" : "Not Seen"}
+                  </span>
+                </div>
+              );
+            })
+          )}
+        </div>
+      </aside>
     </div>
   );
 }
-
-export default Mentorship;

@@ -1,48 +1,81 @@
-import React, { useState, useEffect } from 'react';
-import '../styles/Chat.css';
-import { MessageService } from '../services/MessageService';
+import React, { useState, useEffect, useRef } from "react";
+import "../styles/Chat.css";
+import { MessageService } from "../services/MessageService";
+import { FaPaperPlane } from "react-icons/fa";
+import { FiUser } from "react-icons/fi";
 
-export default function Chat({ currentUser, selectedUser }) {
-  const [message, setMessage] = useState('');
+export default function Chat({ currentUser }) {
+  const [message, setMessage] = useState("");
   const [conversation, setConversation] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState("");
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
+    const loadUsers = async () => {
+      const list = await MessageService.getUsers();
+      setUsers(list.filter((u) => u !== currentUser));
+      if (list.length > 0) setSelectedUser(list[0]); // auto-select first
+    };
+    loadUsers();
+  }, [currentUser]);
+
+  useEffect(() => {
+    if (!selectedUser) return;
     const loadMessages = async () => {
-      const convo = await MessageService.getConversation(currentUser, selectedUser);
+      const convo = await MessageService.getConversation(
+        currentUser,
+        selectedUser
+      );
       setConversation(convo);
     };
-
     loadMessages();
-    const interval = setInterval(loadMessages, 2000); // Poll every 2 seconds
+    const interval = setInterval(loadMessages, 1000);
     return () => clearInterval(interval);
   }, [currentUser, selectedUser]);
 
-  const sendMessage = async () => {
-    if (!message.trim()) return;
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [conversation]);
 
+  const sendMessage = async () => {
+    if (!message.trim() || !selectedUser) return;
     await MessageService.sendMessage({
       sender: currentUser,
       receiver: selectedUser,
       content: message,
     });
-
-    setMessage('');
-    const updatedConversation = await MessageService.getConversation(currentUser, selectedUser);
-    setConversation(updatedConversation);
+    setMessage("");
   };
 
   return (
     <div className="chat-container">
+      {/* Chat Header */}
       <div className="chat-header">
-        <h2>Chat with {selectedUser}</h2>
+        <div className="chat-user-info">
+          <FiUser size={20} />
+          <span>{selectedUser ? `Chat with ${selectedUser}` : "Select a user"}</span>
+        </div>
+        <select
+          value={selectedUser}
+          onChange={(e) => setSelectedUser(e.target.value)}
+          className="chat-user-select"
+        >
+          {users.map((u, i) => (
+            <option key={i} value={u}>
+              {u}
+            </option>
+          ))}
+        </select>
       </div>
 
+      {/* Messages */}
       <div className="chat-messages">
         {conversation.map((msg, index) => (
           <div
             key={index}
             className={`chat-message ${
-              msg.sender === currentUser ? 'sent' : 'received'
+              msg.sender === currentUser ? "sent" : "received"
             }`}
           >
             <div className="chat-message-text">{msg.content}</div>
@@ -51,17 +84,21 @@ export default function Chat({ currentUser, selectedUser }) {
             </div>
           </div>
         ))}
+        <div ref={messagesEndRef}></div>
       </div>
 
+      {/* Input */}
       <div className="chat-input">
         <input
           type="text"
-          placeholder="Type your message..."
+          placeholder={`Message ${selectedUser || "someone"}...`}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
         />
-        <button onClick={sendMessage}>Send</button>
+        <button onClick={sendMessage}>
+          <FaPaperPlane />
+        </button>
       </div>
     </div>
   );

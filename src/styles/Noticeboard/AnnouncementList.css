@@ -1,0 +1,54 @@
+/* ==============================
+   Announcement List
+============================== */
+
+.announcement-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Card Style */
+.announcement-card {
+  background-color: #fff;
+  padding: 1rem 1.2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.announcement-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+.announcement-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #004aad; /* Strathmore primary */
+  margin-bottom: 0.4rem;
+}
+
+.announcement-description {
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 0.6rem;
+  line-height: 1.4;
+}
+
+.announcement-meta {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.announcement-meta .poster {
+  font-weight: 500;
+  color: #004aad;
+}
+
+.announcement-empty {
+  text-align: center;
+  color: #666;
+  font-size: 1rem;
+  padding: 1rem 0;
+}

@@ -1,16 +1,13 @@
 // src/services/storage.js
 import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from "firebase/storage";
-import { storage } from "./firebase";   // <-- import storage instance here
-import { updateUserProfile } from "./db"; 
+import { storage } from "./firebase";
+import { updateUserProfile } from "./db";
 
 export const VALID_IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"];
 export const IMAGE_MAX_SIZE = 2 * 1024 * 1024; // 2 MB
 
 /**
  * Validate an image file (type + size).
- * @param {File} file
- * @param {number} maxSize
- * @returns {boolean}
  */
 export function validateImageFile(file, maxSize = IMAGE_MAX_SIZE) {
   if (!file) return false;
@@ -20,23 +17,22 @@ export function validateImageFile(file, maxSize = IMAGE_MAX_SIZE) {
 }
 
 /**
- * Upload a user image to Storage and return the download URL.
+ * Generic image upload function.
  *
- * @param {string} uid - user id
+ * @param {string} path - Storage path (e.g., "users/uid/profilePicture" or "marketplace/itemId/thumbnail")
  * @param {File} file - File object from input
- * @param {string} imageKey - storage filename/key (default: "profilePicture")
- * @param {(progress:number, snapshot?:object)=>void} onProgress - optional progress callback (0-100)
- * @returns {Promise<string>} download URL
+ * @param {(progress:number, snapshot?:object)=>void} [onProgress] - Optional progress callback (0-100)
+ * @returns {Promise<string>} - Download URL
  */
-export async function uploadUserImage(uid, file, imageKey = "profilePicture", onProgress) {
-  if (!uid) throw new Error("UID is required");
+export async function uploadImage(path, file, onProgress) {
+  if (!path) throw new Error("Storage path is required");
   if (!file) throw new Error("File is required");
 
   if (!validateImageFile(file)) {
     throw new Error("Invalid file: only jpeg/png/gif/webp under 2MB allowed");
   }
 
-  const storageRef = ref(storage, `users/${uid}/${imageKey}`);
+  const storageRef = ref(storage, path);
   const metadata = { contentType: file.type };
 
   const uploadTask = uploadBytesResumable(storageRef, file, metadata);
@@ -62,47 +58,70 @@ export async function uploadUserImage(uid, file, imageKey = "profilePicture", on
 }
 
 /**
- * Delete a user's image from Storage.
- * @param {string} uid
- * @param {string} imageKey - storage filename/key (default: "profilePicture")
- * @returns {Promise<void>}
+ * Generic delete function for any storage path.
  */
-export async function deleteUserImage(uid, imageKey = "profilePicture") {
-  if (!uid) throw new Error("UID is required");
-  const storageRef = ref(storage, `users/${uid}/${imageKey}`);
+export async function deleteImage(path) {
+  if (!path) throw new Error("Storage path is required");
+  const storageRef = ref(storage, path);
   await deleteObject(storageRef);
 }
 
 /**
- * Get download URL for an existing user image.
- * @param {string} uid
- * @param {string} imageKey - storage filename/key (default: "profilePicture")
- * @returns {Promise<string>} download URL
+ * Generic get URL function for any storage path.
  */
-export async function getUserImageUrl(uid, imageKey = "profilePicture") {
-  if (!uid) throw new Error("UID is required");
-  const storageRef = ref(storage, `users/${uid}/${imageKey}`);
+export async function getImageUrl(path) {
+  if (!path) throw new Error("Storage path is required");
+  const storageRef = ref(storage, path);
   return await getDownloadURL(storageRef);
 }
 
 /**
- * Upload user profile photo and update Firestore user profile.
- * @param {string} uid
- * @param {File} file
- * @param {string} imageKey - storage filename/key (default: "profilePicture")
- * @returns {Promise<string>} download URL
+ * Convenience wrapper: Upload a user image.
+ */
+export function uploadUserImage(uid, file, imageKey = "profilePicture", onProgress) {
+  return uploadImage(`users/${uid}/${imageKey}`, file, onProgress);
+}
+
+/**
+ * Convenience wrapper: Delete a user image.
+ */
+export function deleteUserImage(uid, imageKey = "profilePicture") {
+  return deleteImage(`users/${uid}/${imageKey}`);
+}
+
+/**
+ * Convenience wrapper: Get user image URL.
+ */
+export function getUserImageUrl(uid, imageKey = "profilePicture") {
+  return getImageUrl(`users/${uid}/${imageKey}`);
+}
+
+/**
+ * Upload profile photo and update Firestore user profile.
  */
 export async function saveProfilePhotoAndUpdateDB(uid, file, imageKey = "profilePicture") {
-  if (!uid) throw new Error("UID is required");
-  if (!file) throw new Error("File is required");
-
-  // Upload image to Storage
   const imageUrl = await uploadUserImage(uid, file, imageKey);
-
-  // Update Firestore profile document with new image URL
-  const updateData = {};
-  updateData[imageKey] = imageUrl;
-  await updateUserProfile(uid, updateData);
-
+  await updateUserProfile(uid, { [imageKey]: imageUrl });
   return imageUrl;
+}
+
+/**
+ * Convenience wrapper: Upload a marketplace listing image.
+ */
+export function uploadMarketplaceImage(itemId, file, imageKey = "thumbnail", onProgress) {
+  return uploadImage(`marketplace/${itemId}/${imageKey}`, file, onProgress);
+}
+
+/**
+ * Convenience wrapper: Delete a marketplace image.
+ */
+export function deleteMarketplaceImage(itemId, imageKey = "thumbnail") {
+  return deleteImage(`marketplace/${itemId}/${imageKey}`);
+}
+
+/**
+ * Convenience wrapper: Get marketplace image URL.
+ */
+export function getMarketplaceImageUrl(itemId, imageKey = "thumbnail") {
+  return getImageUrl(`marketplace/${itemId}/${imageKey}`);
 }

@@ -1,0 +1,164 @@
+/* styles/Mentorship/MentorshipCard.css */
+
+/* === Color Palette (Strathmore inspired) === */
+:root {
+  --strathmore-blue: #004aad;
+  --strathmore-gold: #ffb81c;
+  --light-bg: #ffffff;
+  --medium-gray: #d9d9d9;
+  --dark-gray: #333333;
+}
+
+/* Card Base */
+.mentorship-card {
+  background-color: var(--light-bg);
+  border: 1.5px solid var(--medium-gray);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+}
+
+.mentorship-card:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+/* Header */
+.card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--strathmore-blue);
+}
+
+.role-badge {
+  display: inline-block;
+  margin-left: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  background-color: var(--strathmore-gold);
+  color: #000; /* High contrast on gold */
+}
+
+.role-mentor {
+  background-color: var(--strathmore-blue);
+  color: #fff;
+}
+
+.role-mentee {
+  background-color: var(--strathmore-gold);
+  color: #000;
+}
+
+/* Status Badges */
+.status-badge {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  text-transform: capitalize;
+  align-self: flex-start;
+}
+
+.status-accepted {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.status-rejected {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* Meta Info */
+.card-meta {
+  font-size: 0.9rem;
+  color: var(--dark-gray);
+}
+
+.card-subheading {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--strathmore-blue);
+  margin-top: 0.4rem;
+}
+
+.card-line {
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: var(--dark-gray);
+}
+
+/* Actions */
+.card-actions {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.card-actions .btn {
+  font-weight: 600;
+}
+
+.btn-primary {
+  background-color: var(--strathmore-blue);
+  color: #fff;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #003a87;
+}
+
+.btn-secondary {
+  background-color: var(--strathmore-gold);
+  color: #000;
+  border: none;
+}
+
+.btn-secondary:hover {
+  background-color: #e6a815;
+}
+
+.btn-danger {
+  background-color: #d9534f;
+  color: #fff;
+  border: none;
+}
+
+.btn-danger:hover {
+  background-color: #c9302c;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .mentorship-card {
+    padding: 1rem;
+  }
+
+  .card-title {
+    font-size: 1.1rem;
+  }
+
+  .card-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

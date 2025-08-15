@@ -1,60 +1,121 @@
-import React, { useState, useEffect } from 'react';
-import { getAuth } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';
-import Chat from '../components/Chat';
-import '../styles/Chat.css';
+// src/pages/Messages.jsx
+import React, { useEffect, useState } from "react";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
+import { app } from "../services/firebase";
+import Chat from "../components/Chat";
+import "../styles/Messages.css";
+
+const dummyUsers = [
+  { id: "user1", name: "Alice Johnson", role: "Student" },
+  { id: "user2", name: "Bob Smith", role: "Lecturer" },
+  { id: "user3", name: "Charlie Brown", role: "Peer Mentor" },
+  { id: "user4", name: "Diana Prince", role: "Alumni" },
+  { id: "user5", name: "Ethan Clark", role: "Student" },
+];
 
 const Messages = () => {
-  const auth = getAuth();
+  const auth = getAuth(app);
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(null);
-  const [contact, setContact] = useState('');
-  const [selectedUser, setSelectedUser] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [selectedUser, setSelectedUser] = useState(null);
 
-  // On mount, check auth
   useEffect(() => {
-    const user = auth.currentUser;
-    if (!user) {
-      navigate('/auth');
-    } else {
-      // you can choose to use user.uid or user.displayName
-      setCurrentUser(user.uid);
-    }
+    const unsub = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        navigate("/auth");
+      } else {
+        setCurrentUser(user.uid);
+      }
+      setLoading(false);
+    });
+    return () => unsub();
   }, [auth, navigate]);
 
-  // If not logged in yet, don't render anything
+  if (loading) return <div className="messages-loading">Loading…</div>;
   if (!currentUser) return null;
 
-  // If a contact is selected, show the Chat component
-  if (selectedUser) {
-    return (
-      <div className="messages-page">
-        <h2>Secure Chat</h2>
-        <Chat currentUser={currentUser} selectedUser={selectedUser} />
-      </div>
-    );
-  }
+  const contacts = dummyUsers.filter((u) => u.id !== currentUser);
 
-  // Otherwise show a simple "select contact" form
   return (
-    <div className="max-w-4xl mx-auto bg-white p-8 mt-10 rounded-lg shadow-md">
-      <h2 className="text-3xl font-bold mb-6 text-center">Messages</h2>
-      <p className="mb-4">
-        Enter the UID (or username) of the person you want to chat with:
-      </p>
-      <input
-        type="text"
-        placeholder="Contact UID or name"
-        value={contact}
-        onChange={(e) => setContact(e.target.value)}
-        className="w-full p-4 border rounded-lg mb-4"
-      />
-      <button
-        onClick={() => contact.trim() && setSelectedUser(contact.trim())}
-        className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-800 transition"
-      >
-        Start Chat
-      </button>
+    <div className="messages-wrapper">
+      {/* LEFT PANEL: Contacts */}
+      <aside className="messages-sidebar">
+        <div className="messages-sidebar__header">Contacts</div>
+        <div className="messages-sidebar__list">
+          {contacts.map((u) => (
+            <div
+              key={u.id}
+              className={`messages-sidebar__item ${
+                selectedUser?.id === u.id ? "is-active" : ""
+              }`}
+              onClick={() => setSelectedUser(u)}
+            >
+              <div className="messages-avatar">
+                {u.name.charAt(0).toUpperCase()}
+              </div>
+              <div className="messages-user-info">
+                <div className="messages-name">{u.name}</div>
+                <div className="messages-role">{u.role}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </aside>
+
+      {/* MIDDLE PANEL: Chat */}
+      <main className="messages-chat">
+        {selectedUser ? (
+          <Chat
+            currentUser={currentUser}
+            selectedUser={selectedUser.id}
+            selectedUserName={selectedUser.name}
+          />
+        ) : (
+          <div className="messages-empty">
+            <span>💬</span> Select a contact to start chatting.
+          </div>
+        )}
+      </main>
+
+      {/* RIGHT PANEL: Contact Info */}
+      <aside className="messages-details">
+        {selectedUser ? (
+          <div className="details-content">
+            {/* Contact Info */}
+            <div className="details-header">
+              <div className="details-avatar">
+                {selectedUser.name.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <h3 className="details-name">{selectedUser.name}</h3>
+                <p className="details-role">{selectedUser.role}</p>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="details-actions">
+              <button className="details-action primary">View Profile</button>
+              <button className="details-action secondary">
+                Start Video Call
+              </button>
+            </div>
+
+            {/* Recent Activity */}
+            <h4 className="details-subtitle">Recent Activity</h4>
+            <ul className="details-activity">
+              <li>📄 Sent an assignment</li>
+              <li>📚 Joined Math Study Group</li>
+              <li>⏳ Last active: 2h ago</li>
+            </ul>
+          </div>
+        ) : (
+          <div className="details-placeholder">
+            ℹ️ Select a contact to see details.
+          </div>
+        )}
+      </aside>
     </div>
   );
 };

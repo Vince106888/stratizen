@@ -1,0 +1,300 @@
+/* src/styles/StudyHub/QuestionCard.css */
+
+/* Theme variables - Strath Style */
+:root {
+  --primary-color: #004aad; /* Strath blue */
+  --primary-hover: #00337a;
+  --accent-color: #ffcc00; /* Strath gold */
+  --accent-hover: #e6b800;
+  --danger-color: #d32f2f;
+  --danger-hover: #b71c1c;
+  --text-color: #1f2937;
+  --subtext-color: #6b7280;
+  --card-bg: #ffffff;
+  --border-color: #e5e7eb;
+  --hover-shadow: 0 6px 18px rgba(0, 74, 173, 0.15);
+  --border-radius: 1rem;
+  --transition: all 0.25s ease;
+}
+
+/* Card container */
+.question-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  transition: var(--transition);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+}
+
+.question-card:hover {
+  box-shadow: var(--hover-shadow);
+  transform: translateY(-3px);
+}
+
+/* Header */
+.question-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.question-header h3 {
+  font-size: 1.25rem;
+  color: var(--primary-color);
+  font-weight: 700;
+  margin: 0;
+}
+
+.question-header span {
+  font-size: 0.85rem;
+  color: var(--subtext-color);
+  white-space: nowrap;
+}
+
+/* Question content */
+.question-card p {
+  font-size: 1rem;
+  color: var(--text-color);
+  margin: 0.75rem 0;
+  line-height: 1.5;
+}
+
+/* Tags */
+.question-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.5rem 0 1rem 0;
+}
+
+.question-tag {
+  background: var(--accent-color);
+  color: #000;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+  font-weight: 500;
+}
+
+/* Footer (reactions, report, author) */
+.question-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin-top: 0.75rem;
+}
+
+/* Reaction buttons */
+.reaction-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: 1px solid var(--border-color);
+  background: #f9fafb;
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.reaction-btn:hover {
+  background: #f3f4f6;
+}
+
+.reaction-btn.like.active {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+  background: rgba(0, 74, 173, 0.1);
+}
+
+.reaction-btn.dislike.active {
+  color: var(--danger-color);
+  border-color: var(--danger-color);
+  background: rgba(211, 47, 47, 0.1);
+}
+
+/* Report button */
+.report-btn {
+  background: none;
+  border: 1px solid var(--danger-color);
+  color: var(--danger-color);
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.report-btn:hover {
+  background: var(--danger-color);
+  color: white;
+}
+
+/* Author info */
+.question-footer span {
+  font-size: 0.85rem;
+  color: var(--subtext-color);
+}
+
+/* Top answer preview */
+.answer-preview {
+  background: #f9fafb;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 0.75rem;
+  margin-top: 1rem;
+}
+
+.answer-preview h4 {
+  margin: 0 0 0.4rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.answer-preview small {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.8rem;
+  color: var(--subtext-color);
+}
+
+/* Show answers button */
+.show-answers-btn {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: var(--transition);
+}
+
+.show-answers-btn:hover {
+  background: var(--primary-hover);
+}
+
+/* Answer form */
+.answer-form {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.answer-form textarea {
+  resize: vertical;
+  min-height: 80px;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.answer-form button {
+  align-self: flex-end;
+  background: var(--accent-color);
+  color: #000;
+  border: none;
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.answer-form button:hover {
+  background: var(--accent-hover);
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(31, 41, 55, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2rem 1rem;
+  z-index: 50;
+  overflow-y: auto;
+}
+
+.modal-content {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  max-width: 600px;
+  width: 100%;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Answers list */
+.answers-list {
+  margin-top: 1rem;
+}
+
+.answer-card {
+  background: #f9fafb;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.answer-footer {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 0.4rem;
+}
+
+.answer-footer span {
+  font-size: 0.75rem;
+  color: var(--subtext-color);
+}
+
+/* Close modal button */
+.close-modal-btn {
+  background: var(--danger-color);
+  color: white;
+  border: none;
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.close-modal-btn:hover {
+  background: var(--danger-hover);
+}
+
+/* Responsive tweaks */
+@media (max-width: 640px) {
+  .question-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .modal-content {
+    max-width: 100%;
+  }
+}

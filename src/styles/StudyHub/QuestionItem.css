@@ -1,0 +1,92 @@
+/* src/styles/QuestionItem.css */
+
+/* Theme variables */
+:root {
+  --primary-color: #004aad;
+  --accent-color: #006bb3;
+  --secondary-color: #ffcc00;
+  --text-color: #1f2937;
+  --subtext-color: #4b5563;
+  --card-bg: #ffffff;
+  --border-radius: 0.75rem;
+  --hover-shadow: 0 4px 12px rgba(0, 74, 173, 0.1);
+  --tag-bg: #e0f0ff;
+  --tag-color: #004aad;
+}
+
+/* Card container */
+.questionitem-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  background-color: var(--card-bg);
+  border: 1px solid #e5e7eb;
+  text-decoration: none;
+  color: var(--text-color);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.questionitem-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--hover-shadow);
+  background-color: #f9fafb;
+}
+
+/* Header: content + avatar */
+.questionitem-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.questionitem-content {
+  font-size: 1.05rem;
+  font-weight: 600;
+  flex: 1;
+  margin-right: 0.5rem;
+}
+
+.questionitem-avatar {
+  background-color: var(--primary-color);
+  color: #fff;
+  font-weight: 600;
+  padding: 0.35rem 0.5rem;
+  border-radius: 50%;
+  font-size: 0.85rem;
+  text-align: center;
+  min-width: 2rem;
+  min-height: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Tags section */
+.questionitem-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.questionitem-tag {
+  background-color: var(--tag-bg);
+  color: var(--tag-color);
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.5rem;
+}
+
+/* Footer: date + stats */
+.questionitem-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--subtext-color);
+}
+
+.questionitem-stats {
+  display: flex;
+  gap: 1rem;
+}

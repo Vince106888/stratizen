@@ -7,7 +7,7 @@ import './styles/App.css';
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Profile = lazy(() => import('./pages/Profile'));
 const Stratizen = lazy(() => import('./pages/Stratizen'));
-const Forum = lazy(() => import('./pages/Forum'));
+const Noticeboard = lazy(() => import('./pages/Noticeboard'));
 const TopicPage = lazy(() => import('./pages/TopicPage'));
 const Messages = lazy(() => import('./pages/Messages'));
 const Marketplace = lazy(() => import('./pages/Marketplace'));
@@ -18,6 +18,7 @@ const QuestionPage = lazy(() => import('./pages/QuestionPage'));
 const ResourceLibrary = lazy(() => import('./pages/ResourceLibrary'));
 const InnovationHub = lazy(() => import('./pages/InnovationHub'));
 const CareersPage = lazy(() => import('./pages/CareersPage'));
+const TimetablePage = lazy(() => import('./pages/TimetablePage'));
 
 function App() {
   return (
@@ -32,8 +33,7 @@ function App() {
         <Route path="/stratizen" element={<Stratizen />} />
         <Route path="/studyhub" element={<StudyHub />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/forum" element={<Forum />} />
-        <Route path="/forum/:topicId" element={<TopicPage />} />
+        <Route path="/noticeboard" element={<Noticeboard />} />
         <Route path="/messages" element={<Messages />} />
         <Route path="/marketplace" element={<Marketplace />} />
         <Route path="/mentorship" element={<Mentorship />} />
@@ -41,6 +41,7 @@ function App() {
         <Route path="/resource-library" element={<ResourceLibrary />} />
         <Route path="/innovation" element={<InnovationHub />} />
         <Route path="/careers" element={<CareersPage />} />
+        <Route path="/timetable" element={<TimetablePage />} />
       </Route>
 
       {/* Fallback */}

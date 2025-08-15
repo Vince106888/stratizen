@@ -9,7 +9,7 @@ const Sidebar = ({ handleLogout }) => {
     { to: '/stratizen', label: 'Stratizen', icon: '🌐' },
     { to: '/studyhub', label: 'Study', icon: '📚' },
     { to: '/mentorship', label: 'Mentorship', icon: '🎓' },
-    { to: '/forum', label: 'Forum', icon: '💬' },
+    { to: '/noticeboard', label: 'Noticeboard', icon: '📰' },
     { to: '/messages', label: 'Messages', icon: '📩' },
     { to: '/marketplace', label: 'Market', icon: '🛒' },
     { to: '/resource-library', label: 'Resources', icon: '📚' },

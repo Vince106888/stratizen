@@ -1,0 +1,38 @@
+/* src/styles/QuestionList.css */
+
+/* Theme variables consistent with StudyHub */
+:root {
+  --text-color: #1f2937;
+  --subtext-color: #4b5563;
+  --gap: 1.5rem;
+}
+
+/* Container for all question cards */
+.questionlist-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+/* Empty state message */
+.questionlist-empty {
+  text-align: center;
+  color: var(--subtext-color);
+  font-style: italic;
+  font-size: 0.95rem;
+  padding: 3rem 1rem;
+  background-color: #fefefe;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+  transition: all 0.2s ease-in-out;
+}
+
+.questionlist-empty:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 74, 173, 0.1);
+}
+
+/* Optional: animation for filtered results */
+.questionlist-container > * {
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}

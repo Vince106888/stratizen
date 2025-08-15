@@ -1,0 +1,95 @@
+/* src/styles/StudyHub/StudyHubHeader.css */
+
+/* Variables consistent with StudyHub parent */
+:root {
+  --primary-color: #004aad;
+  --secondary-color: #ffcc00;
+  --accent-color: #006bb3;
+  --text-color: #1f2937;
+  --subtext-color: #4b5563;
+  --input-bg: #f9fafb;
+  --input-border: #d1d5db;
+  --input-focus-ring: rgba(0, 74, 173, 0.25);
+  --border-radius: 0.75rem;
+}
+
+/* Container */
+.studyhub-header-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .studyhub-header-container {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+/* Title wrapper */
+.studyhub-header-title-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.studyhub-header-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+@media (min-width: 768px) {
+  .studyhub-header-title {
+    font-size: 2.25rem;
+  }
+}
+
+.studyhub-header-subtitle {
+  font-size: 0.9rem;
+  color: var(--subtext-color);
+  display: block;
+}
+
+@media (max-width: 639px) {
+  .studyhub-header-subtitle {
+    display: none; /* Hide on small screens */
+  }
+}
+
+/* Search wrapper */
+.studyhub-header-search-wrapper {
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .studyhub-header-search-wrapper {
+    width: 35%;
+  }
+}
+
+/* Search input */
+.studyhub-header-search {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--input-border);
+  background-color: var(--input-bg);
+  font-size: 0.95rem;
+  color: var(--text-color);
+  transition: all 0.2s ease-in-out;
+}
+
+.studyhub-header-search::placeholder {
+  color: var(--subtext-color);
+}
+
+.studyhub-header-search:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px var(--input-focus-ring);
+}

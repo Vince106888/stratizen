@@ -1,0 +1,74 @@
+.notice-filters-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.filter-card {
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  flex: 1 1 180px;
+  min-width: 150px;
+}
+
+.filter-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+.filter-title {
+  font-weight: 600;
+  color: #004aad; /* Strathmore primary color */
+  font-size: 0.95rem;
+}
+
+.filter-select {
+  padding: 0.5rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 0.95rem;
+  background-color: #fff; /* ensure white background */
+  color: #004aad;         /* text visible on white */
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: #004aad;
+  box-shadow: 0 0 5px rgba(0,74,173,0.3);
+}
+
+.apply-filter-btn {
+  background-color: #004aad;
+  color: #fff;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  align-self: flex-start;
+  margin-top: auto;
+}
+
+.apply-filter-btn:hover {
+  background-color: #00337a;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .notice-filters-container {
+    flex-direction: column;
+  }
+  .filter-card {
+    flex: 1 1 100%;
+  }
+}

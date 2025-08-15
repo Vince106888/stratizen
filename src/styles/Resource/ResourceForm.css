@@ -1,0 +1,45 @@
+.resource-form {
+  max-width: 500px;
+  margin: auto;
+}
+
+.resource-input {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+.resource-input:focus {
+  border-color: #00205b; /* Strathmore Blue */
+  box-shadow: 0 0 0 3px rgba(0,32,91,0.1);
+  outline: none;
+}
+
+.resource-btn {
+  width: 100%;
+  background-color: #00205b;
+  color: #fff;
+  font-weight: 500;
+  padding: 0.7rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.resource-btn:hover {
+  background-color: #004aad;
+  transform: translateY(-1px);
+}
+
+.resource-btn:disabled {
+  background-color: #6b7280;
+  cursor: not-allowed;
+}
+
+.loading {
+  opacity: 0.8;
+}
