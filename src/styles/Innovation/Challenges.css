@@ -1,0 +1,90 @@
+/* Challenges.css */
+
+/* Section container styling */
+.challenges-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Heading */
+.challenges-section h2 {
+  color: #0033a0; /* Strathmore blue */
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+/* Challenges list */
+.challenges-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+/* Individual challenge card */
+.challenge-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem;
+  border-radius: 1rem;
+  background-color: #f0f4ff; /* light Strathmore tint */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.challenge-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  background-color: #e6f0ff;
+}
+
+/* Challenge info */
+.challenge-info h3 {
+  color: #001f66; /* dark Strathmore text */
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.challenge-info p {
+  font-size: 0.9rem;
+  color: #0033a0;
+}
+
+/* Register button */
+.register-btn {
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #0033a0; /* Strathmore blue */
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  align-self: flex-start;
+}
+
+.register-btn:hover {
+  background-color: #001f66;
+  transform: translateY(-1px);
+}
+
+/* Responsive grid (optional if list grows) */
+@media screen and (min-width: 768px) {
+  .challenges-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .challenges-list {
+    grid-template-columns: 1fr;
+  }
+}

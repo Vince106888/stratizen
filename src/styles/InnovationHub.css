@@ -1,0 +1,182 @@
+/* InnovationHub.css */
+
+/* --- Container & Grid --- */
+.innovation-hub-container {
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff; /* light Strathmore blue background */
+}
+
+.innovation-hub-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media screen and (min-width: 1024px) {
+  .innovation-hub-grid {
+    grid-template-columns: 2fr 1fr;
+    align-items: start;
+    gap: 2rem;
+  }
+}
+
+/* --- Panels --- */
+.panel {
+  background: #ffffff; /* keep panels white for contrast */
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.panel:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  background: #f0f4ff; /* subtle Strathmore accent hover */
+}
+
+/* --- Main & Right Panels --- */
+.innovation-main-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  color: #001f66; /* Strathmore dark text for readability */
+}
+
+.innovation-right-panel {
+  width: 320px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 1.5rem;
+}
+
+/* --- Section Headings --- */
+.panel h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #0033a0; /* Strathmore blue */
+  margin-bottom: 1rem;
+}
+
+/* --- Paragraphs & small text --- */
+.panel p, .panel span, .panel a {
+  color: #001f66; /* dark text for visibility */
+}
+
+/* --- Buttons --- */
+button {
+  transition: all 0.2s;
+  cursor: pointer;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  border: none;
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+/* Primary buttons */
+button.bg-blue-600 {
+  background-color: #0033a0; /* Strathmore blue */
+  color: white;
+}
+
+button.bg-blue-600:hover {
+  background-color: #001f66;
+}
+
+/* Secondary buttons */
+button.bg-gray-200 {
+  background-color: #f0f0f0;
+  color: #001f66;
+}
+
+button.bg-gray-200:hover {
+  background-color: #d9d9d9;
+}
+
+/* --- Tags --- */
+.tag {
+  display: inline-block;
+  background-color: #0033a0; /* Strathmore blue */
+  color: #ffffff;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+/* --- Inputs & Textareas --- */
+input, textarea, select {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #0033a0; /* Strathmore blue border */
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s, color 0.2s;
+  background-color: #f0f4ff; /* light Strathmore tint */
+  color: #001f66;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: #001f66;
+  box-shadow: 0 0 0 3px rgba(0,51,160,0.2);
+  background-color: #ffffff;
+}
+
+/* --- Responsive Grids inside components --- */
+.featured-projects-grid,
+.project-explorer-grid,
+.mentors-grid,
+.challenges-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media screen and (min-width: 768px) {
+  .featured-projects-grid,
+  .project-explorer-grid,
+  .mentors-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .featured-projects-grid,
+  .project-explorer-grid,
+  .mentors-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* --- Links --- */
+a {
+  text-decoration: none;
+  color: #001f66; /* dark for visibility */
+  font-weight: 500;
+}
+
+a:hover {
+  color: #0033a0;
+  text-decoration: underline;
+}
+
+/* --- Right Panel --- */
+.innovation-right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* --- Misc --- */
+.panel h3 {
+  color: #001f66;
+  font-weight: 600;
+}
+
+.panel .text-gray-500 {
+  color: #0033a0 !important; /* Override gray to Strath blue for visibility */
+}

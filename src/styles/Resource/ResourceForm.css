@@ -1,45 +1,113 @@
-.resource-form {
-  max-width: 500px;
-  margin: auto;
+/* src/styles/Resource/ResourceForm.css */
+
+:root {
+  --strath-blue: #004aad;
+  --strath-red: #b31b1b;
+  --strath-yellow: #ffcc00;
+  --neutral-light: #f9f9f9;
+  --neutral-border: #e5e5e5;
 }
 
+/* Wrapper */
+.resource-form {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.resource-form:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+}
+
+.form-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--strath-blue);
+  margin-bottom: 0.5rem;
+}
+
+/* Alerts */
+.form-alert {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.form-alert.success {
+  background: #e6f9ee;
+  color: #166534;
+  border: 1px solid #a3e6b1;
+}
+
+.form-alert.error {
+  background: #fdeaea;
+  color: #991b1b;
+  border: 1px solid #f5b2b2;
+}
+
+/* Inputs */
 .resource-input {
-  width: 100%;
-  padding: 0.6rem 0.8rem;
-  border: 1px solid #d1d5db;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--neutral-border);
   border-radius: 8px;
   font-size: 0.95rem;
+  background: var(--neutral-light);
   transition: border 0.2s, box-shadow 0.2s;
 }
 
 .resource-input:focus {
-  border-color: #00205b; /* Strathmore Blue */
-  box-shadow: 0 0 0 3px rgba(0,32,91,0.1);
+  border-color: var(--strath-blue);
+  box-shadow: 0 0 0 2px rgba(0,74,173,0.15);
   outline: none;
 }
 
+/* Button */
 .resource-btn {
-  width: 100%;
-  background-color: #00205b;
-  color: #fff;
+  background: var(--strath-blue);
+  color: white;
+  padding: 0.85rem;
   font-weight: 500;
-  padding: 0.7rem;
-  border: none;
   border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.2s;
+  transition: background 0.3s ease, transform 0.2s ease;
 }
 
 .resource-btn:hover {
-  background-color: #004aad;
+  background: #00337a;
   transform: translateY(-1px);
 }
 
 .resource-btn:disabled {
-  background-color: #6b7280;
+  background: #a0aec0;
   cursor: not-allowed;
 }
 
-.loading {
-  opacity: 0.8;
+.resource-btn.loading {
+  position: relative;
+  pointer-events: none;
+}
+
+.resource-btn.loading::after {
+  content: "...";
+  animation: dots 1.2s infinite;
+  position: absolute;
+  right: 1rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes dots {
+  0% { content: "."; }
+  33% { content: ".."; }
+  66% { content: "..."; }
 }

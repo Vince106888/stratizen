@@ -1,0 +1,105 @@
+/* FeaturedProjects.css */
+
+/* Section styling */
+.featured-projects {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.featured-projects h2 {
+  color: #0033a0; /* Strathmore blue */
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+/* Projects grid */
+.projects-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media screen and (min-width: 768px) {
+  .projects-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .projects-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Individual project card */
+.project-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #f0f4ff; /* light Strathmore tint */
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.project-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  background-color: #e6f0ff;
+}
+
+/* Project info */
+.project-info h3 {
+  font-weight: 600;
+  color: #001f66; /* Strathmore dark */
+  margin-bottom: 0.5rem;
+}
+
+.project-info .tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.project-info .tag {
+  background-color: #0033a0; /* Strathmore blue */
+  color: #ffffff;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.project-info .status {
+  font-size: 0.8rem;
+  color: #001f66;
+}
+
+/* GitHub button/link */
+.github-btn {
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #0033a0;
+  color: white;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.github-btn:hover {
+  background-color: #001f66;
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+
+/* Responsive adjustments if needed */
+@media screen and (max-width: 640px) {
+  .project-card {
+    padding: 1rem;
+  }
+}

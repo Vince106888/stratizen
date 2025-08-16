@@ -1,0 +1,55 @@
+/* ResourceLibrary.css */
+
+/* Panel styling */
+.resource-library {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background-color: #e6f0ff; /* light Strathmore blue */
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.resource-library h2 {
+  color: #0033a0; /* Strathmore blue */
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+/* Resource list */
+.resource-list {
+  list-style-type: disc;
+  list-style-position: inside;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.resource-list li a {
+  color: #0033a0;
+  text-decoration: underline;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+}
+
+.resource-list li a:hover {
+  color: #001f66;
+  transform: translateX(2px);
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 640px) {
+  .resource-library {
+    padding: 1rem;
+  }
+
+  .resource-library h2 {
+    font-size: 1.5rem;
+  }
+
+  .resource-list li a {
+    font-size: 0.9rem;
+  }
+}

@@ -1,0 +1,103 @@
+:root {
+  --primary: #004aad;   /* Strathmore Blue */
+  --accent: #ffcc00;    /* Strathmore Yellow */
+  --danger: #d32f2f;    /* Strathmore Red */
+  --bg-light: #ffffff;
+  --muted: #6b7280;
+}
+
+/* Section Container */
+.resource-grid-section {
+  margin-top: 2rem;
+  padding: 0 1rem;
+  animation: fadeSlide 0.5s ease-in-out;
+}
+
+/* Responsive Grid */
+.resource-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  transition: all 0.3s ease-in-out;
+}
+
+/* Card Wrapper Animation */
+.resource-card-wrapper {
+  opacity: 0;
+  transform: translateY(15px);
+  animation: fadeInUp 0.5s forwards;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Card Hover Elevation */
+.resource-card-wrapper:hover {
+  transform: translateY(-5px) scale(1.02);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* Empty State */
+.empty-state-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem 1rem;
+}
+
+.empty-state-card {
+  text-align: center;
+  background: #f9fafb;
+  padding: 2rem;
+  border-radius: 16px;
+  border: 2px dashed var(--primary);
+  max-width: 420px;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.empty-state-card:hover {
+  background: #f1f5f9;
+  transform: translateY(-3px);
+}
+
+.empty-state-icon {
+  width: 48px;
+  height: 48px;
+  color: var(--primary);
+  margin: 0 auto 1rem auto;
+}
+
+.empty-state-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.empty-state-subtext {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #9ca3af;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -114,8 +114,12 @@
 }
 
 .rightpanel-section li {
-  padding: 0.3rem 0;
+  padding: 0.4rem 0.5rem;
+  border-radius: 8px;
+  margin: 0.5rem 0;
   font-size: 0.9rem;
+  font-weight: 500;
+  color: #002147;
 }
 
 /* Status Messages */
