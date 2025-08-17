@@ -9,7 +9,7 @@ const hoursRange = Array.from({ length: 17 }, (_, i) => i + 6); // 6–22
 const DEBUG = true;
 const dlog = (...args) => DEBUG && console.log("[EventForm]", ...args);
 
-export default function EventForm({ existingEvent, onClose, onSave, onDelete }) {
+export default function EventForm({ existingEvent, onClose, onSave, onDelete, checkConflict }) {
   const normalizeHour = (h, fallback) => {
     const n = Number(h);
     return Number.isFinite(n) ? n : fallback;
@@ -18,7 +18,7 @@ export default function EventForm({ existingEvent, onClose, onSave, onDelete }) 
   const [formData, setFormData] = useState({
     title: existingEvent?.title || "",
     description: existingEvent?.description || "",
-    date: existingEvent?.date || "",
+    date: existingEvent?.date ? new Date(existingEvent.date).toISOString().split("T")[0] : "",
     day: existingEvent?.day || "",
     startHour: normalizeHour(existingEvent?.startHour, 6),
     endHour: normalizeHour(existingEvent?.endHour, 7),
@@ -36,7 +36,7 @@ export default function EventForm({ existingEvent, onClose, onSave, onDelete }) 
     (existingEvent?.type?.toLowerCase() || "event") === "class" && !!existingEvent?.recurring
   );
   const [errors, setErrors] = useState({});
-  const [status, setStatus] = useState(null); // success / error message
+  const [status, setStatus] = useState(null);
 
   // --- DEBUG on mount
   useEffect(() => {
@@ -95,6 +95,21 @@ export default function EventForm({ existingEvent, onClose, onSave, onDelete }) 
     if (Number(formData.startHour) >= Number(formData.endHour)) {
       newErrors.endHour = "End hour must be after start hour.";
     }
+
+    // Conflict check (if parent provided)
+    if (checkConflict) {
+      const conflict = checkConflict({
+        ...formData,
+        date: new Date(formData.date),
+        startHour: Number(formData.startHour),
+        endHour: Number(formData.endHour),
+        id: existingEvent?.id,
+      });
+      if (conflict) {
+        newErrors.conflict = "⚠️ This event overlaps with another one.";
+      }
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -119,19 +134,17 @@ export default function EventForm({ existingEvent, onClose, onSave, onDelete }) 
       type: String(formData.type).toLowerCase(),
       startHour: Number(formData.startHour),
       endHour: Number(formData.endHour),
+      date: new Date(formData.date),
     };
 
-    // Only include id if editing an existing event
-    if (existingEvent?.id) {
-      payload.id = existingEvent.id;
-    }
+    if (existingEvent?.id) payload.id = existingEvent.id;
 
     dlog("Submitting payload to parent:", payload);
 
     try {
       await onSave(payload);
       setStatus({ type: "success", message: "Event saved successfully!" });
-      setTimeout(() => onClose?.(), 500); // small delay for feedback
+      setTimeout(() => onClose?.(), 500);
     } catch (err) {
       console.error("[EventForm] onSave error:", err);
       setStatus({ type: "error", message: "Failed to save event." });
@@ -154,22 +167,18 @@ export default function EventForm({ existingEvent, onClose, onSave, onDelete }) 
 
   return (
     <div className="tt-event-form-container">
-      <form onSubmit={handleSubmit} className="tt-event-form">
+      <form onSubmit={handleSubmit} className="tt-event-form" role="dialog" aria-modal="true">
         <h3 className="tt-form-title">{existingEvent?.id ? "Edit Event" : "Add Event"}</h3>
 
-        {status && (
-          <div className={`tt-status ${status.type}`}>
-            {status.message}
-          </div>
-        )}
-
-        {errors.form && <div className="tt-form-error">{errors.form}</div>}
+        {status && <div className={`tt-status ${status.type}`}>{status.message}</div>}
+        {errors.conflict && <div className="tt-form-error">{errors.conflict}</div>}
 
         <label>
           Title
           <input
             type="text"
             name="title"
+            aria-label="Event title"
             value={formData.title}
             onChange={handleChange}
             placeholder="E.g., Mathematics Lecture"
@@ -181,6 +190,7 @@ export default function EventForm({ existingEvent, onClose, onSave, onDelete }) 
           Description
           <textarea
             name="description"
+            aria-label="Event description"
             value={formData.description}
             onChange={handleChange}
             placeholder="Optional details or notes..."
@@ -212,18 +222,14 @@ export default function EventForm({ existingEvent, onClose, onSave, onDelete }) 
           <label>
             Start Hour
             <select name="startHour" value={formData.startHour} onChange={handleChange}>
-              {hoursRange.map(h => (
-                <option key={h} value={h}>{h}</option>
-              ))}
+              {hoursRange.map(h => <option key={h} value={h}>{h}</option>)}
             </select>
             {errors.startHour && <span className="tt-field-error">{errors.startHour}</span>}
           </label>
           <label>
             End Hour
             <select name="endHour" value={formData.endHour} onChange={handleChange}>
-              {hoursRange.map(h => (
-                <option key={h} value={h}>{h}</option>
-              ))}
+              {hoursRange.map(h => <option key={h} value={h}>{h}</option>)}
             </select>
             {errors.endHour && <span className="tt-field-error">{errors.endHour}</span>}
           </label>

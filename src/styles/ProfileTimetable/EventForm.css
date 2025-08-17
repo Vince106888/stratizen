@@ -1,13 +1,14 @@
 /* ===============================
-   EventForm.css – Modern Responsive
+   EventForm.css – Dark/Light Theme Modern
    =============================== */
 
-/* Theme variables */
+/* ---------------- Theme Variables ---------------- */
 :root {
-  --primary-color: #002147;        /* Strathmore blue */
-  --accent-color: #ffd100;         /* Gold highlight */
-  --text-color: #1f2937;           /* Dark text */
-  --bg-color: #f4f4f4;             /* Light grey background for contrast */
+  /* Light Theme */
+  --primary-color: #002147;
+  --accent-color: #ffd100;
+  --text-color: #1f2937;
+  --bg-color: #f4f4f4;
   --input-border: #cbd5e1;
   --input-focus: #002147;
   --btn-bg: #002147;
@@ -19,7 +20,22 @@
   --btn-cancel-text: #1f2937;
 }
 
-/* Form container */
+/* Dark theme overrides */
+.dark-mode {
+  --text-color: #e5e7eb;
+  --bg-color: #1f2937;
+  --input-border: #374151;
+  --input-focus: #60a5fa;
+  --btn-bg: #2563eb;
+  --btn-text: #fefefe;
+  --btn-hover-bg: #1e40af;
+  --btn-delete-bg: #ef4444;
+  --btn-delete-hover: #b91c1c;
+  --btn-cancel-bg: #374151;
+  --btn-cancel-text: #f3f4f6;
+}
+
+/* ---------------- Form Container ---------------- */
 .tt-event-form {
   background-color: var(--bg-color);
   padding: 2rem;
@@ -43,6 +59,7 @@
   font-weight: 700;
   color: var(--primary-color);
   margin-bottom: 1rem;
+  transition: color 0.3s ease;
 }
 
 /* Labels */
@@ -70,6 +87,14 @@
   background-color: #fdfdff;
   color: var(--text-color);
   box-sizing: border-box;
+}
+
+.dark-mode .tt-event-form input,
+.dark-mode .tt-event-form select,
+.dark-mode .tt-event-form textarea {
+  background-color: #374151;
+  color: var(--text-color);
+  border: 1px solid var(--input-border);
 }
 
 .tt-event-form input:focus,

@@ -1,17 +1,30 @@
+/* ---------------------------
+   Skill Radar Chart Section
+--------------------------- */
 .skill-radar-chart-section {
   width: 100%;
-  max-width: 550px; /* increased max width */
-  height: 450px; /* increased height */
+  max-width: 500px;
+  height: 500px;
   margin: 0 auto 2.5rem auto;
   background: white;
   border-radius: 16px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12); /* slightly stronger shadow */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
   user-select: none;
+  transition: all 0.3s ease;
 }
 
+/* Dark Mode */
+.skill-radar-chart-section.dark-mode {
+  background: #111827;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* ---------------------------
+   Chart Title
+--------------------------- */
 .skill-radar-chart-title {
   text-align: center;
   margin-bottom: 1.25rem;
@@ -19,26 +32,99 @@
   font-size: 1.6rem;
   color: #2563eb; /* Primary color */
   letter-spacing: 0.02em;
+  transition: color 0.3s ease;
 }
 
+.skill-radar-chart-section.dark-mode .skill-radar-chart-title {
+  color: #4f46e5; /* Dark mode title color */
+}
+
+/* ---------------------------
+   Axis Styling
+--------------------------- */
 .recharts-polar-angle-axis-tick text {
   font-size: 14px !important;
   fill: #2a2a2a !important;
   font-weight: 700 !important;
+  transition: fill 0.3s ease;
+}
+
+.skill-radar-chart-section.dark-mode .recharts-polar-angle-axis-tick text {
+  fill: #e5e7eb !important;
 }
 
 .recharts-polar-radius-axis-tick text {
   font-size: 12px !important;
   fill: #555 !important;
   font-weight: 500 !important;
+  transition: fill 0.3s ease;
 }
 
-/* Increase thickness of radar stroke and area */
+.skill-radar-chart-section.dark-mode .recharts-polar-radius-axis-tick text {
+  fill: #d1d5db !important;
+}
+
+/* ---------------------------
+   Radar Stroke & Area
+--------------------------- */
 .recharts-radar-dot {
   stroke-width: 3 !important; /* thicker dots on vertices */
 }
 
 .recharts-radar-area {
   stroke-width: 3 !important; /* thicker radar stroke */
-  opacity: 0.7 !important; /* slight increase in opacity for better visibility */
+  opacity: 0.7 !important; /* improved visibility */
+  transition: all 0.3s ease;
+}
+
+/* Distinct radar colors for multiple datasets */
+.recharts-radar-dot[data-index="0"] {
+  stroke: #2563eb !important; /* primary */
+  fill: #2563eb !important;
+}
+.recharts-radar-dot[data-index="1"] {
+  stroke: #10b981 !important; /* green */
+  fill: #10b981 !important;
+}
+.recharts-radar-dot[data-index="2"] {
+  stroke: #f59e0b !important; /* amber */
+  fill: #f59e0b !important;
+}
+
+.recharts-radar-area[data-index="0"] {
+  stroke: #2563eb !important;
+  fill: #2563eb !important;
+  fill-opacity: 0.6 !important;
+}
+.recharts-radar-area[data-index="1"] {
+  stroke: #10b981 !important;
+  fill: #10b981 !important;
+  fill-opacity: 0.6 !important;
+}
+.recharts-radar-area[data-index="2"] {
+  stroke: #f59e0b !important;
+  fill: #f59e0b !important;
+  fill-opacity: 0.6 !important;
+}
+
+/* ---------------------------
+   Responsive
+--------------------------- */
+@media (max-width: 640px) {
+  .skill-radar-chart-section {
+    height: 400px;
+    padding: 1rem;
+  }
+
+  .skill-radar-chart-title {
+    font-size: 1.4rem;
+  }
+
+  .recharts-polar-angle-axis-tick text {
+    font-size: 12px !important;
+  }
+
+  .recharts-polar-radius-axis-tick text {
+    font-size: 10px !important;
+  }
 }

@@ -1,5 +1,5 @@
 /* ===============================
-   ProfileTimetable.css – Upgraded
+   ProfileTimetable.css – Light/Dark Upgrade
    =============================== */
 
 /* Theme variables */
@@ -12,9 +12,15 @@
   --tooltip-bg: rgba(0, 33, 71, 0.9);
   --tooltip-color: #ffd100;
   --btn-hover-bg: #ffc107;
+  --dark-bg: #111827;
+  --dark-text: #e5e7eb;
+  --dark-border: #374151;
+  --dark-btn-hover: #4f46e5;
 }
 
-/* Container */
+/* ===============================
+   Container
+=============================== */
 .profile-timetable-container {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   width: 95%;
@@ -28,9 +34,19 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  transition: all 0.3s ease;
 }
 
-/* Header */
+.profile-timetable-container.dark-mode {
+  background-color: var(--dark-bg);
+  color: var(--dark-text);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--dark-border);
+}
+
+/* ===============================
+   Header
+=============================== */
 .timetable-header {
   text-align: center;
   margin-bottom: 1rem;
@@ -41,6 +57,11 @@
   font-weight: 700;
   font-size: 2rem;
   margin-bottom: 0.25rem;
+  transition: color 0.3s ease;
+}
+
+.profile-timetable-container.dark-mode .timetable-title {
+  color: var(--dark-text);
 }
 
 .quote {
@@ -49,7 +70,13 @@
   font-size: 1rem;
 }
 
-/* Controls */
+.profile-timetable-container.dark-mode .quote {
+  color: var(--dark-text);
+}
+
+/* ===============================
+   Controls
+=============================== */
 .timetable-controls {
   display: flex;
   justify-content: flex-end;
@@ -80,6 +107,11 @@
   box-shadow: 0 5px 12px rgba(255, 209, 0, 0.6);
 }
 
+.profile-timetable-container.dark-mode .btn-add-event {
+  background-color: var(--dark-btn-hover);
+  color: var(--dark-text);
+}
+
 .btn-toggle-view {
   background-color: var(--strathmore-primary);
   color: white;
@@ -89,7 +121,14 @@
   background-color: #00325a;
 }
 
-/* Status message */
+.profile-timetable-container.dark-mode .btn-toggle-view {
+  background-color: #1f2937;
+  color: var(--dark-text);
+}
+
+/* ===============================
+   Status message
+=============================== */
 .timetable-status-message {
   margin-top: 1rem;
   padding: 0.6rem 1rem;
@@ -102,6 +141,12 @@
   animation: fadeInOut 3s ease forwards;
 }
 
+.profile-timetable-container.dark-mode .timetable-status-message {
+  background-color: #1f2937;
+  border: 1px solid #374151;
+  color: var(--dark-text);
+}
+
 @keyframes fadeInOut {
   0% { opacity: 0; }
   10% { opacity: 1; }
@@ -109,7 +154,9 @@
   100% { opacity: 0; }
 }
 
-/* Timetable/Calendar main content */
+/* ===============================
+   Timetable/Calendar main content
+=============================== */
 .timetable-main-content {
   display: flex;
   flex-direction: column;
@@ -125,7 +172,13 @@
   color: var(--strathmore-primary);
 }
 
-/* Modal */
+.profile-timetable-container.dark-mode .loading-text {
+  color: var(--dark-text);
+}
+
+/* ===============================
+   Modal
+=============================== */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -141,7 +194,7 @@
 }
 
 .modal-content {
-  background: white;
+  background: var(--strathmore-light);
   border-radius: 12px;
   max-width: 600px;
   width: 100%;
@@ -149,9 +202,18 @@
   overflow-y: auto;
   padding: 2rem 1.5rem;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
 }
 
-/* Tooltip for events (hover) */
+.profile-timetable-container.dark-mode .modal-content {
+  background: var(--dark-bg);
+  color: var(--dark-text);
+  border: 1px solid var(--dark-border);
+}
+
+/* ===============================
+   Tooltip for events
+=============================== */
 .event-tooltip {
   position: absolute;
   background-color: var(--tooltip-bg);
@@ -165,7 +227,9 @@
   transition: opacity 0.2s ease;
 }
 
-/* Responsive adjustments */
+/* ===============================
+   Responsive adjustments
+=============================== */
 @media (max-width: 768px) {
   .timetable-title {
     font-size: 1.5rem;

@@ -1,12 +1,13 @@
 // src/components/ProfileTimetable/TimetableGrid.jsx
 import React, { useMemo, useEffect, useState } from "react";
+import { useTheme } from "../../context/ThemeContext"; // ✅ Theme integration
 import "../../styles/ProfileTimetable/TimetableGrid.css";
 
 const hours = Array.from({ length: 17 }, (_, i) => i + 6); // 6am-10pm
 const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 // EventCard component
-function EventCard({ event, onEdit }) {
+function EventCard({ event, onEdit, isDark }) {
   if (!event) return null;
 
   const handleClick = (e) => {
@@ -14,7 +15,9 @@ function EventCard({ event, onEdit }) {
     onEdit?.(event);
   };
 
-  const bgColor = event.type === "Class" ? "var(--class-color)" : "var(--event-color)";
+  const bgColor = event.type === "Class" 
+    ? isDark ? "rgba(37, 99, 235, 0.8)" : "var(--class-color)" 
+    : isDark ? "rgba(16, 185, 129, 0.8)" : "var(--event-color)";
 
   return (
     <div
@@ -23,6 +26,7 @@ function EventCard({ event, onEdit }) {
       style={{
         backgroundColor: bgColor,
         padding: event.multiple ? "2px 4px" : "6px 8px",
+        color: isDark ? "#fff" : "#000",
       }}
       title={event.title}
     >
@@ -61,6 +65,8 @@ export default function TimetableGrid({ events = [], onEditEvent, dayNameFromDat
   const today = value ? new Date(value) : new Date();
   const todayDayName = dayNameFromDate(today);
   const [cellWidth, setCellWidth] = useState(100);
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
 
   // Update cell width on resize
   useEffect(() => {
@@ -103,9 +109,6 @@ export default function TimetableGrid({ events = [], onEditEvent, dayNameFromDat
     return map;
   }, [mergedEvents]);
 
-  /** -----------------------------
-   * Cell click logic
-  ----------------------------- */
   const handleCellClick = (cellEvents, day, hour) => {
     if (!cellEvents?.length) {
       const eventDate = new Date(today);
@@ -148,7 +151,7 @@ export default function TimetableGrid({ events = [], onEditEvent, dayNameFromDat
   };
 
   return (
-    <div className="tt-grid-container">
+    <div className={`tt-grid-container ${isDark ? "dark-mode" : ""}`}>
       {/* Column headers */}
       <div className="tt-grid-header">
         <div className="tt-grid-time-header" />
@@ -179,9 +182,7 @@ export default function TimetableGrid({ events = [], onEditEvent, dayNameFromDat
               return (
                 <div
                   key={`${day}-${hour}`}
-                  className={`tt-grid-cell ${
-                    cellEvents.length ? "tt-grid-cell-event" : ""
-                  }`}
+                  className={`tt-grid-cell ${cellEvents.length ? "tt-grid-cell-event" : ""}`}
                   onClick={() => handleCellClick(cellEvents, day, hour)}
                   role="button"
                   tabIndex={0}
@@ -196,6 +197,7 @@ export default function TimetableGrid({ events = [], onEditEvent, dayNameFromDat
                     <EventCard
                       event={cellEvents[0]}
                       onEdit={(ev) => onEditEvent(ev)}
+                      isDark={isDark}
                     />
                   )}
                   {cellEvents.length > 1 && (

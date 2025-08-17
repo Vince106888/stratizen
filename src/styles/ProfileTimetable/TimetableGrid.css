@@ -1,7 +1,10 @@
 /* ===============================
-   TimetableGrid.css – Modern Responsive
+   TimetableGrid.css – Modern Dark/Light Theme
    =============================== */
 
+/* =======================
+   Light Theme Variables
+======================= */
 :root {
   --primary-color: #00205B;       /* Strathmore Blue */
   --accent-color: #FFC72C;        /* Gold */
@@ -14,6 +17,23 @@
   --multi-bg: #1e40af;             /* Blue for multiple events */
   --multi-class-color: #0d9488;
   --multi-event-color: #2563eb;
+}
+
+/* =======================
+   Dark Theme Overrides
+======================= */
+.tt-grid-container.dark-mode {
+  --primary-color: #0e3a70;
+  --accent-color: #ffc72c;
+  --event-color: #2563eb;
+  --class-color: #0d9488;
+  --text-color: #f0f0f0;
+  --bg-color: #1f2937;
+  --cell-border: #374151;
+  --hover-shadow: rgba(0,0,0,0.6);
+  --multi-bg: #1e40af;
+  --multi-class-color: #14b8a6;
+  --multi-event-color: #3b82f6;
 }
 
 /* Container */
@@ -87,9 +107,17 @@
   transition: background 0.3s ease;
 }
 
+.tt-grid-container.dark-mode .tt-grid-time-label {
+  background-color: #374151;
+}
+
 .tt-grid-time-label.current-hour {
   background-color: #fde68a;
   font-weight: bold;
+}
+
+.tt-grid-container.dark-mode .tt-grid-time-label.current-hour {
+  background-color: #facc15;
 }
 
 /* Cells */
@@ -104,7 +132,10 @@
 
 .tt-grid-cell-event {
   background-color: #f1f5f9;
-  transition: background 0.2s ease;
+}
+
+.tt-grid-container.dark-mode .tt-grid-cell-event {
+  background-color: #374151;
 }
 
 /* Event cards */
@@ -145,10 +176,16 @@
 .tt-event-time {
   font-size: 0.75rem;
   margin-top: 2px;
-  color: #fefefe;
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: #fefefe;
+}
+
+.tt-grid-container.dark-mode .tt-event-location,
+.tt-grid-container.dark-mode .tt-event-online-link,
+.tt-grid-container.dark-mode .tt-event-time {
+  color: #e5e7eb;
 }
 
 /* Multiple events per cell */
@@ -207,45 +244,24 @@
   border-radius: 6px;
 }
 
+.tt-grid-container.dark-mode .tt-grid-body::-webkit-scrollbar-track {
+  background: #1f2937;
+}
+.tt-grid-container.dark-mode .tt-grid-body::-webkit-scrollbar-thumb {
+  background: var(--accent-color);
+}
+
 /* Responsive adjustments */
 @media (max-width: 900px) {
-  .tt-grid-container {
-    min-width: 100%;
-  }
-
-  .tt-grid-header,
-  .tt-grid-row {
-    grid-template-columns: 50px repeat(7, 1fr);
-  }
-
-  .tt-grid-time-label {
-    font-size: 0.75rem;
-    padding: 6px 2px;
-  }
-
-  .tt-event-card {
-    font-size: 0.8rem;
-    padding: 4px 6px;
-  }
+  .tt-grid-container { min-width: 100%; }
+  .tt-grid-header, .tt-grid-row { grid-template-columns: 50px repeat(7, 1fr); }
+  .tt-grid-time-label { font-size: 0.75rem; padding: 6px 2px; }
+  .tt-event-card { font-size: 0.8rem; padding: 4px 6px; }
 }
 
 @media (max-width: 600px) {
-  .tt-grid-container {
-    min-width: 600px;
-  }
-
-  .tt-grid-day-header {
-    font-size: 0.85rem;
-    padding: 8px 4px;
-  }
-
-  .tt-event-title {
-    font-size: 0.85rem;
-  }
-
-  .tt-event-location,
-  .tt-event-online-link,
-  .tt-event-time {
-    font-size: 0.7rem;
-  }
+  .tt-grid-container { min-width: 600px; }
+  .tt-grid-day-header { font-size: 0.85rem; padding: 8px 4px; }
+  .tt-event-title { font-size: 0.85rem; }
+  .tt-event-location, .tt-event-online-link, .tt-event-time { font-size: 0.7rem; }
 }

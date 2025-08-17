@@ -1,123 +1,154 @@
 /* src/styles/ProfileTimetable/CalendarView.css */
 
+/* ---------------- Container ---------------- */
 .calendar-view-container {
   padding: 1.5rem;
-  background: #f8f9fa;
   border-radius: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
-/* Base Calendar Styling */
+/* Light vs Dark Mode */
+.calendar-view-container.light {
+  background-color: #f8f9fa;
+  color: #1f2937;
+}
+
+.calendar-view-container.dark {
+  background-color: #0a0f29;
+  color: #f1f5f9;
+}
+
+/* ---------------- Calendar Base ---------------- */
 .custom-calendar {
-  border: none;
   width: 100%;
-  background-color: #ffffff;
+  border: none;
   border-radius: 12px;
   font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  background-color: inherit;
+  color: inherit;
+}
+
+/* ---------------- Navigation ---------------- */
+.react-calendar__navigation {
+  display: flex;
+  padding: 0.75rem;
+  border-radius: 12px 12px 0 0;
+  font-weight: 600;
   transition: all 0.3s ease;
 }
 
-/* Calendar Header/Navigation */
-.react-calendar__navigation {
-  display: flex;
+.calendar-view-container.light .react-calendar__navigation {
   background-color: #0a1853; /* Strathmore dark blue */
-  color: white;
-  padding: 0.75rem;
-  border-radius: 12px 12px 0 0;
+  color: #fff;
+}
+
+.calendar-view-container.dark .react-calendar__navigation {
+  background-color: #1a2450;
+  color: #e0e7ff;
 }
 
 .react-calendar__navigation button {
-  color: white;
-  font-weight: 600;
-  font-size: 1rem;
   background: none;
   border: none;
   padding: 0.5rem 1rem;
   min-width: 44px;
+  font-size: 1rem;
+  cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .react-calendar__navigation button:hover {
-  background-color: #123780; /* Slightly lighter blue */
   border-radius: 6px;
 }
 
+.calendar-view-container.light .react-calendar__navigation button:hover {
+  background-color: #123780;
+}
+
+.calendar-view-container.dark .react-calendar__navigation button:hover {
+  background-color: #2a3670;
+}
+
 .react-calendar__navigation button:disabled {
-  background-color: transparent;
   opacity: 0.5;
 }
 
-.react-calendar__navigation__label {
-  flex-grow: 1;
-  text-align: center;
-  font-size: 1.1rem;
-  font-weight: 600;
-}
-
-/* Day of Week Headers */
+/* ---------------- Weekdays ---------------- */
 .react-calendar__month-view__weekdays {
-  background-color: #f1f3f5;
   padding: 0.5rem 0;
   border-bottom: 1px solid #e0e0e0;
 }
 
-.react-calendar__month-view__weekdays__weekday {
-  padding: 0.5rem;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #0a1853; /* Strathmore dark blue */
-  text-align: center;
-  text-transform: uppercase;
+.calendar-view-container.light .react-calendar__month-view__weekdays {
+  background-color: #f1f3f5;
+  color: #0a1853;
 }
 
-/* Day Cells */
+.calendar-view-container.dark .react-calendar__month-view__weekdays {
+  background-color: #101c3a;
+  color: #e0e7ff;
+}
+
+.react-calendar__month-view__weekdays__weekday {
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.5rem;
+}
+
+/* ---------------- Day Cells ---------------- */
 .react-calendar__tile {
   min-height: 100px;
   padding: 8px 4px;
   text-align: center;
-  background-color: white;
   border: 1px solid #e9ecef;
   position: relative;
   transition: all 0.2s ease;
+  background-color: inherit;
+  color: inherit;
 }
 
 .react-calendar__tile abbr {
   display: inline-block;
-  padding: 4px;
-  border-radius: 50%;
   width: 24px;
   height: 24px;
   line-height: 24px;
+  border-radius: 50%;
+  padding: 4px;
 }
 
-/* Hover State */
+/* Hover Effect */
 .react-calendar__tile:enabled:hover {
-  background-color: #f8f9fa;
   transform: translateY(-2px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  z-index: 1;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-/* Today's Date */
+/* ---------------- Today ---------------- */
 .calendar-today {
-  background-color: #f0f7ff !important;
+  font-weight: 600;
 }
 
-.calendar-today abbr {
-  background-color: #004aad !important; /* Strathmore blue */
-  color: white !important;
-  font-weight: bold;
+.calendar-view-container.light .calendar-today abbr {
+  background-color: #004aad; /* Strathmore blue */
+  color: #fff;
 }
 
-/* Dates with Events */
+.calendar-view-container.dark .calendar-today abbr {
+  background-color: #3399ff;
+  color: #101c3a;
+}
+
+/* ---------------- Dates with Events ---------------- */
 .calendar-has-events {
-  background-color: #f8f9fa !important;
   border-bottom: 3px solid #ffcc00; /* Strathmore gold */
 }
 
-/* Event List in Cell */
+/* ---------------- Event List ---------------- */
 .calendar-day-events-list {
   list-style: none;
   margin: 6px 0 0;
@@ -142,17 +173,22 @@
   font-size: 0.7rem;
   margin-bottom: 4px;
   padding: 2px 4px;
-  background-color: rgba(255, 255, 255, 0.9);
   border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.9);
   color: #333;
   transition: all 0.2s ease;
 }
 
-.calendar-event-item:hover {
-  background-color: white;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+.calendar-view-container.dark .calendar-event-item {
+  background-color: rgba(20, 30, 60, 0.8);
+  color: #f1f5f9;
 }
 
+.calendar-event-item:hover {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Event Dots */
 .calendar-event-dot {
   width: 8px;
   height: 8px;
@@ -161,13 +197,12 @@
   flex-shrink: 0;
 }
 
-/* Different dot colors for event types */
 .calendar-event-dot.class {
-  background-color: #004aad; /* Strathmore blue for classes */
+  background-color: #004aad; /* Strathmore blue */
 }
 
 .calendar-event-dot.event {
-  background-color: #ffcc00; /* Strathmore gold for events */
+  background-color: #ffcc00; /* Strathmore gold */
 }
 
 .calendar-event-title {
@@ -177,35 +212,30 @@
   font-weight: 500;
 }
 
-/* Weekend Days */
+/* ---------------- Weekends ---------------- */
 .react-calendar__month-view__days__day--weekend {
-  color: #d32f2f; /* Slightly muted red for weekends */
+  color: #d32f2f;
 }
 
-/* Neighboring Month Days */
+/* ---------------- Neighboring Month ---------------- */
 .react-calendar__month-view__days__day--neighboringMonth {
   color: #adb5bd;
-  background-color: #f8f9fa;
 }
 
-/* Active/Pressed State */
+/* ---------------- Active/Pressed ---------------- */
 .react-calendar__tile:enabled:active,
 .react-calendar__tile:enabled:focus {
-  background-color: #e6f0ff;
   transform: translateY(0);
 }
 
-/* Responsive Adjustments */
+/* ---------------- Responsive ---------------- */
 @media (max-width: 768px) {
   .react-calendar__tile {
     min-height: 80px;
-    padding: 4px 2px;
   }
-  
   .calendar-day-events-list {
     max-height: 50px;
   }
-  
   .calendar-event-item {
     font-size: 0.65rem;
   }
@@ -215,11 +245,9 @@
   .react-calendar__tile {
     min-height: 60px;
   }
-  
   .calendar-day-events-list {
     display: none;
   }
-  
   .calendar-has-events::after {
     content: '';
     display: block;
@@ -230,3 +258,28 @@
     margin: 2px auto 0;
   }
 }
+
+/* ---------------- Event Dots Dynamic ---------------- */
+.calendar-event-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+
+/* Event type classes */
+.calendar-event-dot.class    { background-color: #004aad; } /* Strathmore blue */
+.calendar-event-dot.event    { background-color: #ffcc00; } /* Strathmore gold */
+.calendar-event-dot.meeting  { background-color: #00b894; } /* Green */
+.calendar-event-dot.exam     { background-color: #d32f2f; } /* Red */
+.calendar-event-dot.workshop { background-color: #6c5ce7; } /* Purple */
+.calendar-event-dot.default  { background-color: #888888; } /* Grey fallback */
+
+/* Dark mode adjustments (optional for better visibility) */
+.calendar-view-container.dark .calendar-event-dot.class    { background-color: #3399ff; }
+.calendar-view-container.dark .calendar-event-dot.event    { background-color: #ffd700; }
+.calendar-view-container.dark .calendar-event-dot.meeting  { background-color: #55d28f; }
+.calendar-view-container.dark .calendar-event-dot.exam     { background-color: #ff6b6b; }
+.calendar-view-container.dark .calendar-event-dot.workshop { background-color: #a890ff; }
+.calendar-view-container.dark .calendar-event-dot.default  { background-color: #aaaaaa; }
