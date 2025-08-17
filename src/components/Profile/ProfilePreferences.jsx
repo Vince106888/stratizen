@@ -1,61 +1,69 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import "../../styles/Profile/ProfilePreferences.css";
 
 const ProfilePreferences = ({ form, onChange }) => {
-  const handleToggleNotifications = () => {
-    onChange("notificationsEnabled", !form.notificationsEnabled);
+  const navigate = useNavigate();
+
+  const handleToggle = (field) => {
+    onChange(field, !form[field]);
   };
 
-  const handleThemeChange = (e) => {
-    onChange("themePreference", e.target.value);
+  const handleChange = (field, value) => {
+    onChange(field, value);
   };
 
   return (
     <div className="profile-preferences-container">
       <h2>Preferences & Privacy</h2>
 
+      {/* Notifications */}
       <section className="preference-section">
         <label className="switch-label">
           <input
             type="checkbox"
             checked={form.notificationsEnabled}
-            onChange={handleToggleNotifications}
+            onChange={() => handleToggle("notificationsEnabled")}
+            aria-label="Enable Notifications"
           />
           <span className="slider" />
           Enable Notifications
         </label>
-        <p className="helper-text">
-          Turn notifications on or off to control if you want to receive updates.
-        </p>
       </section>
 
+      {/* Theme */}
       <section className="preference-section">
-        <label htmlFor="themePreference" className="select-label">
-          Theme Preference
-        </label>
-        <select
-          id="themePreference"
-          value={form.themePreference}
-          onChange={handleThemeChange}
-          className="select-field"
-        >
-          <option value="auto">Auto (Follow system)</option>
-          <option value="light">Light</option>
-          <option value="dark">Dark</option>
-        </select>
+        <h3>Theme Preference</h3>
+        <div className="theme-options">
+          {["auto", "light", "dark"].map((option) => (
+            <label key={option} className="radio-label">
+              <input
+                type="radio"
+                name="themePreference"
+                value={option}
+                checked={form.themePreference === option}
+                onChange={(e) => handleChange("themePreference", e.target.value)}
+              />
+              {option === "auto"
+                ? "Auto (Follow system)"
+                : option.charAt(0).toUpperCase() + option.slice(1)}
+            </label>
+          ))}
+        </div>
       </section>
 
+      {/* Privacy */}
       <section className="preference-section">
         <h3>Privacy Settings</h3>
-        <p>Coming soon: Control your visibility, data sharing, and privacy preferences.</p>
-      </section>
-
-      <section className="disclaimer-section">
-        <h4>Disclaimer</h4>
         <p>
-          All information collected in this profile is used solely to personalize your experience within Stratizen,
-          including messaging, notifications, and content delivery. We respect your privacy and
-          will not share your data with third parties without your consent.
+          Manage your visibility and data sharing preferences in{" "}
+          <button
+            className="link-button"
+            onClick={() => navigate("/settings")}
+          >
+            Settings
+          </button>
+          .
         </p>
       </section>
     </div>

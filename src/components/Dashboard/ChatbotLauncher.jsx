@@ -12,7 +12,8 @@ export default function ChatbotLauncher({ onClick }) {
       aria-label="Open Stratizen Chatbot"
       title="Talk to Stratizen Bot"
     >
-      <MessageCircle size={26} />
+      <MessageCircle size={28} />
+      <span className="chatbot-tooltip">Chat</span>
     </button>
   );
 }

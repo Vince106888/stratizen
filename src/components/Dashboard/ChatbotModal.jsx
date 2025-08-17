@@ -3,7 +3,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { X, Send } from 'lucide-react';
 import '../../styles/Dashboard/ChatbotModal.css';
 
-const OPENAI_API_KEY = 'YOUR_OPENAI_API_KEY_HERE'; // Secure in backend in production
+// NOTE: In production, the API key must be secured in a backend!
+const OPENAI_API_KEY = 'YOUR_OPENAI_API_KEY_HERE';
 
 export default function ChatbotModal({ onClose }) {
   const [input, setInput] = useState('');
@@ -14,6 +15,7 @@ export default function ChatbotModal({ onClose }) {
   const [error, setError] = useState(null);
   const chatEndRef = useRef(null);
 
+  // Auto-scroll to newest message
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading]);
@@ -36,11 +38,8 @@ export default function ChatbotModal({ onClose }) {
         body: JSON.stringify({
           model: 'gpt-4o-mini',
           messages: [
-            { role: 'system', content: 'You are a helpful AI assistant for the Stratizen platform.' },
-            ...messages.map((m) => ({
-              role: m.sender === 'user' ? 'user' : 'assistant',
-              content: m.text,
-            })),
+            { role: 'system', content: 'You are a helpful AI assistant for Stratizen platform.' },
+            ...messages.map((m) => ({ role: m.sender === 'user' ? 'user' : 'assistant', content: m.text })),
             { role: 'user', content: userMessage.text },
           ],
           max_tokens: 500,
@@ -68,7 +67,13 @@ export default function ChatbotModal({ onClose }) {
   };
 
   return (
-    <div className="chatbot-modal-overlay" onClick={onClose}>
+    <div
+      className="chatbot-modal-overlay"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Stratizen Chatbot"
+    >
       <div className="chatbot-modal" onClick={(e) => e.stopPropagation()}>
         <header className="chatbot-header">
           <h2>Stratizen Bot</h2>
@@ -97,7 +102,11 @@ export default function ChatbotModal({ onClose }) {
             placeholder="Ask me anything..."
             disabled={loading}
           />
-          <button onClick={sendMessage} disabled={loading || !input.trim()}>
+          <button
+            onClick={sendMessage}
+            disabled={loading || !input.trim()}
+            aria-label="Send message"
+          >
             <Send size={18} />
           </button>
         </footer>

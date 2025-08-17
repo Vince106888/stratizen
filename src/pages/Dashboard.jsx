@@ -23,64 +23,54 @@ import ChatbotLauncher from '../components/Dashboard/ChatbotLauncher';
 import ChatbotModal from '../components/Dashboard/ChatbotModal';
 
 import '../styles/Dashboard.css';
+import { useTheme } from '../context/ThemeContext'; // ✅ import theme context
 
 export default function Dashboard() {
+  const navigate = useNavigate();
+  const { theme } = useTheme(); // ✅ get current theme
+
   const [userData, setUserData] = useState(null);
-  const [stats, setStats] = useState({
-    messages: 0,
-    forum: 0,
-    marketplace: 0,
-    xp: 0,
-    rank: 999,
-  });
-  const [recentActivity, setRecentActivity] = useState({
-    messages: [],
-    forum: [],
-    marketplace: [],
-  });
+  const [stats, setStats] = useState({ messages: 0, forum: 0, marketplace: 0, xp: 0, rank: 999 });
+  const [recentActivity, setRecentActivity] = useState({ messages: [], forum: [], marketplace: [] });
   const [leaderboard, setLeaderboard] = useState([]);
   const [loading, setLoading] = useState(true);
   const [chatbotOpen, setChatbotOpen] = useState(false);
   const [error, setError] = useState(null);
 
-  const navigate = useNavigate();
+  // -----------------------------
+  // Framer Motion variants
+  // -----------------------------
+  const fadeUpVariant = useMemo(() => ({
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  }), []);
 
-  const fadeUpVariant = useMemo(
-    () => ({
-      hidden: { opacity: 0, y: 20 },
-      visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-    }),
-    []
-  );
-
-  /** Fetch recent items from a given collection */
+  // -----------------------------
+  // Fetch recent items helper
+  // -----------------------------
   const getRecentItems = useCallback(async (collectionName, userId, sortField) => {
     const q = query(
       collection(db, collectionName),
       where('userId', '==', userId),
       orderBy(sortField, 'desc')
     );
-
     const snap = await getDocs(q);
     const allItems = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    return {
-      count: allItems.length,
-      recent: allItems.slice(0, 3),
-    };
+    return { count: allItems.length, recent: allItems.slice(0, 3) };
   }, []);
 
-  /** Fetch dashboard data */
+  // -----------------------------
+  // Fetch dashboard data
+  // -----------------------------
   const fetchData = useCallback(async (user) => {
     if (!user) return;
     setLoading(true);
     setError(null);
 
     try {
-      // Fetch user profile
       const userDocSnap = await getDoc(doc(db, 'users', user.uid));
       const userInfo = userDocSnap.exists() ? userDocSnap.data() : {};
 
-      // Fetch activity data in parallel
       const [msgs, forum, market] = await Promise.all([
         getRecentItems(`messages/${user.uid}/conversations`, user.uid, 'lastUpdated'),
         getRecentItems('forumTopics', user.uid, 'createdAt'),
@@ -95,22 +85,22 @@ export default function Dashboard() {
         { id: '4', username: 'David', xp: 980, rank: 4 },
         { id: '5', username: 'Eve', xp: 940, rank: 5 },
       ];
+
       setLeaderboard(dummyLeaderboard);
 
       setUserData({
-        username: userInfo.username ?? 'User',
-        bio: userInfo.bio ?? 'No bio provided.',
-        purpose: userInfo.purpose ?? 'Just exploring Stratizen!',
-        profilePic:
-          userInfo.profilePic ?? 'https://via.placeholder.com/120?text=No+Image',
+        username: userInfo.username || 'User',
+        bio: userInfo.bio || 'No bio provided.',
+        purpose: userInfo.purpose || 'Just exploring Stratizen!',
+        profilePic: userInfo.profilePic || 'https://via.placeholder.com/120?text=No+Image',
       });
 
       setStats({
         messages: msgs.count,
         forum: forum.count,
         marketplace: market.count,
-        xp: userInfo.xp ?? 0,
-        rank: userInfo.rank ?? 999,
+        xp: userInfo.xp || 0,
+        rank: userInfo.rank || 999,
       });
 
       setRecentActivity({
@@ -118,6 +108,7 @@ export default function Dashboard() {
         forum: forum.recent,
         marketplace: market.recent,
       });
+
     } catch (err) {
       console.error('Dashboard fetch error:', err);
       setError(`⚠️ Could not load dashboard data: ${err.message || 'Unknown error'}`);
@@ -126,7 +117,9 @@ export default function Dashboard() {
     }
   }, [getRecentItems]);
 
-  /** Listen for auth changes */
+  // -----------------------------
+  // Auth listener
+  // -----------------------------
   useEffect(() => {
     let lastUid = null;
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -139,20 +132,28 @@ export default function Dashboard() {
     return unsubscribe;
   }, [fetchData, navigate]);
 
+  // -----------------------------
+  // Loading/Error/No Data states
+  // -----------------------------
   if (loading) return <LoadingScreen />;
   if (error) return <ErrorScreen message={error} onRetry={() => fetchData(auth.currentUser)} />;
   if (!userData) return <NoDataScreen />;
 
+  // -----------------------------
+  // Main dashboard render
+  // -----------------------------
   return (
     <div
-      className="dashboard-grid"
+      className={`dashboard-grid min-h-screen p-4 transition-colors duration-300
+                  bg-strathmore-light dark:bg-strathmore-dark
+                  text-strathmore-blue dark:text-strathmore-light`}
       role="main"
       aria-label="User dashboard"
       aria-busy={loading}
     >
       {/* Left panel */}
       <motion.section
-        className="dashboard-left"
+        className="dashboard-left space-y-6"
         initial="hidden"
         animate="visible"
         variants={fadeUpVariant}
@@ -164,7 +165,7 @@ export default function Dashboard() {
 
       {/* Right sidebar */}
       <motion.aside
-        className="dashboard-right"
+        className="dashboard-right space-y-6"
         initial="hidden"
         animate="visible"
         variants={fadeUpVariant}
@@ -175,6 +176,7 @@ export default function Dashboard() {
         <ChatbotLauncher onClick={() => setChatbotOpen(true)} />
       </motion.aside>
 
+      {/* Chatbot modal */}
       {chatbotOpen && <ChatbotModal onClose={() => setChatbotOpen(false)} />}
     </div>
   );
@@ -185,7 +187,12 @@ export default function Dashboard() {
 -------------------------------- */
 function LoadingScreen() {
   return (
-    <div className="loading-screen" role="status" aria-live="polite">
+    <div className="loading-screen flex justify-center items-center h-64 text-lg
+                    bg-strathmore-light dark:bg-strathmore-dark
+                    text-strathmore-blue dark:text-strathmore-light"
+      role="status"
+      aria-live="polite"
+    >
       Loading your dashboard...
     </div>
   );
@@ -193,10 +200,19 @@ function LoadingScreen() {
 
 function ErrorScreen({ message, onRetry }) {
   return (
-    <div className="error-screen" role="alert" aria-live="assertive">
-      <p>{message}</p>
+    <div className="error-screen flex flex-col justify-center items-center h-64 p-4
+                    bg-red-100 dark:bg-red-900
+                    text-red-800 dark:text-red-200 rounded-md"
+      role="alert"
+      aria-live="assertive"
+    >
+      <p className="mb-4">{message}</p>
       {onRetry && (
-        <button onClick={onRetry} className="retry-btn">
+        <button
+          onClick={onRetry}
+          className="retry-btn bg-strathmore-blue dark:bg-strathmore-light
+                     text-white dark:text-strathmore-dark px-4 py-2 rounded hover:opacity-90 transition"
+        >
           Retry
         </button>
       )}
@@ -206,7 +222,12 @@ function ErrorScreen({ message, onRetry }) {
 
 function NoDataScreen() {
   return (
-    <div className="no-data-screen" role="alert" aria-live="polite">
+    <div className="no-data-screen flex justify-center items-center h-64
+                    bg-strathmore-light dark:bg-strathmore-dark
+                    text-strathmore-blue dark:text-strathmore-light"
+      role="alert"
+      aria-live="polite"
+    >
       User data not found.
     </div>
   );

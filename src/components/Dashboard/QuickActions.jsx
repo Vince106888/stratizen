@@ -1,8 +1,9 @@
+// src/components/Dashboard/QuickActions.jsx
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import '../../styles/Dashboard/QuickActions.css';
 
-function QuickActions() {
+export default function QuickActions() {
   const location = useLocation();
 
   const actions = [
@@ -13,25 +14,22 @@ function QuickActions() {
   ];
 
   return (
-    <section className="quick-actions">
+    <section className="quick-actions" aria-label="Quick access actions">
       <h3>Quick Actions</h3>
       <div className="actions-grid">
         {actions.map(({ to, label, icon }) => {
           const currentPath = String(location.pathname || '');
-          const targetPath = String(to);
-          const isActive = currentPath === targetPath;
+          const isActive = currentPath === to;
 
           return (
             <Link
-              key={targetPath}
-              to={targetPath}
+              key={to}
+              to={to}
               className={`action-btn ${isActive ? 'active' : ''}`}
               aria-label={label}
               title={label}
             >
-              <span className="action-icon" aria-hidden="true">
-                {icon}
-              </span>
+              <span className="action-icon" aria-hidden="true">{icon}</span>
               <span className="action-label">{label}</span>
             </Link>
           );
@@ -40,5 +38,3 @@ function QuickActions() {
     </section>
   );
 }
-
-export default QuickActions;

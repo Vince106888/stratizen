@@ -17,6 +17,7 @@ import {
 
 import "../styles/Profile.css";
 
+// Tabs displayed in the profile page
 const profilePageTabs = [
   "Overview",
   "Links",
@@ -26,6 +27,7 @@ const profilePageTabs = [
   "Preferences",
 ];
 
+// Default form structure for a new user profile
 const initialProfilePageForm = {
   fullName: "",
   username: "",
@@ -54,35 +56,50 @@ const initialProfilePageForm = {
 };
 
 export default function ProfilePage() {
+  // Firebase authenticated user object
   const [user, setUser] = useState(null);
+  // Profile form state
   const [form, setForm] = useState(initialProfilePageForm);
+  // Track loading state
   const [loading, setLoading] = useState(true);
+  // Track error messages
   const [error, setError] = useState("");
+  // Track whether profile data has been successfully loaded at least once
   const [dataLoaded, setDataLoaded] = useState(false);
+  // Remember which tab is currently active (persisted in localStorage)
   const [selectedTab, setSelectedTab] = useState(
     Number(localStorage.getItem("profileActiveTab")) || 0
   );
 
   const navigate = useNavigate();
 
-  // Auth + load/create profile
+  // ---------------- AUTH + PROFILE LOADING ----------------
   useEffect(() => {
+    // Subscribe to auth state changes
     const unsubscribe = onAuthStateChanged(getAuth(), async (currentUser) => {
       if (!currentUser) {
+        // If user not logged in, redirect to auth page
         navigate("/auth", { replace: true });
         return;
       }
+
       setUser(currentUser);
       setLoading(true);
       setError("");
+
       try {
+        // Try to fetch user profile from DB
         let profile = await getUserProfile(currentUser.uid);
+
+        // If profile does not exist, create a new one with default values
         if (!profile) {
           profile = await createUserProfile(currentUser, {
             ...initialProfilePageForm,
-            xp: 50,
+            xp: 50, // give new users some XP as a starter
           });
         }
+
+        // Merge profile data into form
         setForm((prev) => ({ ...initialProfilePageForm, ...profile }));
       } catch (err) {
         console.error("Profile load error:", err);
@@ -92,12 +109,16 @@ export default function ProfilePage() {
         setDataLoaded(true);
       }
     });
+
+    // Cleanup: unsubscribe from auth listener when component unmounts
     return () => unsubscribe();
   }, [navigate]);
 
+  // Update form state when a field changes
   const handleFormChange = (field, value) =>
     setForm((prev) => ({ ...prev, [field]: value }));
 
+  // ---------------- LOADING STATE ----------------
   if (loading && !dataLoaded) {
     return (
       <div className="profilepage-status profilepage-loading">
@@ -106,19 +127,23 @@ export default function ProfilePage() {
     );
   }
 
+  // ---------------- MAIN RENDER ----------------
   return (
     <div className="profilepage-container">
+      {/* Greeting Title */}
       <h1 className="profilepage-title">
         Welcome to your profile{user?.displayName ? `, ${user.displayName}` : ""} 👋
       </h1>
 
+      {/* Tab Navigation (Headless UI Tabs) */}
       <TabGroup
         selectedIndex={selectedTab}
         onChange={(index) => {
           setSelectedTab(index);
-          localStorage.setItem("profileActiveTab", index);
+          localStorage.setItem("profileActiveTab", index); // persist selected tab
         }}
       >
+        {/* Tab Buttons */}
         <TabList className="profilepage-tab-list">
           {profilePageTabs.map((tab) => (
             <Tab
@@ -132,6 +157,7 @@ export default function ProfilePage() {
           ))}
         </TabList>
 
+        {/* Tab Content Panels */}
         <TabPanels className="profilepage-tab-panels">
           <TabPanel>
             <ProfileOverview
@@ -146,17 +172,22 @@ export default function ProfilePage() {
               userId={user?.uid}
             />
           </TabPanel>
-          <TabPanel>{user && <ProfileTimetable userId={user.uid} />}</TabPanel>
+          <TabPanel>
+            {user && <ProfileTimetable userId={user.uid} />}
+          </TabPanel>
           <TabPanel>
             <ProfileSkills form={form} onChange={handleFormChange} />
           </TabPanel>
-          <TabPanel>{user && <ProfileMessaging userId={user.uid} />}</TabPanel>
+          <TabPanel>
+            {user && <ProfileMessaging userId={user.uid} />}
+          </TabPanel>
           <TabPanel>
             <ProfilePreferences form={form} onChange={handleFormChange} />
           </TabPanel>
         </TabPanels>
       </TabGroup>
 
+      {/* Disclaimer Section */}
       <p className="profilepage-disclaimer fancy-disclaimer">
         All information collected is used solely for Stratizen features. Your
         data is securely stored and will not be shared without your consent. By

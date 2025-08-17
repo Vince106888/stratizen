@@ -1,8 +1,11 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import { useTheme } from '../context/ThemeContext';
 import '../styles/Sidebar.css';
 
-const Sidebar = ({ handleLogout }) => {
+const Sidebar = ({ handleLogout, isOpen }) => {
+  const { theme } = useTheme();
+
   const links = [
     { to: '/dashboard', label: 'Dashboard', icon: '🏠' },
     { to: '/profile', label: 'Profile', icon: '👤' },
@@ -14,11 +17,11 @@ const Sidebar = ({ handleLogout }) => {
     { to: '/marketplace', label: 'Market', icon: '🛒' },
     { to: '/resource-library', label: 'Resources', icon: '📚' },
     { to: '/innovation', label: 'Innovation Hub', icon: '🚀' },
-    { to: '/careers', label: 'Careers', icon: '💼' }
+    { to: '/careers', label: 'Careers', icon: '💼' },
   ];
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${theme} ${isOpen ? 'sidebar-open' : ''}`}>
       <nav className="sidebar-nav">
         {links.map(link => (
           <NavLink
@@ -28,7 +31,8 @@ const Sidebar = ({ handleLogout }) => {
               `sidebar-link ${isActive ? 'active' : ''}`
             }
           >
-            <span className="icon">{link.icon}</span> {link.label}
+            <span className="icon">{link.icon}</span>
+            {link.label}
           </NavLink>
         ))}
         <button onClick={handleLogout} className="sidebar-link logout-btn">

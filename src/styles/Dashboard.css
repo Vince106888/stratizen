@@ -1,22 +1,30 @@
-/* Grid layout */
-
+/* -------------------------
+   Dashboard Grid Layout
+-------------------------- */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 1fr 360px;
+  grid-template-columns: 1fr 360px; /* Left main panel + right sidebar */
   gap: 2rem;
   padding: 2rem;
   max-width: 1300px;
   margin: 0 auto;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #1a1a1a;
+  color: #1a1a1a; /* Default text color */
   min-height: 85vh;
   user-select: none;
-
-  background-color: #f9f7fc;
+  background-color: #f9f7fc; /* Light background */
   border-radius: 10px;
   box-shadow: 0 2px 10px rgb(126 87 194 / 0.15);
+  transition: all 0.3s ease;
 }
 
+/* Dark mode support for grid container */
+.dark .dashboard-grid {
+  background-color: #001f66; /* Dark variant background */
+  color: #e6f0ff; /* Light text on dark */
+}
+
+/* Responsive layout */
 @media (max-width: 900px) {
   .dashboard-grid {
     grid-template-columns: 1fr;
@@ -24,25 +32,37 @@
   }
 }
 
+/* -------------------------
+   Panels: Left & Right
+-------------------------- */
 .dashboard-left,
 .dashboard-right {
   display: flex;
   flex-direction: column;
   gap: 2rem;
-
-  background-color: #fff;
+  background-color: #fff; /* Light panel background */
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 4px 15px rgb(126 87 194 / 0.1);
+  transition: all 0.3s ease;
 }
 
+/* Dark mode panel styling */
+.dark .dashboard-left,
+.dark .dashboard-right {
+  background-color: #00205B; /* Dark panel background */
+  color: #e6f0ff; /* Light text */
+}
+
+/* Right sidebar sticky positioning */
 .dashboard-right {
   position: sticky;
   top: 2rem;
 }
 
-/* Loading & Error screens styles unchanged */
-
+/* -------------------------
+   Loading, Error & No Data Screens
+-------------------------- */
 .loading-screen,
 .error-screen,
 .no-data-screen {
@@ -52,34 +72,87 @@
   height: 50vh;
   font-size: 1.3rem;
   font-weight: 600;
-  color: #6a1b9a;
+  text-align: center;
+  transition: all 0.3s ease;
 }
 
-/* Scrollbar styles unchanged */
+/* Light mode colors */
+.loading-screen,
+.no-data-screen {
+  color: #6a1b9a;
+  background-color: #f9f7fc;
+}
 
-.recent-activity, 
+.error-screen {
+  color: #b71c1c;
+  background-color: #ffebee;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+/* Dark mode colors */
+.dark .loading-screen,
+.dark .no-data-screen {
+  color: #e6f0ff;
+  background-color: #001f66;
+}
+
+.dark .error-screen {
+  color: #ffcdd2;
+  background-color: #b71c1c;
+}
+
+/* -------------------------
+   Scrollbars
+-------------------------- */
+.recent-activity,
 .chatbot-messages {
   scrollbar-width: thin;
   scrollbar-color: #7e57c2 #f4f0fb;
 }
 
-.recent-activity::-webkit-scrollbar, 
+.recent-activity::-webkit-scrollbar,
 .chatbot-messages::-webkit-scrollbar {
   width: 8px;
 }
 
-.recent-activity::-webkit-scrollbar-thumb, 
+.recent-activity::-webkit-scrollbar-thumb,
 .chatbot-messages::-webkit-scrollbar-thumb {
   background-color: #7e57c2;
   border-radius: 4px;
 }
 
-/* Accessibility focus unchanged */
+/* Dark mode scrollbars */
+.dark .recent-activity::-webkit-scrollbar-thumb,
+.dark .chatbot-messages::-webkit-scrollbar-thumb {
+  background-color: #e6f0ff;
+  border-radius: 4px;
+}
 
+/* -------------------------
+   Focus & Accessibility
+-------------------------- */
 a:focus,
 button:focus,
 input:focus,
 textarea:focus {
   outline: 3px solid #5e35b1;
   outline-offset: 2px;
+}
+
+/* -------------------------
+   Smooth hover effects for panels
+-------------------------- */
+.dashboard-left > *:hover,
+.dashboard-right > *:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease;
+}
+
+/* Dark mode hover tweaks for visibility */
+.dark .dashboard-left > *:hover,
+.dark .dashboard-right > *:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease;
+  filter: brightness(1.1); /* subtle highlight on dark */
 }

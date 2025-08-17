@@ -1,19 +1,23 @@
+// src/components/Dashboard/Leaderboard.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 import '../../styles/Dashboard/Leaderboard.css';
 
-export default function Leaderboard({ leaderboard, currentUserRank, isLoading }) {
+/**
+ * Leaderboard component showing top users
+ */
+export default function Leaderboard({ leaderboard = [], currentUserRank, isLoading }) {
   return (
-    <section className="leaderboard">
+    <section className="leaderboard" role="region" aria-label="Top users leaderboard">
       <h3>Leaderboard</h3>
 
       {isLoading ? (
-        <p className="loading-message">Loading leaderboard...</p>
+        <p className="loading-message" aria-live="polite">Loading leaderboard...</p>
       ) : !leaderboard || leaderboard.length === 0 ? (
-        <p className="empty-message">No leaderboard data available yet.</p>
+        <p className="empty-message" aria-live="polite">No leaderboard data available yet.</p>
       ) : (
         <>
-          <ul className="leaderboard-list" aria-label="Top users leaderboard">
+          <ul className="leaderboard-list">
             {leaderboard.slice(0, 5).map((user) => {
               const { username = 'Unknown', rank, xp = 0 } = user;
               const isCurrent = rank === currentUserRank;
@@ -27,7 +31,7 @@ export default function Leaderboard({ leaderboard, currentUserRank, isLoading })
                 >
                   <span className="rank">#{rank}</span>
                   <span className="username">{username}</span>
-                  <span className="xp">{xp} XP</span>
+                  <span className="xp">{xp.toLocaleString()} XP</span>
                 </li>
               );
             })}

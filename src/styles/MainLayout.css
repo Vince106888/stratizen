@@ -1,96 +1,230 @@
-.top-nav {
-  background-color: var(--color-primary);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.2rem 1rem;
-  line-height: 1;
-  position: relative;
+/* ---------------- Root Variables ---------------- */
+:root {
+  /* Primary colors */
+  --strathmore-blue: #0033a0;
+  --strathmore-light: #e6f0ff;
+  --strathmore-dark: #001f66;
+
+  /* Dropdown */
+  --dropdown-bg: rgba(255, 255, 255, 0.95);
+  --dropdown-blur: 12px;
+
+  /* Text & backgrounds */
+  --bg-color: #ffffff;
+  --text-color: #001f66;
+  --text-secondary: #333333;
+  --hover-bg: #e6f0ff;
+  --logout-color: #c62828;
+  --logout-hover-bg: #ffe6e6;
 }
 
-.nav-left, .nav-right {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+/* ---------------- Dark Mode Overrides ---------------- */
+.dark {
+  --strathmore-blue: #e6f0ff;
+  --strathmore-light: #001f66;
+  --strathmore-dark: #e6f0ff;
+
+  --dropdown-bg: rgba(0, 0, 0, 0.75);
+  --dropdown-blur: 12px;
+
+  --bg-color: #001f66;
+  --text-color: #e6f0ff;
+  --text-secondary: #cccccc;
+  --hover-bg: rgba(230, 240, 255, 0.15);
+  --logout-color: #ff6666;
+  --logout-hover-bg: rgba(255, 102, 102, 0.2);
 }
 
+/* ---------------- Global ---------------- */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* ---------------- NAV CENTER ---------------- */
 .nav-center {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  cursor: pointer;
+}
+
+.logo-center {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+  display: block;
 }
 
 .brand-name {
-  font-weight: bold;
-  font-size: 2rem;
-  letter-spacing: 1px;
+  font-size: 2rem !important;
+  font-weight: 800;
+  color: var(--text-color);
+  letter-spacing: -0.3px;
+  margin: 0;
+  line-height: 1.2;
 }
 
-.menu-toggle {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 1.5rem;
-  cursor: pointer;
-}
-
-.logo {
-  height: 40px;
-}
-
-.nav-btn {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 0.6rem;
-  cursor: pointer;
-}
-
+/* ---------------- Profile Container ---------------- */
 .profile-container {
   position: relative;
+  display: inline-block;
 }
 
 .profile-img {
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
-  height: 40px;
-  width: 40px;
   cursor: pointer;
+  object-fit: cover;
+  border: 2px solid var(--strathmore-blue);
+  user-select: none;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
-.profile-dropdown {
+.profile-img:hover {
+  border-color: var(--strathmore-dark);
+  transform: scale(1.08);
+  box-shadow: 0 0 10px rgba(0, 51, 160, 0.4);
+}
+
+/* ---------------- Dropdown Styling ---------------- */
+.profile-dropdown,
+.settings-dropdown {
   position: absolute;
+  top: 55px;
   right: 0;
-  top: 45px;
-  background-color: white;
-  color: var(--color-text);
-  min-width: 160px;
-  border-radius: 0.4rem;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
-  overflow: hidden;
-  z-index: 100;
+  background: var(--dropdown-bg);
+  backdrop-filter: blur(var(--dropdown-blur));
+  border: 1px solid var(--strathmore-light);
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+  width: 220px;
+  z-index: 1000;
+  padding: 10px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.25s ease-in-out;
 }
 
-.profile-dropdown button {
+.profile-container:hover .profile-dropdown,
+.settings-container:hover .settings-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.profile-dropdown hr,
+.settings-dropdown hr {
+  border: none;
+  border-top: 1px solid var(--strathmore-light);
+  margin: 8px 0;
+}
+
+.profile-dropdown button,
+.settings-dropdown button {
   width: 100%;
-  padding: 0.6rem 1rem;
+  background: transparent;
+  border: none;
   text-align: left;
+  padding: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 6px;
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: 0.2s ease-in-out;
+}
+
+.profile-dropdown button:hover,
+.settings-dropdown button:hover {
+  background: var(--hover-bg);
+  color: var(--strathmore-blue);
+}
+
+/* Profile Info */
+.profile-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 6px;
+}
+
+.dropdown-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--strathmore-light);
+}
+
+.dropdown-name {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--text-color);
+}
+
+/* Logout Button */
+.logout {
+  color: var(--logout-color);
+  font-weight: bold;
+}
+
+.logout:hover {
+  background: var(--logout-hover-bg);
+}
+
+/* ---------------- Settings Icon ---------------- */
+.settings-btn {
   background: none;
   border: none;
+  font-size: 1rem;
   cursor: pointer;
-  font-size: 0.9rem;
+  color: var(--text-color);
+  transition: transform 0.25s ease, color 0.2s ease-in-out;
 }
 
-.profile-dropdown button:hover {
-  background-color: rgba(0, 33, 71, 0.05);
+.settings-btn:hover {
+  color: var(--strathmore-blue);
+  transform: rotate(20deg);
 }
 
-.profile-dropdown hr {
-  margin: 0;
-  border: 0;
-  border-top: 1px solid #eee;
+/* ---------------- Sidebar Titles ---------------- */
+.sidebar-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+  color: var(--strathmore-blue);
+  letter-spacing: -0.5px;
 }
 
-.logout {
-  color: var(--color-accent);
+.sidebar-subtitle {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+  opacity: 0.8;
+}
+
+/* ---------------- Settings Page Header ---------------- */
+.settings-header {
+  margin-bottom: 1.5rem;
+}
+
+.settings-title {
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--strathmore-blue);
+  margin-bottom: 0.4rem;
+  letter-spacing: -0.5px;
+}
+
+.settings-description {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  opacity: 0.85;
+  line-height: 1.5;
 }
