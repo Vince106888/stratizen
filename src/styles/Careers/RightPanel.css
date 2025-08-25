@@ -1,18 +1,19 @@
-/* Right Panel Wrapper */
+/* -------------------- Right Panel Wrapper -------------------- */
 .right-panel {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   position: sticky;
   top: 6rem; /* offset from top for sticky */
+  transition: all 0.3s ease;
 }
 
-/* Generic Panel Styling */
+/* -------------------- Generic Panel Styling -------------------- */
 .panel {
   padding: 1.5rem;
   border-radius: 1rem;
   box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-  transition: all 0.3s ease;
+  transition: all 0.3s ease, background-color 0.3s ease, color 0.3s ease;
 }
 
 .panel:hover {
@@ -20,15 +21,28 @@
   box-shadow: 0 10px 28px rgba(0,0,0,0.12);
 }
 
-/* Quick Links Panel */
+/* -------------------- Quick Links Panel -------------------- */
 .quick-links {
   background-color: #ffffff;
+}
+
+.careers-wrapper.dark .quick-links {
+  background-color: #1f2937;
 }
 
 .quick-links h3 {
   font-weight: 700;
   font-size: 1.125rem;
   margin-bottom: 0.75rem;
+}
+
+.quick-links ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
 .quick-links ul li a {
@@ -44,9 +58,21 @@
   text-decoration: underline;
 }
 
-/* Highlights Panel */
+.careers-wrapper.dark .quick-links ul li a {
+  color: #93c5fd;
+}
+
+.careers-wrapper.dark .quick-links ul li a:hover {
+  color: #60a5fa;
+}
+
+/* -------------------- Highlights Panel -------------------- */
 .highlights {
   background-color: #f0f9ff;
+}
+
+.careers-wrapper.dark .highlights {
+  background-color: #374151;
 }
 
 .highlights h3 {
@@ -55,22 +81,36 @@
   margin-bottom: 0.75rem;
 }
 
+.highlights ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
 .highlights ul li {
   color: #1e293b;
-  margin-bottom: 0.5rem;
   font-size: 0.95rem;
 }
 
-/* CTA Panel */
+.careers-wrapper.dark .highlights ul li {
+  color: #d1d5db;
+}
+
+/* -------------------- CTA Panel -------------------- */
 .cta-panel {
   background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
   color: #ffffff;
   text-align: center;
+  transition: all 0.3s ease;
 }
 
 .cta-panel h4 {
   font-weight: 700;
   font-size: 1.125rem;
+  margin-bottom: 0.5rem;
 }
 
 .apply-btn {
@@ -90,21 +130,19 @@
   color: #1e40af;
 }
 
-/* Dark Mode Overrides */
-@media (prefers-color-scheme: dark) {
-  .quick-links {
-    background-color: #1f2937;
-  }
-  .quick-links ul li a {
-    color: #93c5fd;
-  }
-  .quick-links ul li a:hover {
-    color: #60a5fa;
-  }
-  .highlights {
-    background-color: #374151;
-  }
-  .highlights ul li {
-    color: #d1d5db;
+.careers-wrapper.dark .cta-panel .apply-btn {
+  background-color: #3b82f6;
+  color: #ffffff;
+}
+
+.careers-wrapper.dark .cta-panel .apply-btn:hover {
+  background-color: #2563eb;
+  color: #ffffff;
+}
+
+/* -------------------- Responsive Adjustments -------------------- */
+@media screen and (max-width: 1024px) {
+  .right-panel {
+    display: none;
   }
 }

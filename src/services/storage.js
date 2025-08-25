@@ -7,7 +7,10 @@ export const VALID_IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif", "image
 export const IMAGE_MAX_SIZE = 2 * 1024 * 1024; // 2 MB
 
 /**
- * Validate an image file (type + size).
+ * Validate an image file (type + size)
+ * @param {File} file
+ * @param {number} maxSize
+ * @returns {boolean}
  */
 export function validateImageFile(file, maxSize = IMAGE_MAX_SIZE) {
   if (!file) return false;
@@ -17,24 +20,21 @@ export function validateImageFile(file, maxSize = IMAGE_MAX_SIZE) {
 }
 
 /**
- * Generic image upload function.
- *
- * @param {string} path - Storage path (e.g., "users/uid/profilePicture" or "marketplace/itemId/thumbnail")
+ * Generic image upload function
+ * @param {string} path - Storage path
  * @param {File} file - File object from input
- * @param {(progress:number, snapshot?:object)=>void} [onProgress] - Optional progress callback (0-100)
+ * @param {function} [onProgress] - Optional progress callback (0-100)
  * @returns {Promise<string>} - Download URL
  */
 export async function uploadImage(path, file, onProgress) {
   if (!path) throw new Error("Storage path is required");
   if (!file) throw new Error("File is required");
-
   if (!validateImageFile(file)) {
     throw new Error("Invalid file: only jpeg/png/gif/webp under 2MB allowed");
   }
 
   const storageRef = ref(storage, path);
   const metadata = { contentType: file.type };
-
   const uploadTask = uploadBytesResumable(storageRef, file, metadata);
 
   return new Promise((resolve, reject) => {
@@ -58,7 +58,7 @@ export async function uploadImage(path, file, onProgress) {
 }
 
 /**
- * Generic delete function for any storage path.
+ * Delete an image by storage path
  */
 export async function deleteImage(path) {
   if (!path) throw new Error("Storage path is required");
@@ -67,7 +67,7 @@ export async function deleteImage(path) {
 }
 
 /**
- * Generic get URL function for any storage path.
+ * Get download URL for any storage path
  */
 export async function getImageUrl(path) {
   if (!path) throw new Error("Storage path is required");
@@ -76,29 +76,20 @@ export async function getImageUrl(path) {
 }
 
 /**
- * Convenience wrapper: Upload a user image.
+ * User-specific wrappers
  */
 export function uploadUserImage(uid, file, imageKey = "profilePicture", onProgress) {
   return uploadImage(`users/${uid}/${imageKey}`, file, onProgress);
 }
 
-/**
- * Convenience wrapper: Delete a user image.
- */
 export function deleteUserImage(uid, imageKey = "profilePicture") {
   return deleteImage(`users/${uid}/${imageKey}`);
 }
 
-/**
- * Convenience wrapper: Get user image URL.
- */
 export function getUserImageUrl(uid, imageKey = "profilePicture") {
   return getImageUrl(`users/${uid}/${imageKey}`);
 }
 
-/**
- * Upload profile photo and update Firestore user profile.
- */
 export async function saveProfilePhotoAndUpdateDB(uid, file, imageKey = "profilePicture") {
   const imageUrl = await uploadUserImage(uid, file, imageKey);
   await updateUserProfile(uid, { [imageKey]: imageUrl });
@@ -106,22 +97,38 @@ export async function saveProfilePhotoAndUpdateDB(uid, file, imageKey = "profile
 }
 
 /**
- * Convenience wrapper: Upload a marketplace listing image.
+ * Marketplace-specific wrappers
  */
 export function uploadMarketplaceImage(itemId, file, imageKey = "thumbnail", onProgress) {
   return uploadImage(`marketplace/${itemId}/${imageKey}`, file, onProgress);
 }
 
-/**
- * Convenience wrapper: Delete a marketplace image.
- */
 export function deleteMarketplaceImage(itemId, imageKey = "thumbnail") {
   return deleteImage(`marketplace/${itemId}/${imageKey}`);
 }
 
-/**
- * Convenience wrapper: Get marketplace image URL.
- */
 export function getMarketplaceImageUrl(itemId, imageKey = "thumbnail") {
   return getImageUrl(`marketplace/${itemId}/${imageKey}`);
+}
+
+/**
+ * Post-specific wrappers (Stratizen feed)
+ */
+export function uploadPostImage(postId, file, imageKey = "media", onProgress) {
+  if (!postId) throw new Error("Post ID is required");
+  if (!file) throw new Error("File is required");
+
+  // ensure uniqueness by appending timestamp + original filename
+  const uniqueName = `${imageKey}_${Date.now()}_${file.name}`;
+  return uploadImage(`posts/${postId}/${uniqueName}`, file, onProgress);
+}
+
+export function deletePostImage(postId, imageKey = "media") {
+  if (!postId) throw new Error("Post ID is required");
+  return deleteImage(`posts/${postId}/${imageKey}`);
+}
+
+export function getPostImageUrl(postId, imageKey = "media") {
+  if (!postId) throw new Error("Post ID is required");
+  return getImageUrl(`posts/${postId}/${imageKey}`);
 }

@@ -5,6 +5,9 @@ import {
   collection,
   addDoc,
   serverTimestamp,
+  query,
+  where,
+  getDocs,
 } from "firebase/firestore";
 import {
   getStorage,
@@ -27,6 +30,7 @@ export default function PostEditor({ currentUser, onPostCreated }) {
   const [mediaFiles, setMediaFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
   const fileInputRef = useRef(null);
 
   // Extract URLs from text
@@ -41,7 +45,7 @@ export default function PostEditor({ currentUser, onPostCreated }) {
     const tags = [];
     let match;
     while ((match = tagRegex.exec(text)) !== null) {
-      tags.push(match[1]);
+      tags.push(match[1].toLowerCase()); // normalize
     }
     return tags;
   };
@@ -63,13 +67,12 @@ export default function PostEditor({ currentUser, onPostCreated }) {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
+  // Upload media and return array with url + path + meta (needed for future deletion)
   const uploadMediaFiles = async () => {
-    const urls = [];
+    const results = [];
     for (const file of mediaFiles) {
-      const storageRef = ref(
-        storage,
-        `posts/${currentUser.uid}/${Date.now()}_${file.name}`
-      );
+      const storagePath = `posts/${currentUser.uid}/${Date.now()}_${file.name}`;
+      const storageRef = ref(storage, storagePath);
       const uploadTask = uploadBytesResumable(storageRef, file);
 
       await new Promise((resolve, reject) => {
@@ -79,16 +82,37 @@ export default function PostEditor({ currentUser, onPostCreated }) {
           (error) => reject(error),
           async () => {
             const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-            urls.push({
+            results.push({
               url: downloadURL,
+              path: storagePath,
               type: file.type.startsWith("video") ? "video" : "image",
+              alt: file.name,
+              mime: file.type,
+              size: file.size,
             });
             resolve();
           }
         );
       });
     }
-    return urls;
+    return results;
+  };
+
+  // 🔹 Resolve @usernames -> user IDs from Firestore
+  const resolveTagsToUserIds = async (usernames) => {
+    if (!usernames.length) return [];
+    const userIds = [];
+
+    for (const username of usernames) {
+      const q = query(
+        collection(db, "users"),
+        where("username", "==", username)
+      );
+      const snap = await getDocs(q);
+      snap.forEach((doc) => userIds.push(doc.id));
+    }
+
+    return userIds;
   };
 
   const handleSubmit = async (e) => {
@@ -113,9 +137,10 @@ export default function PostEditor({ currentUser, onPostCreated }) {
 
       const links = extractLinks(content);
       const tagsUsernames = extractTags(content);
-      const tags = []; // TODO: resolve usernames to user IDs
+      const tags = await resolveTagsToUserIds(tagsUsernames);
 
-      await addDoc(collection(db, "posts"), {
+      // 🔹 Create Firestore post with reactions: {}
+      const docRef = await addDoc(collection(db, "posts"), {
         authorId: currentUser.uid,
         content: content.trim(),
         createdAt: serverTimestamp(),
@@ -123,15 +148,37 @@ export default function PostEditor({ currentUser, onPostCreated }) {
         tags,
         links,
         visibility: "public",
+        reactions: {}, // ✅ initial empty reactions object
       });
+
+      // 🔹 Build optimistic post object for instant UI
+      const newPost = {
+        id: docRef.id,
+        authorId: currentUser.uid,
+        content: content.trim(),
+        createdAt: new Date(),
+        media,
+        tags,
+        links,
+        visibility: "public",
+        reactions: {}, // ✅ must also exist here
+        author: {
+          uid: currentUser.uid,
+          displayName: currentUser.displayName || "Anonymous",
+          photoURL: currentUser.photoURL || null,
+        },
+      };
+
+      if (onPostCreated) {
+        onPostCreated(newPost);
+      }
 
       // Reset form
       setContent("");
       setMediaFiles([]);
       if (fileInputRef.current) fileInputRef.current.value = "";
 
-      // Notify parent that a post was created
-      if (onPostCreated) onPostCreated();
+      setSuccess("✅ Post created successfully!");
     } catch (err) {
       setError("Failed to create post. Try again.");
       console.error(err);
@@ -200,6 +247,7 @@ export default function PostEditor({ currentUser, onPostCreated }) {
       </div>
 
       {error && <p className="error-message">{error}</p>}
+      {success && <p className="success-message">{success}</p>}
     </form>
   );
 }

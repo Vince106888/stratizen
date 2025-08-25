@@ -35,6 +35,217 @@
   --logout-hover-bg: rgba(255, 102, 102, 0.2);
 }
 
+/* === Stratizen Layout === */
+.stratizen-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr 320px;
+  height: 100vh;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: grid-template-columns 0.3s ease, background 0.3s ease, color 0.3s ease;
+}
+
+/* Collapsed Sidebar */
+.stratizen-layout.sidebar-collapsed {
+  grid-template-columns: 70px 1fr 320px;
+}
+
+/* Responsive Grid */
+@media (max-width: 1200px) {
+  .stratizen-layout {
+    grid-template-columns: 70px 1fr;
+  }
+  .stratizen-rightpanel {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .stratizen-layout {
+    grid-template-columns: 1fr;
+  }
+  .stratizen-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    transform: translateX(-100%);
+    z-index: 50;
+    transition: transform 0.3s ease;
+  }
+  .stratizen-layout.sidebar-open .stratizen-sidebar {
+    transform: translateX(0);
+  }
+}
+
+/* === Sidebar === */
+.stratizen-sidebar {
+  background-color: var(--bg-color);
+  border-right: 1px solid #ddd;
+  padding: 1rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.collapse-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.collapse-btn:hover {
+  color: var(--strathmore-blue);
+  transform: rotate(-90deg);
+}
+
+.sidebar-title {
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--strathmore-blue);
+}
+
+.sidebar-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: transparent;
+  border: none;
+  font-size: 0.95rem;
+  padding: 0.6rem;
+  border-radius: 12px;
+  text-align: left;
+  color: var(--text-color);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.sidebar-btn:hover {
+  background-color: var(--hover-bg);
+  transform: translateX(3px);
+}
+
+.sidebar-btn.active {
+  background-color: var(--strathmore-blue);
+  color: #fff;
+  font-weight: bold;
+}
+
+/* Logout button */
+.sidebar-btn.logout {
+  color: var(--logout-color);
+}
+.sidebar-btn.logout:hover {
+  background-color: var(--logout-hover-bg);
+}
+
+/* === Main Content === */
+.stratizen-main {
+  background-color: var(--bg-color);
+  padding: 1rem;
+  overflow-y: auto;
+  border-radius: 16px;
+  margin: 1rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.stratizen-header h1 {
+  color: var(--strathmore-blue);
+  margin-bottom: 1rem;
+}
+
+/* === Right Panel === */
+.stratizen-rightpanel {
+  background-color: var(--bg-color);
+  border-left: 1px solid #ddd;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.rightpanel-section {
+  background-color: var(--strathmore-light);
+  padding: 0.8rem;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.rightpanel-section h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  color: var(--strathmore-blue);
+  border-bottom: 2px solid var(--strathmore-blue);
+  padding-bottom: 0.3rem;
+}
+
+.rightpanel-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.rightpanel-section li {
+  padding: 0.4rem 0.5rem;
+  border-radius: 8px;
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-color);
+  transition: background 0.2s ease;
+}
+.rightpanel-section li:hover {
+  background-color: var(--hover-bg);
+}
+
+/* === Status Messages === */
+.status-message {
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.loading-message {
+  background-color: #eaf4ff;
+  color: #004085;
+}
+
+.error-message {
+  background-color: #ffe8e8;
+  color: #721c24;
+}
+
+.info-message {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+/* === Scrollbar Styling === */
+.stratizen-main::-webkit-scrollbar,
+.stratizen-rightpanel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.stratizen-main::-webkit-scrollbar-thumb,
+.stratizen-rightpanel::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
 /* ---------------- Global ---------------- */
 body {
   background-color: var(--bg-color);

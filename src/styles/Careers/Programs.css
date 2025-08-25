@@ -1,0 +1,58 @@
+.programs-section {
+  background-color: #dbeafe; /* light blue */
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.programs-section:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+
+/* Dark mode */
+.careers-wrapper.dark .programs-section {
+  background-color: #111827;
+  color: #f3f4f6;
+}
+
+.programs-section h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.programs-section p {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.programs-list {
+  list-style-type: disc;
+  margin-left: 1.5rem;
+  color: #1f2937;
+  padding-left: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Dark mode for list */
+.careers-wrapper.dark .programs-list {
+  color: #f3f4f6;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 640px) {
+  .programs-section {
+    padding: 1.5rem;
+  }
+  .programs-section h2 {
+    font-size: 1.75rem;
+  }
+  .programs-section p,
+  .programs-list {
+    font-size: 0.95rem;
+  }
+}

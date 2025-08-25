@@ -3,7 +3,7 @@ import '../../styles/Careers/RightPanel.css';
 
 export default function RightPanel() {
   return (
-    <div className="flex flex-col space-y-6 sticky top-24">
+    <div className="right-panel-container">
 
       {/* Quick Links */}
       <div className="panel quick-links">

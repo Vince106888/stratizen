@@ -389,3 +389,152 @@
     padding: 0.7rem;
   }
 }
+
+/* 🌙 Dark Mode Overrides */
+.dark .profile-links-page {
+  background: #0d1117;
+  color: #e5e7eb;
+}
+
+.dark .card {
+  background: #161b22;
+  border-color: #374151;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.dark .section-title {
+  color: #93c5fd;
+}
+
+.dark .form-label {
+  color: #60a5fa;
+}
+
+.dark .input-text {
+  background-color: #1e293b;
+  border-color: #374151;
+  color: #f3f4f6;
+}
+.dark .input-text:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.35);
+}
+
+.dark .input-error {
+  background-color: #450a0a;
+  border-color: #dc2626 !important;
+  color: #fca5a5;
+}
+
+.dark .error-text {
+  color: #f87171;
+}
+
+.dark .clickable-link {
+  color: #93c5fd;
+}
+.dark .clickable-link:hover,
+.dark .clickable-link:focus-visible {
+  color: #bfdbfe;
+}
+
+.dark .invalid-link-text {
+  color: #9ca3af;
+}
+
+.dark .personal-links-list {
+  scrollbar-color: #60a5fa #1e293b;
+}
+.dark .personal-links-list::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+.dark .personal-links-list::-webkit-scrollbar-thumb {
+  background-color: #2563eb;
+  border: 2px solid #1e293b;
+}
+
+.dark .personal-link-row {
+  background: #1f2937;
+}
+.dark .personal-link-row:hover,
+.dark .personal-link-row:focus-within {
+  background: #374151;
+}
+
+.dark .personal-link-label {
+  color: #93c5fd;
+}
+.dark .personal-link-url {
+  color: #d1d5db;
+}
+
+.dark .btn-edit-link {
+  background-color: #2563eb;
+}
+.dark .btn-edit-link:hover,
+.dark .btn-edit-link:focus-visible {
+  background-color: #1d4ed8;
+  outline-color: #1d4ed8;
+}
+
+.dark .btn-save-link {
+  background-color: #16a34a;
+}
+.dark .btn-save-link:disabled,
+.dark .btn-save-link[aria-disabled="true"] {
+  background-color: #064e3b;
+  color: #6ee7b7;
+}
+.dark .btn-save-link:not(:disabled):hover,
+.dark .btn-save-link:not(:disabled):focus-visible {
+  background-color: #15803d;
+  outline-color: #15803d;
+}
+
+.dark .btn-cancel-link {
+  background-color: #b91c1c;
+}
+.dark .btn-cancel-link:hover,
+.dark .btn-cancel-link:focus-visible {
+  background-color: #7f1d1d;
+  outline-color: #7f1d1d;
+}
+
+.dark .btn-add-link {
+  background-color: #2563eb;
+}
+.dark .btn-add-link:hover,
+.dark .btn-add-link:focus-visible {
+  background-color: #1d4ed8;
+  outline-color: #1d4ed8;
+}
+
+.dark .btn-remove-link {
+  color: #f87171;
+}
+.dark .btn-remove-link:hover,
+.dark .btn-remove-link:focus-visible {
+  color: #fca5a5;
+  background: rgba(220, 38, 38, 0.2);
+}
+
+.dark .profile-links-save-btn {
+  background-color: #2563eb;
+}
+.dark .profile-links-save-btn:hover:not(.disabled),
+.dark .profile-links-save-btn:focus-visible:not(.disabled) {
+  background-color: #1d4ed8;
+  outline-color: #1d4ed8;
+}
+.dark .profile-links-save-btn.disabled,
+.dark .profile-links-save-btn:disabled {
+  background-color: #1e293b;
+  color: #6b7280;
+}
+
+.dark .profile-links-save-error {
+  color: #f87171;
+}
+.dark .profile-links-save-success {
+  color: #22c55e;
+}

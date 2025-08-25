@@ -3,9 +3,13 @@
   --strathmore-gold: #ffc72c;
   --strathmore-light: #f4f6fa;
   --strathmore-dark: #1f2937;
+
   --bg-light: #ffffff;
   --bg-panel: #f9fafb;
   --bg-panel-alt: #f3f4f6;
+
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
 
   --radius-lg: 1.5rem;
   --radius-xl: 2rem;
@@ -13,7 +17,23 @@
   --transition-medium: 0.35s ease;
 }
 
-/* Outer wrapper */
+/* ---------------------------
+   Dark Mode Variables
+   (match .dark applied by JS)
+--------------------------- */
+.dark {
+  --bg-light: #111827;
+  --bg-panel: #1f2937;
+  --bg-panel-alt: #374151;
+
+  --strathmore-dark: #e5e7eb;
+  --text-main: #f3f4f6;
+  --text-muted: #9ca3af;
+}
+
+/* ---------------------------
+   Outer wrapper
+--------------------------- */
 .settings-page-wrapper {
   display: flex;
   justify-content: center;
@@ -22,35 +42,42 @@
   background: var(--bg-light);
   min-height: 100vh;
   font-family: "Inter", sans-serif;
-  color: var(--strathmore-dark);
+  color: var(--text-main);
+  transition: background var(--transition-medium), color var(--transition-medium);
 }
 
-/* Main container */
+/* ---------------------------
+   Main container
+--------------------------- */
 .settings-page {
   display: flex;
   flex-direction: row;
   width: 100%;
   max-width: 1200px;
-  background: #ffffff;
+  background: var(--bg-panel);
   border-radius: var(--radius-xl);
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
   overflow: hidden;
-  transition: transform var(--transition-medium);
+  transition: transform var(--transition-medium),
+    background var(--transition-medium);
 }
 
 .settings-page:hover {
   transform: translateY(-2px);
 }
 
-/* Sidebar */
+/* ---------------------------
+   Sidebar
+--------------------------- */
 .settings-sidebar {
   width: 260px;
-  background: #ffffff;
+  background: var(--bg-panel);
   padding: 1.5rem 1rem;
   border-right: 3px solid var(--strathmore-blue);
   display: flex;
   flex-direction: column;
   border-radius: var(--radius-xl) 0 0 var(--radius-xl);
+  transition: background var(--transition-medium), border var(--transition-medium);
 }
 
 .sidebar-title {
@@ -62,7 +89,7 @@
 
 .sidebar-subtitle {
   font-size: 0.9rem;
-  color: #6b7280;
+  color: var(--text-muted);
   margin-bottom: 1rem;
 }
 
@@ -82,7 +109,7 @@
   cursor: pointer;
   font-weight: 500;
   background: transparent;
-  color: var(--strathmore-dark);
+  color: var(--text-main);
   transition: background var(--transition-fast), color var(--transition-fast),
     transform var(--transition-fast);
 }
@@ -101,15 +128,18 @@
   transform: translateX(6px);
 }
 
-/* Content Area */
+/* ---------------------------
+   Content Area
+--------------------------- */
 .settings-content {
   flex: 1;
   padding: 2.5rem;
-  background: #ffffff;
+  background: var(--bg-panel);
   border-radius: 0 var(--radius-xl) var(--radius-xl) 0;
   display: flex;
   align-items: flex-start;
   flex-direction: column;
+  transition: background var(--transition-medium), color var(--transition-medium);
 }
 
 .settings-header {
@@ -124,19 +154,21 @@
 
 .settings-description {
   font-size: 1rem;
-  color: #6b7280;
+  color: var(--text-muted);
   margin-top: 0.3rem;
 }
 
-/* Panels */
+/* ---------------------------
+   Panels
+--------------------------- */
 .settings-panel {
   width: 100%;
-  background: #fff;
+  background: var(--bg-panel-alt);
   padding: 2rem;
   border-radius: var(--radius-lg);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
   transition: transform var(--transition-medium),
-    box-shadow var(--transition-medium);
+    box-shadow var(--transition-medium), background var(--transition-medium);
 }
 
 .settings-panel:hover {
@@ -144,7 +176,9 @@
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
 }
 
-/* Responsive */
+/* ---------------------------
+   Responsive
+--------------------------- */
 @media (max-width: 900px) {
   .settings-page {
     flex-direction: column;

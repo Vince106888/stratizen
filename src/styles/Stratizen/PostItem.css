@@ -1,17 +1,22 @@
+/* ------------------------
+   Post Item Container
+------------------------- */
 .post-item {
-  background: white;
+  background: #ffffff;
   border-radius: 12px;
   padding: 1rem 1.5rem;
-  box-shadow: 0 1px 6px rgb(0 0 0 / 0.1);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.3s ease;
   user-select: none;
 }
 
 .post-item:hover {
-  box-shadow: 0 4px 14px rgb(37 99 235 / 0.25);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
 }
 
-/* Header */
+/* ------------------------
+   Header
+------------------------- */
 .post-header {
   display: flex;
   align-items: center;
@@ -27,7 +32,9 @@
   font-weight: 400;
 }
 
-/* Content */
+/* ------------------------
+   Content
+------------------------- */
 .post-content {
   font-size: 1rem;
   color: #1e293b;
@@ -44,7 +51,9 @@
   color: #1d4ed8;
 }
 
-/* Tags */
+/* ------------------------
+   Tags
+------------------------- */
 .post-tags {
   font-size: 0.9rem;
   margin-top: 0.5rem;
@@ -56,17 +65,95 @@
   font-weight: 500;
 }
 
-/* Media */
+/* ------------------------
+   Media Grid
+------------------------- */
 .post-media {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
   gap: 0.5rem;
-  margin-top: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.post-media:has(:only-child) {
+  grid-template-columns: 1fr;
+}
+
+.post-media:has(:nth-child(2)) {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.post-media:has(:nth-child(3)) {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.post-media:has(:nth-child(4)) {
+  grid-template-columns: repeat(2, 1fr);
 }
 
 .post-media img,
 .post-media video {
-  max-width: 100%;
-  border-radius: 8px;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
   object-fit: cover;
+  max-height: 400px;
+  aspect-ratio: 1 / 1;
+}
+
+/* ------------------------
+   Fullscreen Image Viewer
+------------------------- */
+.media-viewer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.media-viewer-content {
+  position: relative;
+  max-width: 90%;
+  max-height: 90%;
+}
+
+.media-viewer-img {
+  max-width: 100%;
+  max-height: 90vh;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.media-viewer-close {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* ------------------------
+   Delete Post Button
+------------------------- */
+.btn-delete-post {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.btn-delete-post:hover {
+  color: #dc2626;
+  text-decoration: underline;
 }

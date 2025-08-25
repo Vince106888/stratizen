@@ -1,3 +1,4 @@
+// src/components/Stratizen/PostList.jsx
 import React, { useEffect, useState } from "react";
 import {
   collection,
@@ -6,6 +7,8 @@ import {
   limit,
   getDocs,
   startAfter,
+  doc,
+  getDoc,
 } from "firebase/firestore";
 import { db } from "../../services/firebase";
 import PostItem from "./PostItem";
@@ -13,7 +16,12 @@ import "../../styles/Stratizen/PostList.css";
 
 const POST_LIMIT = 20;
 
-const PostList = ({ user }) => {
+const PostList = ({
+  currentUser,
+  refreshKey, // parent passes a changing value to trigger refresh
+  onAddComment,
+  onReactToComment,
+}) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [lastDoc, setLastDoc] = useState(null);
@@ -22,10 +30,40 @@ const PostList = ({ user }) => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    if (user) fetchPosts();
-  }, [user]);
+  // --- Helper: enrich post with user profile ---
+  const enrichWithUser = async (rawPosts) => {
+    const enriched = await Promise.all(
+      rawPosts.map(async (p) => {
+        if (!p.userId) return p;
+        try {
+          const userDoc = await getDoc(doc(db, "users", p.userId));
+          if (userDoc.exists()) {
+            const { username, photoURL } = userDoc.data();
+            return {
+              ...p,
+              authorName: username || "Unknown",
+              authorPhoto: photoURL || null,
+            };
+          }
+        } catch (err) {
+          console.warn("Failed to fetch user for post:", p.id, err);
+        }
+        return {
+          ...p,
+          authorName: "Unknown",
+          authorPhoto: null,
+        };
+      })
+    );
+    return enriched;
+  };
 
+  // --- Initial + refresh fetch ---
+  useEffect(() => {
+    fetchPosts();
+  }, [refreshKey]);
+
+  /** --- Fetch first page --- */
   const fetchPosts = async () => {
     setLoading(true);
     setError(null);
@@ -36,61 +74,59 @@ const PostList = ({ user }) => {
         limit(POST_LIMIT)
       );
       const snapshot = await getDocs(postsQuery);
-      const fetchedPosts = snapshot.docs.map((doc) => ({
+      const rawPosts = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-      setPosts(fetchedPosts);
+
+      const enriched = await enrichWithUser(rawPosts);
+
+      setPosts(enriched);
       setLastDoc(snapshot.docs[snapshot.docs.length - 1] || null);
       setNewPostCount(0);
     } catch (err) {
-      setError("Failed to load posts. Please try again.");
       console.error(err);
+      setError("Failed to load posts. Please try again.");
     }
     setLoading(false);
   };
 
+  /** --- Check if newer posts exist --- */
   const checkForNewPosts = async () => {
     if (!posts.length) return;
     setCheckingNew(true);
-    setError(null);
     try {
       const latestTimestamp = posts[0]?.createdAt;
-      if (!latestTimestamp) {
-        setCheckingNew(false);
-        return;
-      }
+      if (!latestTimestamp) return;
+
       const postsQuery = query(
         collection(db, "posts"),
         orderBy("createdAt", "desc"),
         limit(POST_LIMIT)
       );
       const snapshot = await getDocs(postsQuery);
-      const allDocs = snapshot.docs.map((doc) => ({
+      const rawPosts = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
 
-      const countNew = allDocs.filter(
+      const countNew = rawPosts.filter(
         (p) => p.createdAt?.seconds > latestTimestamp.seconds
       ).length;
 
       setNewPostCount(countNew);
     } catch (err) {
-      setError("Failed to check for new posts.");
       console.error(err);
+      setError("Failed to check for new posts.");
+    } finally {
+      setCheckingNew(false);
     }
-    setCheckingNew(false);
   };
 
-  const refreshPosts = async () => {
-    await fetchPosts();
-  };
-
+  /** --- Load more (pagination) --- */
   const loadMorePosts = async () => {
     if (!lastDoc) return;
     setLoadingMore(true);
-    setError(null);
     try {
       const postsQuery = query(
         collection(db, "posts"),
@@ -99,54 +135,102 @@ const PostList = ({ user }) => {
         limit(POST_LIMIT)
       );
       const snapshot = await getDocs(postsQuery);
-      const morePosts = snapshot.docs.map((doc) => ({
+      const rawPosts = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
 
-      setPosts((prev) => [...prev, ...morePosts]);
+      const enriched = await enrichWithUser(rawPosts);
+
+      setPosts((prev) => [...prev, ...enriched]);
       setLastDoc(snapshot.docs[snapshot.docs.length - 1] || null);
     } catch (err) {
-      setError("Failed to load more posts.");
       console.error(err);
+      setError("Failed to load more posts.");
     }
     setLoadingMore(false);
   };
 
-  if (loading)
+  /** --- Delete locally --- */
+  const handleDeletePost = (postId) => {
+    setPosts((prev) => prev.filter((p) => p.id !== postId));
+  };
+
+  /** --- Optimistic comment reaction --- */
+  const handleReactToComment = (postId, commentId, type) => {
+    setPosts((prev) =>
+      prev.map((post) =>
+        post.id === postId
+          ? {
+              ...post,
+              comments: post.comments?.map((c) =>
+                c.id === commentId
+                  ? {
+                      ...c,
+                      reactions: {
+                        ...c.reactions,
+                        [type]: (c.reactions?.[type] || 0) + 1,
+                      },
+                    }
+                  : c
+              ),
+            }
+          : post
+      )
+    );
+    onReactToComment?.(postId, commentId, type); // sync with parent/DB
+  };
+
+  // ---- RENDER ----
+  if (loading) {
     return (
       <div className="post-list-loading">
         <div className="loader"></div>
         Loading posts...
       </div>
     );
+  }
 
-  if (!loading && posts.length === 0)
+  if (!posts.length) {
     return <p className="post-list-empty">No posts found.</p>;
+  }
 
   return (
     <section className="post-list-container">
-      <header className="post-list-header">
+      {/* Floating check for new posts */}
+      <div className="floating-new-post-btn">
         <button
           className="btn-check-new"
           onClick={checkForNewPosts}
           disabled={checkingNew}
-          aria-live="polite"
         >
-          {checkingNew ? "Checking…" : "Check for new posts"}
+          {checkingNew
+            ? "Checking…"
+            : newPostCount > 0
+            ? `🔔 ${newPostCount} New`
+            : "🔔 New"}
         </button>
         {newPostCount > 0 && (
-          <button className="btn-refresh" onClick={refreshPosts}>
-            Refresh ({newPostCount} new)
+          <button className="btn-refresh" onClick={fetchPosts}>
+            Refresh
           </button>
         )}
-      </header>
+      </div>
 
       {error && <p className="post-list-error">{error}</p>}
 
       <div className="post-list">
         {posts.map((post) => (
-          <PostItem key={post.id} post={post} currentUser={user} />
+          <PostItem
+            key={post.id}
+            post={post}
+            currentUser={currentUser}
+            onDelete={handleDeletePost}
+            onAddComment={(text) => onAddComment(post.id, text)}
+            onReactToComment={(commentId, type) =>
+              handleReactToComment(post.id, commentId, type)
+            }
+          />
         ))}
       </div>
 

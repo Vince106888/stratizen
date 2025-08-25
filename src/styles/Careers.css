@@ -1,157 +1,343 @@
-/* General Wrapper */
+/* ==========================================================================
+   Careers – Next-Gen Modular Styles
+   File: src/styles/Careers.modern.css
+   Notes:
+   - Uses CSS variables for full theming (light/dark).
+   - Works alongside Tailwind utilities without conflicts.
+   - Grid split: 2/3 main panel : 1/3 sidebar on lg+.
+   - Sticky sidebar, responsive, focus-visible styles.
+   ========================================================================== */
+
+/* -------------------------
+   🌈 Theme Tokens
+-------------------------- */
+:root {
+  --brand-blue: #00205b;
+  --brand-gold: #ffc72c;
+
+  --bg-body: #f3f4f9;
+  --bg-panel: #ffffff;
+  --bg-panel-alt: #f9fafb;
+
+  --text-strong: #0f172a;   /* slate-900-ish */
+  --text-muted: #475569;    /* slate-600-ish */
+  --text-invert: #ffffff;
+
+  --accent: #3b82f6;        /* blue-500 */
+  --accent-2: #6366f1;      /* indigo-500 */
+  --accent-3: #9333ea;      /* purple-600 */
+
+  --shadow-soft: 0 8px 28px rgba(15, 23, 42, 0.08);
+  --shadow-hover: 0 12px 34px rgba(15, 23, 42, 0.12);
+
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 10px;
+
+  --ring: 2px;
+  --ring-color: rgba(59, 130, 246, 0.65);
+
+  --transition: 200ms ease;
+}
+
+.dark {
+  --bg-body: #0b1220;
+  --bg-panel: #0f172a;      /* slate-900/800 */
+  --bg-panel-alt: #0b1324;
+
+  --text-strong: #e6f0ff;
+  --text-muted: #cbd5e1;
+  --text-invert: #ffffff;
+
+  --accent: #2563eb;        /* blue-600 */
+  --accent-2: #4f46e5;      /* indigo-600 */
+  --accent-3: #7e22ce;      /* purple-700 */
+
+  --ring-color: rgba(99, 102, 241, 0.65);
+}
+
+/* -------------------------
+   📦 Page Wrapper
+-------------------------- */
 .careers-wrapper {
-  background-color: #f9fafb; /* light gray background */
-  color: #1f2937; /* dark text for visibility */
-  min-height: 100vh;
-  font-family: 'Inter', sans-serif;
+  max-width: 1400px;
+  margin: 2rem auto;
+  padding: clamp(1rem, 2.5vw, 2rem);
+  border-radius: var(--radius-lg);
+  background: var(--bg-body);
+  box-shadow: var(--shadow-soft);
+  color: var(--text-strong);
+  transition: background-color var(--transition), color var(--transition), box-shadow var(--transition);
 }
 
-/* Panels */
-.main-panel {
-  background-color: #ffffff;
-  border-radius: 1rem;
-  padding: 1.5rem;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-}
-
-.right-panel {
-  transition: all 0.3s ease;
-}
-
-/* Hero Section */
+/* -------------------------
+   🎯 Hero (Integrated Header)
+-------------------------- */
 .hero {
-  background: linear-gradient(135deg, #6d28d9, #3b82f6, #9333ea);
-  color: #ffffff;
-  padding: 3rem;
-  border-radius: 1rem;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2), var(--accent-3));
+  color: var(--text-invert);
+  padding: clamp(2rem, 6vw, 4rem) clamp(1rem, 4vw, 2rem);
+  border-radius: var(--radius-lg);
   text-align: center;
+  margin-bottom: clamp(1rem, 3vw, 2rem);
+  box-shadow: var(--shadow-soft);
   position: relative;
+  overflow: hidden;
 }
 
 .hero h1 {
-  font-size: 2.5rem;
+  font-size: clamp(1.875rem, 3.6vw, 3rem); /* 30–48px */
   font-weight: 800;
-  margin-bottom: 1rem;
+  letter-spacing: -0.015em;
+  margin: 0 0 0.8rem;
 }
 
 .hero p {
-  font-size: 1.2rem;
-  margin-bottom: 2rem;
+  font-size: clamp(1rem, 1.4vw, 1.25rem);
+  line-height: 1.6;
+  max-width: 720px;
+  margin: 0 auto;
+  color: rgba(255, 255, 255, 0.95);
 }
 
-.hero .cta {
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.75rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
+.hero-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+  justify-content: center;
+  margin-top: 1.5rem;
 }
 
-.hero .cta.primary {
-  background-color: #ffffff;
-  color: #3b82f6;
-}
+/* Button base */
+.cta-btn {
+  appearance: none;
+  border: 0;
+  outline: none;
+  cursor: pointer;
+  user-select: none;
 
-.hero .cta.primary:hover {
-  background-color: #e0e7ff;
-}
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
 
-.hero .cta.outline {
-  border: 2px solid #ffffff;
-  color: #ffffff;
-}
-
-.hero .cta.outline:hover {
-  background-color: #ffffff;
-  color: #3b82f6;
-}
-
-/* Value Grid */
-.value-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-}
-
-.value-card {
-  background: linear-gradient(135deg, #fff7ed, #ffedd5);
-  border-radius: 1rem;
-  padding: 1.5rem;
-  text-align: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.value-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-}
-
-/* Role Card */
-.role-card {
-  background-color: #fef3c7; /* light yellow */
-  padding: 1.5rem;
-  border-radius: 1rem;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.role-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 24px rgba(0,0,0,0.12);
-}
-
-.role-title {
-  font-size: 1.25rem;
   font-weight: 700;
-  margin-bottom: 0.5rem;
+  letter-spacing: .01em;
+  padding: .75rem 1.25rem;
+  border-radius: .75rem;
+  transition: transform var(--transition), box-shadow var(--transition), background-color var(--transition), color var(--transition), border-color var(--transition);
+  text-decoration: none;
+  line-height: 1;
 }
 
-/* Tags */
-.tag {
-  padding: 0.25rem 0.5rem;
-  font-size: 0.75rem;
-  font-weight: 500;
-  border-radius: 9999px;
-  margin-right: 0.25rem;
-  margin-bottom: 0.25rem;
-  display: inline-block;
+.cta-btn:focus-visible {
+  box-shadow: 0 0 0 var(--ring) var(--ring-color);
+  transform: translateY(-2px);
 }
 
-/* Programs Section */
-.programs-section {
-  background-color: #dbeafe; /* light blue */
-  border-radius: 1rem;
-  padding: 2rem;
-  transition: transform 0.3s ease;
+/* Primary & Outline states (React toggles these) */
+.cta-btn.primary {
+  background-color: #fff;
+  color: var(--accent);
+  box-shadow: var(--shadow-soft);
+}
+.dark .cta-btn.primary {
+  background-color: #111827; /* gray-900 */
+  color: #e5e7eb;
 }
 
-.programs-section:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+.cta-btn.primary:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+.cta-btn.primary:active { transform: translateY(0); }
+
+.cta-btn.outline {
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, .95);
+  color: #fff;
+}
+.dark .cta-btn.outline { border-color: rgba(229, 231, 235, .9); }
+
+.cta-btn.outline:hover {
+  background-color: #fff;
+  color: var(--accent);
 }
 
-/* Final CTA */
-.final-cta {
-  background: linear-gradient(135deg, #3b82f6, #9333ea);
-  color: #ffffff;
-  padding: 3rem;
-  border-radius: 1rem;
-  text-align: center;
+/* -------------------------
+   🧱 Layout: Main + Sidebar
+-------------------------- */
+.careers-container {
+  /* your JSX already has Tailwind grid utilities; this CSS complements them */
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1rem, 2vw, 2rem);
 }
 
-.final-cta a {
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.75rem;
-  font-weight: 600;
-  margin: 0.5rem;
-  transition: all 0.3s ease;
-}
-
-.final-cta a:hover {
-  opacity: 0.9;
-}
-
-/* Responsive adjustments */
-@media screen and (max-width: 1024px) {
-  .right-panel {
-    display: none;
+@media (min-width: 1024px) {
+  .careers-container {
+    grid-template-columns: 2fr 1fr; /* 2/3 main : 1/3 side */
   }
+}
+
+/* Main Panel */
+.main-panel-wrapper { min-width: 0; } /* prevent overflow in grid children */
+
+.main-panel {
+  background: var(--bg-panel);
+  color: var(--text-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  padding: clamp(1rem, 3vw, 2.5rem);
+  transition: background-color var(--transition), color var(--transition), box-shadow var(--transition);
+}
+
+.main-panel h2 {
+  font-size: clamp(1.25rem, 1.8vw, 1.5rem);
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 1.25rem;
+}
+
+/* Sidebar */
+.right-panel {
+  min-width: 0;
+}
+
+.right-panel .side-card {
+  background: var(--bg-panel);
+  color: var(--text-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  padding: clamp(1rem, 3vw, 1.5rem);
+  transition: background-color var(--transition), color var(--transition), box-shadow var(--transition);
+}
+
+/* Sticky only on large screens */
+@media (min-width: 1024px) {
+  .right-panel .side-sticky {
+    position: sticky;
+    top: 6rem; /* matches lg:top-24 in Tailwind */
+  }
+}
+
+/* -------------------------
+   🎴 Cards / Lists
+-------------------------- */
+.career-card {
+  background: var(--bg-panel-alt);
+  border: 1px solid rgba(148, 163, 184, .25);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+}
+
+.career-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--accent);
+}
+
+.career-card:focus-within {
+  outline: var(--ring) solid var(--ring-color);
+  outline-offset: 2px;
+}
+
+.career-card h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: .35rem;
+}
+
+.career-card p {
+  color: var(--text-muted);
+  font-size: .95rem;
+  line-height: 1.45;
+}
+
+/* -------------------------
+   🔁 Feedback States
+-------------------------- */
+.loading-screen,
+.error-screen,
+.no-data-screen {
+  display: grid;
+  place-items: center;
+  min-height: 45vh;
+  text-align: center;
+  border-radius: var(--radius-md);
+  padding: 2rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.loading-screen,
+.no-data-screen {
+  background: var(--bg-panel-alt);
+  color: var(--accent-2);
+}
+
+.error-screen {
+  background: #ffebee;
+  color: #b71c1c;
+}
+.dark .error-screen {
+  background: #2b0f12;
+  color: #fecaca;
+}
+
+/* -------------------------
+   🧭 Section Switcher (Optional helpers)
+   (Your React toggles .primary/.outline on buttons and
+    conditionally renders sections; these are just cosmetics.)
+-------------------------- */
+.tabbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  justify-content: center;
+}
+
+.tabbar .tab {
+  padding: .5rem .9rem;
+  border-radius: .65rem;
+  background: transparent;
+  border: 1px solid rgba(148, 163, 184, .35);
+  color: var(--text-strong);
+  font-weight: 600;
+  transition: background-color var(--transition), color var(--transition), border-color var(--transition), transform var(--transition);
+}
+
+.tabbar .tab:hover { transform: translateY(-1px); }
+.tabbar .tab.is-active {
+  background: var(--bg-panel);
+  border-color: var(--accent);
+  box-shadow: var(--shadow-soft);
+}
+
+/* -------------------------
+   ♿ Accessibility & Motion
+-------------------------- */
+:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 var(--ring) var(--ring-color);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* -------------------------
+   🧩 Utility Bridges
+   (Helpful when mixing Tailwind + CSS modules)
+-------------------------- */
+.hidden-until-lg {
+  display: none;
+}
+@media (min-width: 1024px) {
+  .hidden-until-lg { display: block; }
+}
+
+.stack-gap > * + * {
+  margin-top: clamp(0.75rem, 1.8vw, 1.25rem);
 }

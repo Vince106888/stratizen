@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { getAuth } from "firebase/auth";
 import { getUserProfile, updateUserProfile } from "../../services/db";
+import { Sun, Moon } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function AppearanceSettings() {
   const auth = getAuth();
@@ -27,13 +29,9 @@ export default function AppearanceSettings() {
     fetchTheme();
   }, [auth]);
 
-  // Apply theme to document body
+  // Apply theme to <html> element
   const applyTheme = (theme) => {
-    if (theme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
+    document.documentElement.classList.toggle("dark", theme === "dark");
   };
 
   // Toggle theme and save to Firestore
@@ -55,19 +53,24 @@ export default function AppearanceSettings() {
   if (loading) return <p>Loading theme...</p>;
 
   return (
-    <div>
-      <h2>Appearance Settings</h2>
-      <div style={{ marginTop: "1rem" }}>
-        <label style={{ cursor: "pointer", fontSize: "14px" }}>
-          <input
-            type="checkbox"
-            checked={theme === "dark"}
-            onChange={toggleTheme}
-            style={{ marginRight: "8px" }}
-          />
-          Enable Dark Mode
-        </label>
-      </div>
+    <div className="appearance-settings">
+      <h2 className="text-lg font-semibold mb-3">Appearance Settings</h2>
+      <p className="text-sm text-gray-500 mb-4">
+        Switch between light and dark mode. Your preference is saved to your account.
+      </p>
+
+      <motion.button
+        whileTap={{ scale: 0.9, rotate: 10 }}
+        className="flex items-center px-4 py-2 rounded-lg shadow-md bg-gray-100 dark:bg-gray-800 transition"
+        onClick={toggleTheme}
+      >
+        {theme === "dark" ? (
+          <Sun size={18} className="mr-2" />
+        ) : (
+          <Moon size={18} className="mr-2" />
+        )}
+        <span>Enable {theme === "dark" ? "Light" : "Dark"} Mode</span>
+      </motion.button>
     </div>
   );
 }

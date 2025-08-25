@@ -1,3 +1,4 @@
+// src/pages/SettingsPage.jsx
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Palette, User, Shield, Bell } from "lucide-react";
@@ -9,38 +10,43 @@ import NotificationSettings from "../components/Settings/NotificationSettings";
 
 import "../styles/SettingsPage.css";
 
-// Config: all settings sections with icons
+/* -----------------------
+   SETTINGS CONFIG
+------------------------- */
 const settingsSections = [
-  { 
-    id: "appearance", 
-    label: "Appearance", 
-    icon: <Palette size={18} />, 
-    component: AppearanceSettings, 
-    description: "Customize how your dashboard looks and feels." 
+  {
+    id: "appearance",
+    label: "Appearance",
+    icon: <Palette size={18} />,
+    component: AppearanceSettings,
+    description: "Customize how your dashboard looks and feels.",
   },
-  { 
-    id: "account", 
-    label: "Account & Profile", 
-    icon: <User size={18} />, 
-    component: AccountSettings, 
-    description: "Update your personal details and manage account preferences." 
+  {
+    id: "account",
+    label: "Account & Profile",
+    icon: <User size={18} />,
+    component: AccountSettings,
+    description: "Update your personal details and manage account preferences.",
   },
-  { 
-    id: "privacy", 
-    label: "Privacy & Security", 
-    icon: <Shield size={18} />, 
-    component: PrivacySettings, 
-    description: "Control who sees your activity and secure your account." 
+  {
+    id: "privacy",
+    label: "Privacy & Security",
+    icon: <Shield size={18} />,
+    component: PrivacySettings,
+    description: "Control who sees your activity and secure your account.",
   },
-  { 
-    id: "notifications", 
-    label: "Notifications", 
-    icon: <Bell size={18} />, 
-    component: NotificationSettings, 
-    description: "Choose how and when you receive updates." 
+  {
+    id: "notifications",
+    label: "Notifications",
+    icon: <Bell size={18} />,
+    component: NotificationSettings,
+    description: "Choose how and when you receive updates.",
   },
 ];
 
+/* -----------------------
+   SETTINGS PAGE
+------------------------- */
 export default function SettingsPage() {
   const [activeSection, setActiveSection] = useState("appearance");
   const activeMeta = settingsSections.find((s) => s.id === activeSection);
@@ -57,16 +63,25 @@ export default function SettingsPage() {
     <div className="settings-page-wrapper">
       <div className="settings-page">
         {/* Sidebar */}
-        <nav className="settings-sidebar" role="tablist" aria-label="Settings Sections">
-          <h2 className="sidebar-title">⚙️ Settings</h2>
-          <p className="sidebar-subtitle">Personalize your experience</p>
+        <nav
+          className="settings-sidebar"
+          role="tablist"
+          aria-label="Settings Sections"
+        >
+          <div className="sidebar-header">
+            <h2 className="sidebar-title">⚙️ Settings</h2>
+            <p className="sidebar-subtitle">Personalize your experience</p>
+          </div>
+
           <ul>
             {settingsSections.map((section) => (
               <li key={section.id} className="settings-tab-container">
                 <button
                   role="tab"
                   aria-selected={activeSection === section.id}
-                  className={`settings-tab ${activeSection === section.id ? "active" : ""}`}
+                  className={`settings-tab ${
+                    activeSection === section.id ? "active" : ""
+                  }`}
                   onClick={() => setActiveSection(section.id)}
                   title={section.label}
                 >
@@ -74,7 +89,6 @@ export default function SettingsPage() {
                   <span>{section.label}</span>
                 </button>
 
-                {/* Highlight bar animation */}
                 {activeSection === section.id && (
                   <motion.div
                     layoutId="active-highlight"

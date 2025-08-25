@@ -1,36 +1,32 @@
 // src/pages/Stratizen.jsx
-import React, { useEffect, useState, useCallback } from "react";
-import { ToastContainer } from "react-toastify";
+import React, { useEffect, useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import {
-  getAuth,
-  onAuthStateChanged
-} from "firebase/auth";
-import {
-  getFirestore,
-  collection,
-  query,
-  where,
-  orderBy,
-  limit,
-  onSnapshot,
-  doc,
-  getDoc
-} from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { app } from "../services/firebase";
+import { useTheme } from "../context/ThemeContext";
 
 // Components
 import PostList from "../components/Stratizen/PostList";
 import PostEditor from "../components/Stratizen/PostEditor";
 import ClubList from "../components/Stratizen/ClubList";
 import GroupList from "../components/Stratizen/GroupList";
-import SearchBar from "../components/Stratizen/SearchBar";
+
+// Services
+import { getUserProfile } from "../services/db";
+import {
+  listenToFeed,
+  addComment,
+  deleteComment,
+  addReaction,
+  removeReaction,
+  deletePost,
+} from "../services/stratizenService";
 
 // Styles
 import "../styles/Stratizen.css";
 
 const auth = getAuth(app);
-const db = getFirestore(app);
 
 const Stratizen = () => {
   const [user, setUser] = useState(undefined);
@@ -40,7 +36,11 @@ const Stratizen = () => {
   const [loadingPosts, setLoadingPosts] = useState(true);
   const [activeTab, setActiveTab] = useState("community");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const { theme } = useTheme(); // "light" | "dark"
 
+  /* ==============================
+     AUTH STATE WATCH
+  ============================== */
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser || null);
@@ -48,96 +48,162 @@ const Stratizen = () => {
     return () => unsubscribe();
   }, []);
 
-  const fetchUserProfile = useCallback(async (uid) => {
-    try {
-      const snap = await getDoc(doc(db, "users", uid));
-      setUserProfile(snap.exists() ? snap.data() : null);
-    } catch (err) {
-      setError("Failed to load user profile.");
-      console.error(err);
-    }
-  }, []);
-
+  /* ==============================
+     FETCH USER PROFILE
+  ============================== */
   useEffect(() => {
-    if (user?.uid) {
-      fetchUserProfile(user.uid);
-    } else {
-      setUserProfile(null);
-    }
-  }, [user, fetchUserProfile]);
+    const fetchProfile = async () => {
+      if (!user?.uid) {
+        setUserProfile(null);
+        return;
+      }
+      try {
+        const profile = await getUserProfile(user.uid);
+        setUserProfile(profile);
+      } catch (err) {
+        console.error("Profile fetch failed:", err);
+        setError("Failed to load user profile.");
+      }
+    };
+    fetchProfile();
+  }, [user]);
 
+  /* ==============================
+     LISTEN TO POSTS (FEED)
+  ============================== */
   useEffect(() => {
     if (!userProfile) {
       setPosts([]);
       setLoadingPosts(false);
       return;
     }
-
     setLoadingPosts(true);
-    const postsRef = collection(db, "posts");
 
-    const batchArray = (arr, size) =>
-      Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
-        arr.slice(i * size, i * size + size)
-      );
+    const unsub = listenToFeed((fetchedPosts) => {
+      setPosts(fetchedPosts);
+      setLoadingPosts(false);
+    });
 
-    const createInQueries = (field, arr) =>
-      batchArray(arr, 10).map(batch =>
-        query(postsRef, where(field, "in", batch), orderBy("createdAt", "desc"), limit(20))
-      );
-
-    const queries = [];
-
-    if (userProfile.connections?.length) {
-      queries.push(
-        ...createInQueries("authorId", userProfile.connections).map(q =>
-          query(q, where("visibility", "==", "connections"))
-        )
-      );
-    }
-
-    if (userProfile.clubs?.length) {
-      queries.push(
-        ...createInQueries("visibility", userProfile.clubs.map(id => `club:${id}`))
-      );
-    }
-
-    if (userProfile.followedPages?.length) {
-      queries.push(
-        ...createInQueries("visibility", userProfile.followedPages.map(id => `page:${id}`))
-      );
-    }
-
-    queries.push(
-      query(postsRef, where("visibility", "==", "public"), orderBy("createdAt", "desc"), limit(20))
-    );
-
-    const unsubscribes = queries.map(q =>
-      onSnapshot(q, (snapshot) => {
-        const newPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setPosts((prev) => {
-          const map = new Map();
-          [...prev, ...newPosts].forEach(post => map.set(post.id, post));
-          return Array.from(map.values()).sort((a, b) => b.createdAt.seconds - a.createdAt.seconds);
-        });
-        setLoadingPosts(false);
-      })
-    );
-
-    return () => unsubscribes.forEach(unsub => unsub());
+    return () => unsub && unsub();
   }, [userProfile]);
 
-  if (error) return <div className="error-message">🚨 {error}</div>;
-  if (user === undefined || userProfile === null) return <p>Loading Stratizen Hub...</p>;
-  if (!user) return <p>Please login to access Stratizen Hub.</p>;
+  /* ==============================
+     HANDLE POST DELETION (persistent)
+  ============================== */
+  const handleDeletePost = async (postId) => {
+    try {
+      await deletePost(postId);
+      setPosts((prev) => prev.filter((p) => p.id !== postId));
+      toast.success("Post deleted");
+    } catch (err) {
+      console.error("Failed to delete post:", err);
+      toast.error("Failed to delete post");
+    }
+  };
 
+  /* ==============================
+    HANDLE ADD COMMENT
+  ============================== */
+  const handleAddComment = async (postId, text) => {
+    if (!user || !userProfile) return;
+    try {
+      const commentId = await addComment(postId, {
+        uid: user.uid,
+        username: userProfile.username || user.displayName || "Anonymous",
+        photoURL: userProfile.photoURL || user.photoURL || "/default-avatar.png",
+        text,
+        createdAt: new Date(),
+      });
+
+      // Optimistic UI update
+      setPosts((prev) =>
+        prev.map((post) =>
+          post.id === postId
+            ? {
+                ...post,
+                comments: [
+                  ...(post.comments || []),
+                  {
+                    id: commentId,
+                    uid: user.uid,
+                    username: userProfile.username,
+                    photoURL: userProfile.photoURL,
+                    text,
+                    createdAt: new Date(),
+                    reactions: {},
+                  },
+                ],
+              }
+            : post
+        )
+      );
+
+      toast.success("Comment added!");
+      return commentId;
+    } catch (err) {
+      console.error("Failed to add comment:", err);
+      toast.error("Failed to add comment");
+    }
+  };
+
+  /* ==============================
+    HANDLE REACTIONS (Unified)
+  ============================== */
+  const handleReact = async (postId, commentId, type, isRemoving = false) => {
+    if (!user) return;
+    try {
+      if (isRemoving) {
+        await removeReaction(postId, commentId, user.uid, type);
+      } else {
+        await addReaction(postId, commentId, user.uid, type);
+      }
+    } catch (err) {
+      console.error("Reaction error:", err);
+      toast.error("Failed to update reaction");
+    }
+  };
+
+  /* ==============================
+     HANDLE DELETE COMMENT
+  ============================== */
+  const handleDeleteComment = async (postId, commentId) => {
+    try {
+      await deleteComment(postId, commentId);
+      toast.success("Comment deleted");
+    } catch (err) {
+      console.error("Failed to delete comment:", err);
+      toast.error("Failed to delete comment");
+    }
+  };
+
+  /* ==============================
+     RENDER MAIN CONTENT
+  ============================== */
   const renderContent = () => {
     switch (activeTab) {
       case "community":
         return (
           <>
-            <PostEditor currentUser={user} onPostCreated={() => setLoadingPosts(true)} />
-            {loadingPosts ? <p>Loading posts...</p> : <PostList posts={posts} currentUser={user} />}
+            <PostEditor
+              currentUser={user}
+              currentUserProfile={userProfile}
+              onPostCreated={(newPost) =>
+                setPosts((prev) => [newPost, ...prev])
+              }
+            />
+            {loadingPosts ? (
+              <p>Loading posts...</p>
+            ) : (
+              <PostList
+                posts={posts}
+                currentUser={user}
+                currentUserProfile={userProfile}
+                onDelete={handleDeletePost}
+                onAddComment={handleAddComment}
+                onDeleteComment={handleDeleteComment}
+                onReact={handleReact}
+              />
+            )}
           </>
         );
       case "clubs":
@@ -152,35 +218,43 @@ const Stratizen = () => {
   const menuItems = [
     { key: "search", label: "Search", icon: "🔍" },
     { key: "community", label: "SU Hub", icon: "🌐" },
+    { key: "reels", label: "Reels / Videos", icon: "🎥" },
+    { key: "trending", label: "Trending", icon: "🔥" },
+    { key: "events", label: "Events", icon: "📅" },
     { key: "people", label: "Networking", icon: "🤝" },
+    { key: "clubs", label: "Clubs & Societies", icon: "📚" },
+    { key: "groups", label: "Groups", icon: "👥" },
     { key: "pages", label: "Pages", icon: "📄" },
     { key: "forum", label: "Forum", icon: "💬" },
     { key: "newsletters", label: "Newsletters", icon: "📰" },
-    { key: "reels", label: "Reels / Videos", icon: "🎥" },
-    { key: "trending", label: "Trending", icon: "🔥" }, // optional: can keep/remove depending on usage
-    { key: "events", label: "Events", icon: "📅" },
-    { key: "clubs", label: "Clubs & Societies", icon: "📚" },
-    { key: "groups", label: "Groups", icon: "👥" },
     { key: "notifications", label: "Notifications", icon: "🔔" },
-    { key: "settings", label: "Settings", icon: "⚙️" }
+    { key: "settings", label: "Settings", icon: "⚙️" },
   ];
 
+  if (error) return <div className="error-message">🚨 {error}</div>;
+  if (user === undefined) return <p>Loading Stratizen Hub...</p>;
+  if (!user) return <p>Please login to access Stratizen Hub.</p>;
+  if (user && userProfile === null)
+    return <p>⚠️ No profile found. Please complete your setup.</p>;
+
   return (
-    <div className={`stratizen-layout ${sidebarCollapsed ? "sidebar-collapsed" : ""}`}>
+    <div 
+      data-theme={theme}
+      className={`stratizen-layout ${sidebarCollapsed ? "sidebar-collapsed" : ""}`}>
       {/* Left Sidebar */}
       <aside className={`stratizen-sidebar ${sidebarCollapsed ? "collapsed" : ""}`}>
         <div className="sidebar-header">
           {!sidebarCollapsed && <h2 className="sidebar-title">Menu</h2>}
           <button
             className="collapse-btn"
-            onClick={() => setSidebarCollapsed(prev => !prev)}
+            onClick={() => setSidebarCollapsed((prev) => !prev)}
             title={sidebarCollapsed ? "Expand" : "Collapse"}
           >
             {sidebarCollapsed ? "›" : "‹"}
           </button>
         </div>
         <div className="sidebar-menu">
-          {menuItems.map(item => (
+          {menuItems.map((item) => (
             <button
               key={item.key}
               className={`sidebar-btn ${activeTab === item.key ? "active" : ""}`}
