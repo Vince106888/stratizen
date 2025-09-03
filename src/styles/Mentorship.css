@@ -114,15 +114,6 @@
   margin-bottom: 0.8rem;
 }
 
-.panel-box h2 {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--primary-color);
-  border-left: 4px solid var(--accent-color);
-  padding-left: 0.5rem;
-  margin-bottom: 0.8rem;
-}
-
 /* ===== Panel Items ===== */
 .panel-item {
   display: flex;

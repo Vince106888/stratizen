@@ -1,22 +1,39 @@
 /* ------------------------------
-   Tailwind Base Styles
+   Tailwind Base
 ------------------------------ */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ------------------------------
-   Global Variables & Theme Colors
+   Theme Variables
+   Default = light, override in .dark
 ------------------------------ */
 :root {
-  --color-bg-dark: #1a1f2b;
-  --color-bg-light: #ffffff;
-  --color-text-dark: rgba(255, 255, 255, 0.92);
-  --color-text-light: #1e293b;
-  --color-primary: #4f46e5; /* Indigo-600 */
+  --color-bg: #ffffff;
+  --color-text: #1e293b;
+  --color-primary: #4f46e5;       /* Indigo-600 */
   --color-primary-hover: #4338ca; /* Indigo-700 */
-  --color-accent: #f59e0b; /* Amber-500 */
+  --color-accent: #f59e0b;        /* Amber-500 */
+}
 
+.dark {
+  --color-bg: #1a1f2b;
+  --color-text: rgba(255, 255, 255, 0.92);
+  --color-primary: #6366f1;       /* Indigo-500 (brighter in dark) */
+  --color-primary-hover: #818cf8; /* Indigo-400 */
+  --color-accent: #fbbf24;        /* Amber-400 */
+}
+
+/* ------------------------------
+   Global Defaults
+------------------------------ */
+html, body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: var(--color-bg);
+  color: var(--color-text);
   font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
   font-weight: 400;
   line-height: 1.6;
@@ -24,34 +41,7 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  color-scheme: light dark;
-  color: var(--color-text-dark);
-  background-color: var(--color-bg-dark);
-
   transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-/* ------------------------------
-   Light Mode
------------------------------- */
-@media (prefers-color-scheme: light) {
-  :root {
-    color: var(--color-text-light);
-    background-color: var(--color-bg-light);
-  }
-}
-
-/* ------------------------------
-   Body Defaults
------------------------------- */
-body {
-  margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
-  background-color: inherit;
-  color: inherit;
-  font-family: inherit;
   display: flex;
   flex-direction: column;
 }
@@ -64,17 +54,9 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 1.25;
 }
 
-h1 {
-  font-size: 2.25rem; /* 36px */
-}
-
-h2 {
-  font-size: 1.75rem;
-}
-
-h3 {
-  font-size: 1.5rem;
-}
+h1 { font-size: 2.25rem; }
+h2 { font-size: 1.75rem; }
+h3 { font-size: 1.5rem; }
 
 /* ------------------------------
    Links
@@ -128,6 +110,10 @@ button:focus {
   padding: 1.5rem;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
   transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.dark .card {
+  background-color: rgba(255, 255, 255, 0.06);
 }
 
 .card:hover {

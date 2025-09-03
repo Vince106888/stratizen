@@ -1,39 +1,101 @@
-import { collection, getDocs, addDoc, query, where } from "firebase/firestore";
+// src/services/resourceService.js
+import {
+  collection,
+  getDocs,
+  addDoc,
+  query,
+  where,
+  onSnapshot,
+} from "firebase/firestore";
 import { db } from "./firebase";
 
-// Fetch all resources
+// ------------------------
+// Resources
+// ------------------------
+
+/**
+ * Fetch all resources (one-time)
+ */
 export const fetchResources = async () => {
-  const resSnap = await getDocs(collection(db, "resources"));
-  return resSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  try {
+    const resSnap = await getDocs(collection(db, "resources"));
+    return resSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  } catch (err) {
+    console.error("Error fetching resources:", err);
+    return [];
+  }
 };
 
-// Fetch all schools
-export const fetchSchools = async () => {
-  const schoolSnap = await getDocs(collection(db, "schools"));
-  return schoolSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+/**
+ * Listen to resources in real-time
+ * @param {function} callback
+ * @returns unsubscribe function
+ */
+export const listenResources = (callback) => {
+  const q = query(collection(db, "resources"));
+  return onSnapshot(
+    q,
+    (snap) => {
+      const data = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      callback(data);
+    },
+    (err) => console.error("Error listening to resources:", err)
+  );
 };
 
-// Fetch all subjects
-export const fetchSubjects = async () => {
-  const subjSnap = await getDocs(collection(db, "subjects"));
-  return subjSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-};
-
-// Add a new resource
+/**
+ * Add a new resource
+ */
 export const addResource = async (resource) => {
-  const docRef = await addDoc(collection(db, "resources"), resource);
-  return { id: docRef.id, ...resource };
+  if (!resource) throw new Error("Resource data is required");
+  try {
+    const docRef = await addDoc(collection(db, "resources"), resource);
+    return { id: docRef.id, ...resource };
+  } catch (err) {
+    console.error("Error adding resource:", err);
+    throw err;
+  }
 };
 
-// Optional: fetch resources by school/subject
+/**
+ * Fetch resources filtered by schoolId and/or subjectId
+ */
 export const fetchFilteredResources = async (schoolId, subjectId) => {
-  let q = collection(db, "resources");
-  if (schoolId || subjectId) {
+  try {
+    let q = collection(db, "resources");
     const conditions = [];
     if (schoolId) conditions.push(where("schoolId", "==", schoolId));
     if (subjectId) conditions.push(where("subjectId", "==", subjectId));
-    q = query(q, ...conditions);
+    if (conditions.length) q = query(q, ...conditions);
+
+    const resSnap = await getDocs(q);
+    return resSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  } catch (err) {
+    console.error("Error fetching filtered resources:", err);
+    return [];
   }
-  const resSnap = await getDocs(q);
-  return resSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+};
+
+// ------------------------
+// Schools & Subjects
+// ------------------------
+
+export const fetchSchools = async () => {
+  try {
+    const snap = await getDocs(collection(db, "schools"));
+    return snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  } catch (err) {
+    console.error("Error fetching schools:", err);
+    return [];
+  }
+};
+
+export const fetchSubjects = async () => {
+  try {
+    const snap = await getDocs(collection(db, "subjects"));
+    return snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  } catch (err) {
+    console.error("Error fetching subjects:", err);
+    return [];
+  }
 };

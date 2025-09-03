@@ -2,20 +2,21 @@
    Sidebar Container
 -------------------------- */
 .sidebar {
-  width: 260px;
-  background-color: rgba(255, 255, 255, 0.04); /* light mode overlay */
-  padding: 1rem;
+  width: 220px;
+  background-color: var(--bg-color);
+  padding: clamp(0.75rem, 2vw, 1rem);
   border-radius: 0.75rem;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   height: calc(100vh - 2rem);
   position: sticky;
   top: 1rem;
-  transition: all 0.3s ease;
+  transition: all 0.3s ease-in-out;
   color: var(--text-color);
-  background-color: var(--bg-color);
+  z-index: 50;
+  font-size: clamp(0.85rem, 2vw, 1rem);
 }
 
 /* -------------------------
@@ -24,42 +25,40 @@
 .sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: clamp(0.4rem, 1vw, 0.6rem);
 }
 
 .sidebar-link {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.65rem 0.8rem;
+  gap: clamp(0.4rem, 1vw, 0.6rem);
+  padding: clamp(0.55rem, 1.5vw, 0.8rem);
   border-radius: 0.6rem;
   color: var(--text-color);
   font-weight: 500;
-  font-size: 0.95rem;
+  font-size: clamp(0.85rem, 2vw, 0.95rem);
   text-decoration: none;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
 }
 
-/* Hover effects */
 .sidebar-link:hover {
   background-color: var(--hover-bg);
-  transform: translateX(4px) scale(1.02);
+  transform: translateX(3px) scale(1.02);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
-/* Active link styling */
 .sidebar-link.active {
   background-color: var(--strathmore-blue);
   color: var(--strathmore-light);
   font-weight: 600;
 }
 
-/* Icon inside link */
-.sidebar-link svg {
-  width: 18px;
-  height: 18px;
-  fill: currentColor;
+.sidebar-link .icon {
+  font-size: clamp(16px, 3vw, 20px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* -------------------------
@@ -69,9 +68,12 @@
   color: var(--logout-color);
   font-weight: 500;
   margin-top: auto;
-  padding: 0.6rem 0.8rem;
+  padding: clamp(0.55rem, 1.5vw, 0.8rem);
   border-radius: 0.6rem;
   transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: clamp(0.4rem, 1vw, 0.6rem);
 }
 
 .logout-btn:hover {
@@ -80,21 +82,57 @@
 }
 
 /* -------------------------
+   Mobile Backdrop
+-------------------------- */
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.35);
+  z-index: 40;
+}
+
+/* -------------------------
    Responsive Sidebar
 -------------------------- */
+
+/* Tablet */
 @media (max-width: 1024px) {
   .sidebar {
-    width: 220px;
+    width: 200px;
   }
 }
 
+/* Mobile behavior */
 @media (max-width: 768px) {
   .sidebar {
-    position: relative;
-    width: 100%;
-    height: auto;
-    border-radius: 0.5rem;
-    box-shadow: none;
-    margin-bottom: 1rem;
+    position: fixed;
+    top: 0;
+    left: -100%;
+    height: 100vh;
+    width: 220px;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transition: left 0.3s ease-in-out;
+    background-color: var(--bg-color);
+  }
+
+  /* When open */
+  .sidebar.sidebar-open {
+    left: 0;
+  }
+
+  .sidebar-nav {
+    gap: clamp(0.3rem, 1vw, 0.5rem);
+  }
+
+  .sidebar-link {
+    font-size: clamp(0.8rem, 2vw, 0.9rem);
+    padding: clamp(0.5rem, 1.2vw, 0.7rem);
+  }
+
+  .logout-btn {
+    padding: clamp(0.5rem, 1.2vw, 0.7rem);
+    gap: clamp(0.3rem, 0.8vw, 0.5rem);
   }
 }

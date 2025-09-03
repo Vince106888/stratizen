@@ -1,16 +1,17 @@
-// src/pages/Stratizen.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense, lazy } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { app } from "../services/firebase";
 import { useTheme } from "../context/ThemeContext";
 
-// Components
-import PostList from "../components/Stratizen/PostList";
-import PostEditor from "../components/Stratizen/PostEditor";
-import ClubList from "../components/Stratizen/ClubList";
-import GroupList from "../components/Stratizen/GroupList";
+// Lazy-loaded Components
+const PostList = lazy(() => import("../components/Stratizen/PostList"));
+const PostEditor = lazy(() => import("../components/Stratizen/PostEditor"));
+const ClubList = lazy(() => import("../components/Stratizen/ClubList"));
+const GroupList = lazy(() => import("../components/Stratizen/GroupList"));
+const Sidebar = lazy(() => import("../components/Stratizen/Sidebar"));
+const SearchBar = lazy(() => import("../components/Stratizen/SearchBar"));
 
 // Services
 import { getUserProfile } from "../services/db";
@@ -30,47 +31,34 @@ const auth = getAuth(app);
 
 const Stratizen = () => {
   const [user, setUser] = useState(undefined);
-  const [userProfile, setUserProfile] = useState(null);
+  const [userProfile, setUserProfile] = useState(undefined);
   const [error, setError] = useState(null);
   const [posts, setPosts] = useState([]);
   const [loadingPosts, setLoadingPosts] = useState(true);
   const [activeTab, setActiveTab] = useState("community");
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const { theme } = useTheme(); // "light" | "dark"
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
+  const [selectedClubId, setSelectedClubId] = useState(null); // NEW: for feed filtering
 
-  /* ==============================
-     AUTH STATE WATCH
-  ============================== */
+  const { theme } = useTheme();
+
+  // ===== Auth state =====
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser || null);
+    const unsubscribe = onAuthStateChanged(auth, async (u) => {
+      setUser(u);
+      if (u?.uid) {
+        try {
+          const profile = await getUserProfile(u.uid);
+          setUserProfile(profile);
+        } catch {
+          setUserProfile(null);
+          setError("Failed to load profile.");
+        }
+      } else setUserProfile(null);
     });
     return () => unsubscribe();
   }, []);
 
-  /* ==============================
-     FETCH USER PROFILE
-  ============================== */
-  useEffect(() => {
-    const fetchProfile = async () => {
-      if (!user?.uid) {
-        setUserProfile(null);
-        return;
-      }
-      try {
-        const profile = await getUserProfile(user.uid);
-        setUserProfile(profile);
-      } catch (err) {
-        console.error("Profile fetch failed:", err);
-        setError("Failed to load user profile.");
-      }
-    };
-    fetchProfile();
-  }, [user]);
-
-  /* ==============================
-     LISTEN TO POSTS (FEED)
-  ============================== */
+  // ===== Listen to posts =====
   useEffect(() => {
     if (!userProfile) {
       setPosts([]);
@@ -78,32 +66,24 @@ const Stratizen = () => {
       return;
     }
     setLoadingPosts(true);
-
     const unsub = listenToFeed((fetchedPosts) => {
       setPosts(fetchedPosts);
       setLoadingPosts(false);
     });
-
     return () => unsub && unsub();
   }, [userProfile]);
 
-  /* ==============================
-     HANDLE POST DELETION (persistent)
-  ============================== */
+  // ===== Handlers =====
   const handleDeletePost = async (postId) => {
     try {
       await deletePost(postId);
       setPosts((prev) => prev.filter((p) => p.id !== postId));
       toast.success("Post deleted");
     } catch (err) {
-      console.error("Failed to delete post:", err);
-      toast.error("Failed to delete post");
+      toast.error("Failed to delete post: " + err.message);
     }
   };
 
-  /* ==============================
-    HANDLE ADD COMMENT
-  ============================== */
   const handleAddComment = async (postId, text) => {
     if (!user || !userProfile) return;
     try {
@@ -115,7 +95,6 @@ const Stratizen = () => {
         createdAt: new Date(),
       });
 
-      // Optimistic UI update
       setPosts((prev) =>
         prev.map((post) =>
           post.id === postId
@@ -141,171 +120,200 @@ const Stratizen = () => {
       toast.success("Comment added!");
       return commentId;
     } catch (err) {
-      console.error("Failed to add comment:", err);
-      toast.error("Failed to add comment");
+      toast.error("Failed to add comment: " + err.message);
     }
   };
 
-  /* ==============================
-    HANDLE REACTIONS (Unified)
-  ============================== */
   const handleReact = async (postId, commentId, type, isRemoving = false) => {
     if (!user) return;
+
+    setPosts((prev) =>
+      prev.map((post) =>
+        post.id === postId
+          ? {
+              ...post,
+              comments: post.comments.map((comment) =>
+                comment.id === commentId
+                  ? {
+                      ...comment,
+                      reactions: {
+                        ...comment.reactions,
+                        [type]: isRemoving
+                          ? (comment.reactions[type] || []).filter((uid) => uid !== user.uid)
+                          : [...(comment.reactions[type] || []), user.uid],
+                      },
+                    }
+                  : comment
+              ),
+            }
+          : post
+      )
+    );
+
     try {
-      if (isRemoving) {
-        await removeReaction(postId, commentId, user.uid, type);
-      } else {
-        await addReaction(postId, commentId, user.uid, type);
-      }
+      if (isRemoving) await removeReaction(postId, commentId, user.uid, type);
+      else await addReaction(postId, commentId, user.uid, type);
     } catch (err) {
-      console.error("Reaction error:", err);
-      toast.error("Failed to update reaction");
+      toast.error("Failed to update reaction: " + err.message);
     }
   };
 
-  /* ==============================
-     HANDLE DELETE COMMENT
-  ============================== */
   const handleDeleteComment = async (postId, commentId) => {
     try {
       await deleteComment(postId, commentId);
+      setPosts((prev) =>
+        prev.map((post) =>
+          post.id === postId
+            ? { ...post, comments: (post.comments || []).filter((c) => c.id !== commentId) }
+            : post
+        )
+      );
       toast.success("Comment deleted");
     } catch (err) {
-      console.error("Failed to delete comment:", err);
-      toast.error("Failed to delete comment");
+      toast.error("Failed to delete comment: " + err.message);
     }
   };
 
-  /* ==============================
-     RENDER MAIN CONTENT
-  ============================== */
+  // ===== Render main content =====
   const renderContent = () => {
     switch (activeTab) {
       case "community":
         return (
           <>
-            <PostEditor
-              currentUser={user}
-              currentUserProfile={userProfile}
-              onPostCreated={(newPost) =>
-                setPosts((prev) => [newPost, ...prev])
-              }
-            />
-            {loadingPosts ? (
-              <p>Loading posts...</p>
-            ) : (
-              <PostList
-                posts={posts}
+            <Suspense fallback={<div className="loader">Loading editor...</div>}>
+              <PostEditor
                 currentUser={user}
                 currentUserProfile={userProfile}
-                onDelete={handleDeletePost}
-                onAddComment={handleAddComment}
-                onDeleteComment={handleDeleteComment}
-                onReact={handleReact}
+                onPostCreated={(newPost) => setPosts((prev) => [newPost, ...prev])}
               />
+            </Suspense>
+
+            {loadingPosts ? (
+              <div className="post-skeletons">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="post-skeleton">
+                    <div className="skeleton-header" />
+                    <div className="skeleton-body" />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <Suspense fallback={<div className="loader">Loading posts...</div>}>
+                <PostList
+                  posts={
+                    selectedClubId
+                      ? posts.filter((p) => p.clubId === selectedClubId)
+                      : posts
+                  }
+                  currentUser={user}
+                  currentUserProfile={userProfile}
+                  onDelete={handleDeletePost}
+                  onAddComment={handleAddComment}
+                  onDeleteComment={handleDeleteComment}
+                  onReact={handleReact}
+                />
+              </Suspense>
             )}
           </>
         );
       case "clubs":
-        return <ClubList />;
+        return (
+          <Suspense fallback={<div className="loader">Loading clubs...</div>}>
+            <ClubList />
+          </Suspense>
+        );
       case "groups":
-        return <GroupList />;
+        return (
+          <Suspense fallback={<div className="loader">Loading groups...</div>}>
+            <GroupList />
+          </Suspense>
+        );
       default:
-        return <div className="placeholder">🚧 {activeTab} – Coming Soon</div>;
+        return <div className="card coming-soon">🚧 {activeTab} – Coming Soon</div>;
     }
   };
 
   const menuItems = [
-    { key: "search", label: "Search", icon: "🔍" },
     { key: "community", label: "SU Hub", icon: "🌐" },
-    { key: "reels", label: "Reels / Videos", icon: "🎥" },
+    { key: "reels", label: "Reels/Videos", icon: "🎥" },
     { key: "trending", label: "Trending", icon: "🔥" },
     { key: "events", label: "Events", icon: "📅" },
     { key: "people", label: "Networking", icon: "🤝" },
-    { key: "clubs", label: "Clubs & Societies", icon: "📚" },
+    { key: "clubs", label: "Clubs/Societies", icon: "📚" },
     { key: "groups", label: "Groups", icon: "👥" },
-    { key: "pages", label: "Pages", icon: "📄" },
     { key: "forum", label: "Forum", icon: "💬" },
+    { key: "pages", label: "Pages", icon: "📄" },
     { key: "newsletters", label: "Newsletters", icon: "📰" },
     { key: "notifications", label: "Notifications", icon: "🔔" },
     { key: "settings", label: "Settings", icon: "⚙️" },
   ];
 
-  if (error) return <div className="error-message">🚨 {error}</div>;
-  if (user === undefined) return <p>Loading Stratizen Hub...</p>;
+  // ===== Error / Loading States =====
+  if (error) return <div className="card error">🚨 {error}</div>;
+  if (user === undefined || userProfile === undefined) return <p>Loading Stratizen Hub...</p>;
   if (!user) return <p>Please login to access Stratizen Hub.</p>;
-  if (user && userProfile === null)
-    return <p>⚠️ No profile found. Please complete your setup.</p>;
+  if (user && userProfile === null) return <p>⚠️ No profile found. Please complete your setup.</p>;
 
   return (
-    <div 
-      data-theme={theme}
-      className={`stratizen-layout ${sidebarCollapsed ? "sidebar-collapsed" : ""}`}>
-      {/* Left Sidebar */}
-      <aside className={`stratizen-sidebar ${sidebarCollapsed ? "collapsed" : ""}`}>
-        <div className="sidebar-header">
-          {!sidebarCollapsed && <h2 className="sidebar-title">Menu</h2>}
-          <button
-            className="collapse-btn"
-            onClick={() => setSidebarCollapsed((prev) => !prev)}
-            title={sidebarCollapsed ? "Expand" : "Collapse"}
-          >
-            {sidebarCollapsed ? "›" : "‹"}
-          </button>
-        </div>
-        <div className="sidebar-menu">
-          {menuItems.map((item) => (
+    <>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        theme={theme}
+        draggable
+      />
+
+      <div className={`stratizen-layout ${theme} ${sidebarCollapsed ? "sidebar-collapsed" : ""}`}>
+        {/* Mobile overlay */}
+        <div
+          className={`sidebar-overlay ${!sidebarCollapsed ? "active" : ""}`}
+          onClick={() => setSidebarCollapsed(true)}
+        />
+
+        {/* Sidebar */}
+        <Suspense fallback={<div className="loader">Loading sidebar...</div>}>
+          <Sidebar
+            menuItems={menuItems}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            sidebarCollapsed={sidebarCollapsed}
+            setSidebarCollapsed={setSidebarCollapsed}
+          />
+        </Suspense>
+
+        {/* Main Panel */}
+        <main className="main-panel">
+          <header className="main-header">
+            <h1 className="text-xl font-semibold flex items-center gap-2">
+              🌐 Stratizen Hub
+            </h1>
+          </header>
+
+          {/* Search Bar */}
+          <Suspense fallback={<div className="loader">Loading search...</div>}>
+            <SearchBar onSelectClub={setSelectedClubId} />
+          </Suspense>
+
+          <div className="main-scrollable">{renderContent()}</div>
+        </main>
+
+        {/* Mobile Bottom Tab Bar */}
+        <div className="mobile-tab-bar">
+          {menuItems.slice(0, 6).map((item) => (
             <button
               key={item.key}
-              className={`sidebar-btn ${activeTab === item.key ? "active" : ""}`}
+              className={`mobile-tab-btn ${activeTab === item.key ? "active" : ""}`}
               onClick={() => setActiveTab(item.key)}
-              title={sidebarCollapsed ? item.label : ""}
             >
-              <span className="menu-icon">{item.icon}</span>
-              {!sidebarCollapsed && <span className="menu-text">{item.label}</span>}
+              <span className="icon-wrapper">{item.icon}</span>
             </button>
           ))}
         </div>
-      </aside>
-
-      {/* Main Content */}
-      <main className="stratizen-main">
-        <div className="stratizen-header">
-          <h1>🌐 Stratizen Hub</h1>
-        </div>
-        {renderContent()}
-      </main>
-
-      {/* Right Panel */}
-      <aside className="stratizen-rightpanel">
-        <div className="rightpanel-section pages">
-          <h3>🔥 Trending</h3>
-          <ul>
-            <li>Strathmore Business School</li>
-            <li>Innovation</li>
-            <li>#Sports</li>
-          </ul>
-        </div>
-        <div className="rightpanel-section forum">
-          <h3>🤝 Network; Discover</h3>
-          <ul>
-            <li>John Doe</li>
-            <li>Alice A</li>
-            <li>Bob B</li>
-          </ul>
-        </div>
-        <div className="rightpanel-section events">
-          <h3>📅 Upcoming Events</h3>
-          <ul>
-            <li>Career Fair – Aug 20</li>
-            <li>Innovation Week – Sep 5</li>
-            <li>Sports Day – Sep 15</li>
-          </ul>
-        </div>
-      </aside>
-
-      <ToastContainer position="top-right" autoClose={3000} />
-    </div>
+      </div>
+    </>
   );
 };
 

@@ -92,7 +92,7 @@ export default function Dashboard() {
         username: userInfo.username || 'User',
         bio: userInfo.bio || 'No bio provided.',
         purpose: userInfo.purpose || 'Just exploring Stratizen!',
-        profilePic: userInfo.profilePic || 'https://via.placeholder.com/120?text=No+Image',
+        profilePicture: userInfo.profilePicture || 'https://via.placeholder.com/120?text=No+Image',
       });
 
       setStats({
@@ -132,13 +132,70 @@ export default function Dashboard() {
     return unsubscribe;
   }, [fetchData, navigate]);
 
-  // -----------------------------
-  // Loading/Error/No Data states
-  // -----------------------------
-  if (loading) return <LoadingScreen />;
-  if (error) return <ErrorScreen message={error} onRetry={() => fetchData(auth.currentUser)} />;
-  if (!userData) return <NoDataScreen />;
+/* ------------------------------
+   Loading, Error & No Data screens
+-------------------------------- */
+  function LoadingScreen() {
+    return (
+      <div
+        className="loading-screen flex flex-col justify-center items-center h-64 text-lg gap-2
+                  bg-strathmore-light dark:bg-strathmore-dark
+                  text-strathmore-blue dark:text-strathmore-light rounded-md p-4"
+        role="status"
+        aria-live="polite"
+      >
+        <svg className="animate-spin h-10 w-10 text-strathmore-blue dark:text-strathmore-light mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+        </svg>
+        Loading your dashboard...
+      </div>
+    );
+  }
 
+  function ErrorScreen({ message, onRetry }) {
+    return (
+      <div
+        className="error-screen flex flex-col justify-center items-center h-64 p-6 gap-4
+                  bg-red-100 dark:bg-red-900
+                  text-red-800 dark:text-red-200 rounded-lg shadow-md border border-red-300 dark:border-red-700"
+        role="alert"
+        aria-live="assertive"
+      >
+        <svg className="h-12 w-12 text-red-600 dark:text-red-300 mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M4.93 4.93l14.14 14.14M4.93 19.07L19.07 4.93" />
+        </svg>
+        <p className="text-center text-base font-semibold">{message}</p>
+        {onRetry && (
+          <button
+            onClick={onRetry}
+            className="retry-btn mt-2 bg-strathmore-blue dark:bg-strathmore-light
+                      text-white dark:text-strathmore-dark px-5 py-2 rounded-lg
+                      hover:opacity-90 transition focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-strathmore-blue"
+          >
+            Retry
+          </button>
+        )}
+      </div>
+    );
+  }
+
+  function NoDataScreen() {
+    return (
+      <div
+        className="no-data-screen flex flex-col justify-center items-center h-64 gap-2
+                  bg-strathmore-light dark:bg-strathmore-dark
+                  text-strathmore-blue dark:text-strathmore-light rounded-md p-4"
+        role="alert"
+        aria-live="polite"
+      >
+        <svg className="h-10 w-10 text-strathmore-blue dark:text-strathmore-light mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-3-3v6m6 4H6a2 2 0 01-2-2V6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v10a2 2 0 01-2 2z" />
+        </svg>
+        User data not found.
+      </div>
+    );
+  }
   // -----------------------------
   // Main dashboard render
   // -----------------------------

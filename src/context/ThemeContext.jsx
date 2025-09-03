@@ -11,13 +11,9 @@ export const ThemeProvider = ({ children }) => {
 
   // Helper: apply theme to <html>
   const applyTheme = (themeValue) => {
-    if (themeValue === "dark") {
-      document.documentElement.classList.add("dark");
-      document.documentElement.classList.remove("light");
-    } else {
-      document.documentElement.classList.add("light");
-      document.documentElement.classList.remove("dark");
-    }
+    const root = document.documentElement;
+    root.classList.remove("light", "dark");
+    root.classList.add(themeValue);
   };
 
   // 3. On mount → read saved preference or system preference
@@ -44,11 +40,13 @@ export const ThemeProvider = ({ children }) => {
     localStorage.setItem("theme", theme);
   }, [theme, isReady]);
 
-  // 5. Listen for system preference changes (if user hasn’t overridden)
+  // 5. Listen for system preference changes (only if no manual override)
   useEffect(() => {
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
+
     const systemThemeListener = (e) => {
-      if (!localStorage.getItem("theme")) {
+      const userSet = localStorage.getItem("theme");
+      if (!userSet) {
         const newTheme = e.matches ? "dark" : "light";
         setTheme(newTheme);
         applyTheme(newTheme);
@@ -63,16 +61,21 @@ export const ThemeProvider = ({ children }) => {
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
-    applyTheme(newTheme);
     localStorage.setItem("theme", newTheme);
   };
 
+  // 7. Provide context
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      {isReady ? children : <div className="w-full h-screen bg-white dark:bg-black" />} 
+      {isReady ? (
+        children
+      ) : (
+        // Placeholder prevents flash while loading
+        <div className="w-full h-screen bg-bg text-text transition-colors"></div>
+      )}
     </ThemeContext.Provider>
   );
 };
 
-// 7. Hook for easy access
+// 8. Hook for easy access
 export const useTheme = () => useContext(ThemeContext);

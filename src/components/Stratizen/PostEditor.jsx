@@ -194,7 +194,7 @@ export default function PostEditor({ currentUser, onPostCreated }) {
   return (
     <form className="post-editor" onSubmit={handleSubmit}>
       <textarea
-        placeholder="What's on your mind? Tag friends with @, share links, add media..."
+        placeholder="What's on your mind?..."
         value={content}
         onChange={(e) => setContent(e.target.value)}
         disabled={uploading}

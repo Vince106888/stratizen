@@ -13,7 +13,7 @@ import {
   updateDoc,
   onSnapshot,
 } from "firebase/firestore";
-import { uploadMarketplaceImage } from "./storage";
+import { uploadMarketplaceImage } from "./storage"; // production Storage
 
 const COLLECTION = "marketplace";
 
@@ -28,16 +28,14 @@ export const createListing = async (listingData, imageFile) => {
     throw new Error("Missing required listing data");
   }
 
-  // generate unique itemId
   const itemId = `${listingData.userId}_${Date.now()}`;
 
-  // upload image if provided
+  // Upload image to production Storage if provided
   let imageUrl = null;
   if (imageFile) {
     imageUrl = await uploadMarketplaceImage(itemId, imageFile, "thumbnail");
   }
 
-  // Only Firestore-supported fields
   const newListing = {
     title: listingData.title,
     description: listingData.description,
@@ -45,7 +43,7 @@ export const createListing = async (listingData, imageFile) => {
     category: listingData.category,
     userId: listingData.userId,
     userName: listingData.userName || "Anonymous",
-    imageUrl, // only store the URL, not the File object
+    imageUrl, // store only URL
     itemId,
     createdAt: serverTimestamp(),
   };
@@ -55,7 +53,7 @@ export const createListing = async (listingData, imageFile) => {
 };
 
 /**
- * Fetch listings one-time (no real-time updates)
+ * Fetch listings one-time
  * @param {string} category - Category filter, "All" for all categories
  */
 export const fetchListings = async (category = "All") => {
@@ -63,9 +61,6 @@ export const fetchListings = async (category = "All") => {
   let q;
 
   if (category && category !== "All") {
-    if (typeof category !== "string") {
-      throw new Error("Category must be a string");
-    }
     q = query(
       listingsCollection,
       where("category", "==", category),
@@ -90,9 +85,6 @@ export const listenToListings = (callback, category = "All") => {
   let q;
 
   if (category && category !== "All") {
-    if (typeof category !== "string") {
-      throw new Error("Category must be a string");
-    }
     q = query(
       listingsCollection,
       where("category", "==", category),
@@ -107,7 +99,7 @@ export const listenToListings = (callback, category = "All") => {
     callback(listings);
   });
 
-  return unsubscribe; // call this to stop listening
+  return unsubscribe;
 };
 
 /**

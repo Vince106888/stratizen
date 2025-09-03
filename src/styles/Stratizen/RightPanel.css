@@ -1,0 +1,99 @@
+:root {
+  /* Right Panel - Light Mode */
+  --panel-bg: #ffffff;                   /* Card background */
+  --panel-border: #d0d4db;               /* Subtle light border */
+  --panel-radius: 16px;                   /* Rounded corners */
+  --panel-shadow: 0 4px 12px rgba(0,32,91,0.08); /* Soft shadow */
+  --panel-heading: #00205b;               /* Strathmore Deep Blue */
+  --panel-text: #1f2937;                  /* Dark blue-gray text */
+  --panel-subtext: #5a5f7a;               /* Muted secondary text */
+  --transition: 0.3s ease;
+}
+
+/* Dark Mode Overrides */
+[data-theme="dark"] {
+  --panel-bg: #1f2631;                    /* Dark card background */
+  --panel-border: #313957;                /* Dark border */
+  --panel-heading: #003366;               /* Lighter deep blue for headings */
+  --panel-text: #e0e8ff;                  /* Light blue text for readability */
+  --panel-subtext: #a0a8bf;               /* Muted secondary text in dark mode */
+  --panel-shadow: 0 4px 12px rgba(0,32,91,0.15); /* Slightly stronger shadow */
+}
+
+/* Right Panel Container */
+.stratizen-rightpanel {
+  width: 320px;
+  display: flex;
+  justify-content: flex-start;
+  overflow: hidden;
+  transition: width var(--transition), opacity var(--transition);
+}
+
+.stratizen-rightpanel.collapsed {
+  width: 0;
+  opacity: 0;
+}
+
+/* Panel Wrapper */
+.rightpanel-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  padding: 1rem;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--panel-radius);
+  box-shadow: var(--panel-shadow);
+  height: 100%;
+  overflow-y: auto;
+  transition: var(--transition);
+}
+
+/* Header */
+.rightpanel-header {
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--panel-border);
+  margin-bottom: 0.6rem;
+}
+
+.panel-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--panel-heading);
+}
+
+/* Sections */
+.rightpanel-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.rightpanel-section h3 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--panel-heading);
+  margin-bottom: 0.3rem;
+}
+
+.rightpanel-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.rightpanel-section li {
+  font-size: 0.875rem;
+  color: var(--panel-text);
+}
+
+/* Optional: subtle hover effect for list items */
+.rightpanel-section li:hover {
+  color: var(--panel-heading);
+  cursor: pointer;
+  transition: color var(--transition);
+}

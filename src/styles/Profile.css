@@ -9,12 +9,20 @@
   min-height: 80vh;
   display: flex;
   flex-direction: column;
+
+  /* New rounded box styles */
+  border-radius: 1.5rem;            /* smooth rounded corners */
+  box-shadow: 0 8px 30px rgba(0,0,0,0.08); /* soft shadow for elevation */
+  max-width: 1000px;               /* keep it centered like a card */
+  margin: 2rem auto;               /* center horizontally */
 }
 
 /* Dark Mode */
 html.dark .profilepage-container {
-  background: #1f1f1f;
+  background: #1f2937;
   color: #e5e7eb;
+  border-radius: 1.5rem;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
 }
 
 /* ---------------------------

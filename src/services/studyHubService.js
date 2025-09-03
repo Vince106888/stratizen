@@ -11,8 +11,12 @@ import {
   runTransaction,
 } from 'firebase/firestore';
 
+/* ==============================
+   QUESTIONS
+============================== */
+
 /**
- * Subscribe to questions sorted by createdAt DESC
+ * Subscribe to questions (real-time)
  */
 export function subscribeToQuestions(cb) {
   const q = query(collection(db, 'questions'), orderBy('createdAt', 'desc'));
@@ -23,13 +27,11 @@ export function subscribeToQuestions(cb) {
         id: d.id,
         ...d.data(),
         answers: d.data().answers || [],
-        tags: d.data().tags || []
+        tags: d.data().tags || [],
       }));
       cb(arr);
     },
-    (err) => {
-      console.error('subscribeToQuestions error:', err);
-    }
+    (err) => console.error('subscribeToQuestions error:', err)
   );
 }
 
@@ -49,11 +51,15 @@ export async function addQuestion({ title, content, tags = [], author = null }) 
     dislikedBy: {},
     reports: 0,
     reportedBy: {},
-    answers: []
+    answers: [],
   };
   const ref = await addDoc(collection(db, 'questions'), payload);
   return ref.id;
 }
+
+/* ==============================
+   ANSWERS
+============================== */
 
 /**
  * Add an answer to a question
@@ -79,7 +85,7 @@ export async function addAnswer(questionId, { content, author = null }) {
       likedBy: {},
       dislikedBy: {},
       reports: 0,
-      reportedBy: {}
+      reportedBy: {},
     };
 
     answers.push(newAnswer);
@@ -89,11 +95,16 @@ export async function addAnswer(questionId, { content, author = null }) {
   return answerId;
 }
 
+/* ==============================
+   REACTIONS & REPORTS
+============================== */
+
 /**
- * React to question
+ * React to a question (like/dislike)
  */
 export async function reactToQuestion(questionId, uid, type) {
   const qRef = doc(db, 'questions', questionId);
+
   await runTransaction(db, async (tx) => {
     const snap = await tx.get(qRef);
     if (!snap.exists()) throw new Error('Question not found');
@@ -101,7 +112,6 @@ export async function reactToQuestion(questionId, uid, type) {
     const data = snap.data();
     const likedBy = data.likedBy || {};
     const dislikedBy = data.dislikedBy || {};
-
     let likes = data.likes || 0;
     let dislikes = data.dislikes || 0;
 
@@ -141,10 +151,11 @@ export async function reactToQuestion(questionId, uid, type) {
 }
 
 /**
- * Report question
+ * Report a question
  */
 export async function reportQuestion(questionId, uid) {
   const qRef = doc(db, 'questions', questionId);
+
   await runTransaction(db, async (tx) => {
     const snap = await tx.get(qRef);
     if (!snap.exists()) throw new Error('Question not found');
@@ -163,10 +174,11 @@ export async function reportQuestion(questionId, uid) {
 }
 
 /**
- * React to answer
+ * React to an answer (like/dislike)
  */
 export async function reactToAnswer(questionId, answerId, uid, type) {
   const qRef = doc(db, 'questions', questionId);
+
   await runTransaction(db, async (tx) => {
     const snap = await tx.get(qRef);
     if (!snap.exists()) throw new Error('Question not found');
@@ -219,10 +231,11 @@ export async function reactToAnswer(questionId, answerId, uid, type) {
 }
 
 /**
- * Report answer
+ * Report an answer
  */
 export async function reportAnswer(questionId, answerId, uid) {
   const qRef = doc(db, 'questions', questionId);
+
   await runTransaction(db, async (tx) => {
     const snap = await tx.get(qRef);
     if (!snap.exists()) throw new Error('Question not found');

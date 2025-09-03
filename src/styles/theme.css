@@ -1,0 +1,36 @@
+/* src/styles/theme.css */
+
+/* 
+   Theme variables: central palette & UI overrides 
+   Works with Tailwind via CSS variables.
+   Light mode = default, Dark mode = `.dark` on <html>
+*/
+
+@layer base {
+  :root {
+    /* ---------- Brand Palette ---------- */
+    --color-primary: #002147;   /* Navy / Strathmore Blue */
+    --color-accent: #d22630;    /* Red Accent */
+    --color-gold: #fdb813;      /* Gold */
+
+    /* ---------- UI Neutrals (Light) ---------- */
+    --color-bg: #f9f9f9;
+    --color-text: #333333;
+    --color-navbar: var(--color-primary);
+    --color-navbar-text: #ffffff;
+    --color-sidebar-bg: #ffffff;
+    --color-sidebar-text: var(--color-text);
+    --color-dropdown-bg: rgba(255, 255, 255, 0.95);
+  }
+
+  .dark {
+    /* ---------- Dark Mode Overrides ---------- */
+    --color-bg: #1e1e2f;
+    --color-text: #e0e0e0;
+    --color-navbar: #111127;
+    --color-navbar-text: #f9f9f9;
+    --color-sidebar-bg: #1b1b2b;
+    --color-sidebar-text: #e0e0e0;
+    --color-dropdown-bg: rgba(40, 40, 60, 0.95);
+  }
+}

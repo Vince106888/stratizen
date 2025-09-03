@@ -67,6 +67,7 @@
 .error-screen,
 .no-data-screen {
   display: flex;
+  flex-direction: column; /* stack icon + message */
   justify-content: center;
   align-items: center;
   height: 50vh;
@@ -74,6 +75,7 @@
   font-weight: 600;
   text-align: center;
   transition: all 0.3s ease;
+  gap: 1rem;
 }
 
 /* Light mode colors */
@@ -83,14 +85,29 @@
   background-color: #f9f7fc;
 }
 
+/* Error screen updated styling */
 .error-screen {
-  color: #b71c1c;
-  background-color: #ffebee;
-  border-radius: 8px;
-  padding: 1rem;
+  color: #b71c1c; /* dark red */
+  background-color: #ffebee; /* light red */
+  border-left: 6px solid #d32f2f; /* accent left bar */
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  max-width: 600px;
+  margin: 2rem auto;
+  box-shadow: 0 4px 12px rgba(183, 28, 28, 0.3);
+  font-size: 1.25rem;
+  line-height: 1.5;
+  position: relative;
 }
 
-/* Dark mode colors */
+.error-screen::before {
+  content: "⚠️";
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+/* Dark mode colors for screens */
 .dark .loading-screen,
 .dark .no-data-screen {
   color: #e6f0ff;
@@ -100,6 +117,19 @@
 .dark .error-screen {
   color: #ffcdd2;
   background-color: #b71c1c;
+  border-left: 6px solid #ff5252;
+  box-shadow: 0 4px 12px rgba(255, 82, 82, 0.3);
+}
+
+.dark .error-screen::before {
+  content: "⚠️";
+  color: #fff3f3;
+}
+
+/* Hover effect for error */
+.error-screen:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease;
 }
 
 /* -------------------------

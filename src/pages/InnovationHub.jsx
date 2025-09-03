@@ -14,17 +14,36 @@ const InnovationHub = () => {
       <div className="innovation-hub-grid max-w-7xl mx-auto gap-6 lg:gap-8">
         {/* Main Left Panel */}
         <main className="innovation-main-panel space-y-12">
-          <Hero />
-          <FeaturedProjects />
-          <ProjectExplorer />
-          <SubmitInnovationForm />
+          <div className="panel">
+            <Hero />
+          </div>
+
+          <div className="panel">
+            <FeaturedProjects />
+          </div>
+
+          <div className="panel">
+            <ProjectExplorer />
+          </div>
+
+          <div className="panel">
+            <SubmitInnovationForm />
+          </div>
         </main>
 
         {/* Right Side Panel (visible on lg screens) */}
-        <aside className="innovation-right-panel hidden lg:flex flex-col gap-8">
-          <Mentors />
-          <Challenges />
-          <ResourceLibrary />
+        <aside className="innovation-right-panel hidden lg:flex flex-col gap-6">
+          <div className="panel">
+            <Mentors />
+          </div>
+
+          <div className="panel">
+            <Challenges />
+          </div>
+
+          <div className="panel">
+            <ResourceLibrary />
+          </div>
         </aside>
       </div>
     </div>

@@ -1,14 +1,18 @@
 import { collection, getDocs } from "firebase/firestore";
-import { db } from "./firebase"; // adjust path if different
+import { db } from "./firebase"; // production Firestore
 
-// Fetch roles from Firestore
+/**
+ * Fetch all roles from Firestore
+ * @returns {Promise<Array<{id: string, name: string}>> | null}
+ */
 export const getRoles = async () => {
   try {
-    const querySnapshot = await getDocs(collection(db, "roles"));
-    const roles = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    const rolesRef = collection(db, "roles");
+    const snapshot = await getDocs(rolesRef);
+    const roles = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     return roles;
   } catch (error) {
     console.error("Error fetching roles:", error);
-    return null; // return null on failure
+    return null;
   }
 };

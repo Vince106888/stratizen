@@ -1,0 +1,242 @@
+/* ===============================
+   Stratizen Sidebar - Modern Interactive
+   =============================== */
+
+/* ------------------------------
+   Sidebar Container
+------------------------------ */
+.stratizen-sidebar {
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1rem;
+  border-radius: 1rem;
+  position: sticky;
+  top: 1rem;
+  transition: width 0.3s ease, transform 0.3s ease, background-color 0.3s ease;
+  background-color: #f9fafc;
+  box-shadow: 0 6px 16px rgba(0, 32, 91, 0.08);
+  color: #00205b;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  z-index: 100;
+}
+
+/* Dark mode */
+[data-theme="dark"] .stratizen-sidebar {
+  background-color: #1f2631;
+  color: #e6eaf0;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+}
+
+/* Collapsed Sidebar */
+.stratizen-sidebar.collapsed {
+  width: 70px;
+}
+
+/* Inner Box */
+.sidebar-box {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 1rem;
+}
+
+/* ------------------------------
+   Header & Collapse Button
+------------------------------ */
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sidebar-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  transition: opacity 0.2s ease;
+}
+
+.collapse-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.25rem;
+  border-radius: 50%;
+  color: inherit;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.collapse-btn:hover {
+  background-color: rgba(0, 32, 91, 0.08);
+  transform: scale(1.05);
+}
+
+/* Icon Animation */
+.icon-wrapper {
+  position: relative;
+  width: 24px;
+  height: 24px;
+}
+
+.icon-menu,
+.icon-x {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: all 0.25s ease;
+}
+
+.icon-menu.visible {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+.icon-menu.hidden {
+  opacity: 0;
+  transform: rotate(90deg) scale(0.5);
+}
+
+.icon-x.visible {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+.icon-x.hidden {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.5);
+}
+
+/* ------------------------------
+   Sidebar Menu
+------------------------------ */
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sidebar-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.65rem 0.8rem;
+  border-radius: 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  color: inherit;
+  background: transparent;
+}
+
+.sidebar-btn:hover {
+  background-color: rgba(0, 32, 91, 0.05);
+  transform: translateX(3px) scale(1.02);
+}
+
+.sidebar-btn.active {
+  background-color: #00205b;
+  color: #ffc72c;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0, 32, 91, 0.25);
+}
+
+.menu-icon {
+  font-size: 1rem;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Footer */
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 0.6rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: border-color 0.2s ease;
+}
+
+[data-theme="dark"] .sidebar-footer {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.footer-text {
+  font-size: 0.75rem;
+  color: inherit;
+}
+
+/* Collapsed Adjustments */
+.stratizen-sidebar.collapsed .sidebar-title,
+.stratizen-sidebar.collapsed .menu-text {
+  display: none;
+}
+
+.stratizen-sidebar.collapsed .sidebar-btn {
+  justify-content: center;
+  padding: 0.45rem;
+}
+
+/* ------------------------------
+   Responsive Sidebar
+------------------------------ */
+@media (max-width: 1024px) {
+  .stratizen-sidebar {
+    width: 180px;
+  }
+
+  .stratizen-sidebar.collapsed {
+    width: 60px;
+  }
+}
+
+/* Mobile (<768px): overlay drawer */
+@media (max-width: 768px) {
+  .stratizen-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 240px;
+    height: 100vh;
+    border-radius: 0;
+    margin: 0;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+  }
+
+  .stratizen-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .stratizen-sidebar.collapsed {
+    width: 240px;
+  }
+
+  /* Mobile overlay backdrop */
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(2px);
+    z-index: 900;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .sidebar-overlay.show {
+    opacity: 1;
+    pointer-events: all;
+  }
+}

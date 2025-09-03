@@ -1,293 +1,534 @@
-/* ============================
-   Stratizen Layout
-============================ */
+/* ===============================
+   Layout
+   =============================== */
 .stratizen-layout {
-  display: grid;
-  grid-template-columns: 220px 1fr 320px;
-  min-height: 100vh;
-  background: linear-gradient(to bottom, #f9fafb, #f3f4f6);
-  font-family: 'Inter', sans-serif;
-  transition: grid-template-columns 0.3s ease, background 0.3s ease;
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  width: 100%;
+  transition: all 0.3s ease;
+  background-color: var(--bg);
+  color: var(--text);
+  overflow: hidden;
 }
 
-/* Collapsed Sidebar */
-.stratizen-layout.sidebar-collapsed {
-  grid-template-columns: 70px 1fr 280px;
+/* -------------------------------
+   Sidebar Panel
+--------------------------------- */
+.sidebar-panel {
+  width: 240px;
+  flex-shrink: 0;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  background-color: var(--card-bg);
+  box-shadow: var(--card-shadow);
+  border-radius: 16px;
+  overflow: hidden;
+  z-index: 100;
 }
 
-/* Dark Mode */
-html.dark .stratizen-layout {
-  background: #111827;
+/* Collapsed on desktop */
+.stratizen-layout.sidebar-collapsed .sidebar-panel {
+  transform: translateX(-100%);
 }
 
-/* ============================
-   Sidebar
-============================ */
-.stratizen-sidebar {
-  background: #ffffff;
-  border-right: 1px solid #e5e7eb;
-  padding: 1rem 0.75rem;
+/* Overlay for mobile */
+.sidebar-overlay {
+  display: none;
+}
+@media (max-width: 768px) {
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(2px);
+    z-index: 40;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .stratizen-layout.sidebar-open .sidebar-overlay {
+    opacity: 1;
+    pointer-events: all;
+  }
+}
+
+/* -------------------------------
+   Main Panel
+--------------------------------- */
+.main-panel {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  overflow: hidden;
+  background-color: var(--main-bg);
+  border-radius: 0;     /* remove rounding so it touches edges */
+  min-width: 0;
+  box-shadow: var(--card-shadow);
   transition: all 0.3s ease;
 }
 
-html.dark .stratizen-sidebar {
-  background: #111827;
-  border-color: #374151;
-}
-
-.sidebar-header {
+/* Header */
+.main-header {
+  padding: 0.5rem 1rem;
+  border-radius: 16px;
+  font-size: 1rem;
+  font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 0.5rem;
+  height: 3rem;
+  background-color: var(--card-bg);
+  box-shadow: var(--card-shadow);
+  flex-shrink: 0;
 }
 
-.sidebar-title {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--primary, #002147);
-  letter-spacing: -0.2px;
-}
-
-html.dark .sidebar-title {
-  color: #e5e7eb;
-}
-
-.collapse-btn {
-  background: transparent;
+/* Hamburger button (mobile only) */
+.hamburger {
+  font-size: 1.5rem;
+  background: none;
   border: none;
-  font-size: 1.25rem;
   cursor: pointer;
-  color: #6b7280;
-  transition: transform 0.2s ease;
+  display: none;
 }
-.collapse-btn:hover {
-  transform: scale(1.1);
-  color: var(--accent, #ffb81c);
-}
-html.dark .collapse-btn {
-  color: #d1d5db;
+@media (max-width: 768px) {
+  .hamburger { display: block; }
 }
 
-.sidebar-btn {
+/* ===============================
+   Layout
+   =============================== */
+.stratizen-layout {
   display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  background: transparent;
-  border: none;
-  font-size: 0.95rem;
-  padding: 0.65rem 0.75rem;
-  border-radius: 12px;
-  text-align: left;
-  color: var(--primary, #002147);
-  cursor: pointer;
-  transition: all 0.25s ease;
-}
-.sidebar-btn:hover {
-  background: #f3f4f6;
-  transform: translateX(2px);
-}
-.sidebar-btn.active {
-  background: linear-gradient(90deg, var(--accent, #ffb81c), #ffd84d);
-  color: #002147;
-  font-weight: 600;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-}
-html.dark .sidebar-btn {
-  color: #e5e7eb;
-}
-html.dark .sidebar-btn:hover {
-  background: #374151;
-}
-html.dark .sidebar-btn.active {
-  background: linear-gradient(90deg, #4f46e5, #6366f1);
-  color: white;
+  flex-direction: row;
+  height: 100vh;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  width: 100%;
+  transition: all 0.3s ease;
+  background-color: var(--bg);
+  color: var(--text);
+  overflow: hidden;
 }
 
-/* ============================
-   Main Content
-============================ */
-.stratizen-main {
-  background: #ffffff;
-  padding: 1.25rem;
-  overflow-y: auto;
+/* -------------------------------
+   Sidebar Panel
+--------------------------------- */
+.sidebar-panel {
+  width: 240px;
+  flex-shrink: 0;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  background-color: var(--card-bg);
+  box-shadow: var(--card-shadow);
   border-radius: 16px;
-  margin: 1rem;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-  transition: background 0.3s ease, color 0.3s ease;
+  overflow: hidden;
+  z-index: 100;
 }
 
-.stratizen-header h1 {
-  color: #002147;
-  margin-bottom: 1rem;
-  font-weight: 700;
-  font-size: 1.4rem;
+/* Collapsed on desktop */
+.stratizen-layout.sidebar-collapsed .sidebar-panel {
+  transform: translateX(-100%);
 }
 
-html.dark .stratizen-main {
-  background: #111827;
-  color: #e5e7eb;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.6);
+/* Overlay for mobile */
+.sidebar-overlay {
+  display: none;
 }
-html.dark .stratizen-header h1 {
-  color: #ffffff;
+@media (max-width: 768px) {
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(2px);
+    z-index: 40;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .stratizen-layout.sidebar-open .sidebar-overlay {
+    opacity: 1;
+    pointer-events: all;
+  }
 }
 
-/* ============================
-   Right Panel
-============================ */
-.stratizen-rightpanel {
-  background: #ffffff;
-  border-left: 1px solid #e5e7eb;
-  padding: 1rem;
+/* -------------------------------
+   Main Panel
+--------------------------------- */
+.main-panel {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
-  transition: background 0.3s ease;
+  overflow: hidden;
+  background-color: var(--main-bg);
+  border-radius: 0;     /* remove rounding so it touches edges */
+  min-width: 0;
+  box-shadow: var(--card-shadow);
+  transition: all 0.3s ease;
 }
 
-.rightpanel-section {
-  background: #f9f9f9;
-  padding: 1rem;
+/* Header */
+.main-header {
+  padding: 0.5rem 1rem;
   border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  transition: transform 0.2s ease;
-}
-.rightpanel-section:hover {
-  transform: translateY(-2px);
-}
-
-.rightpanel-section h3 {
-  margin-bottom: 0.6rem;
   font-size: 1rem;
   font-weight: 600;
-  color: #002147;
-  border-bottom: 2px solid var(--accent, #ffb81c);
-  padding-bottom: 0.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  height: 3rem;
+  background-color: var(--card-bg);
+  box-shadow: var(--card-shadow);
+  flex-shrink: 0;
 }
-.rightpanel-section ul {
-  list-style: none;
+
+/* Hamburger button (mobile only) */
+.hamburger {
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: none;
+}
+@media (max-width: 768px) {
+  .hamburger { display: block; }
+}
+
+/* -------------------------------
+   Scrollable Content
+--------------------------------- */
+.main-scrollable {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;       /* spacing between cards */
   margin: 0;
-  padding: 0;
-}
-.rightpanel-section li {
-  padding: 0.45rem 0.5rem;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #002147;
-  transition: background 0.25s ease;
-}
-.rightpanel-section li:hover {
-  background: #f3f4f6;
+  padding: 0;         /* no padding, let cards touch edges */
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+  min-width: 0;
+  min-height: 0;
 }
 
-html.dark .stratizen-rightpanel {
-  background: #111827;
-  border-color: #374151;
-}
-html.dark .rightpanel-section {
-  background: #1f2937;
-  color: #e5e7eb;
-}
-html.dark .rightpanel-section h3 {
-  color: #e5e7eb;
-  border-color: #6366f1;
-}
-html.dark .rightpanel-section li {
-  color: #d1d5db;
-}
-html.dark .rightpanel-section li:hover {
-  background: #374151;
+/* -------------------------------
+   Card Utility
+--------------------------------- */
+.card {
+  width: 100%;                       /* span end-to-end */
+  border-radius: 0;                  /* flush edges by default */
+  padding: 1rem;                     /* inner content padding */
+  transition: all 0.3s ease;
+  background-color: var(--card-bg);
+  box-shadow: var(--card-shadow);
 }
 
-/* ============================
-   Status Messages
-============================ */
-.status-message {
-  padding: 0.9rem 1rem;
-  border-radius: 10px;
-  margin: 0.5rem 0;
-  font-size: 0.9rem;
-  font-weight: 500;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-}
-.loading-message {
-  background: #e0f2fe;
-  color: #0369a1;
-  border: 1px solid #7dd3fc;
-}
-.error-message {
-  background: #fee2e2;
-  color: #b91c1c;
-  border: 1px solid #fca5a5;
-}
-.info-message {
-  background: #fef9c3;
-  color: #854d0e;
-  border: 1px solid #fde68a;
-}
-html.dark .loading-message {
-  background: #1e3a8a;
-  color: #dbeafe;
-  border-color: #3b82f6;
-}
-html.dark .error-message {
-  background: #7f1d1d;
-  color: #fee2e2;
-  border-color: #fca5a5;
-}
-html.dark .info-message {
-  background: #78350f;
-  color: #fef9c3;
-  border-color: #facc15;
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--card-hover-shadow);
 }
 
-/* ============================
-   Scrollbar
-============================ */
-.stratizen-main::-webkit-scrollbar,
-.stratizen-rightpanel::-webkit-scrollbar {
-  width: 6px;
-}
-.stratizen-main::-webkit-scrollbar-thumb,
-.stratizen-rightpanel::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 3px;
-}
-html.dark .stratizen-main::-webkit-scrollbar-thumb,
-html.dark .stratizen-rightpanel::-webkit-scrollbar-thumb {
-  background: #4b5563;
+/* Variants */
+.card.error,
+.card.coming-soon {
+  color: var(--error-text);
 }
 
-/* ============================
-   Responsive
-============================ */
-@media (max-width: 1024px) {
-  .stratizen-layout {
-    grid-template-columns: 70px 1fr;
-  }
-  .stratizen-rightpanel {
-    display: none;
+/* Optional: only round on larger screens */
+@media (min-width: 769px) {
+  .card {
+    border-radius: 12px;
   }
 }
-@media (max-width: 640px) {
-  .stratizen-layout {
-    grid-template-columns: 1fr;
-  }
-  .stratizen-sidebar {
-    flex-direction: row;
-    justify-content: space-between;
-    border-right: none;
-    border-bottom: 1px solid #e5e7eb;
-  }
-  html.dark .stratizen-sidebar {
-    border-bottom-color: #374151;
-  }
-  .stratizen-main {
-    margin: 0;
+
+/* ===============================
+   Mobile Tab Bar
+   =============================== */
+.mobile-tab-bar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: transparent;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.15);
+  border-radius: 20px 20px 0 0;
+  padding: 0 8px;
+  gap: 6px;
+  overflow: hidden;
+  z-index: 100;
+  transition: all 0.3s ease;
+}
+
+/* Dark mode */
+[data-theme="dark"] .mobile-tab-bar {
+  background: rgba(31, 38, 49, 0.85);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.35);
+}
+
+/* Mobile tab button */
+.mobile-tab-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text);
+  position: relative;
+  transition: all 0.25s ease;
+}
+
+/* Icon wrapper */
+.mobile-tab-btn .icon-wrapper {
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 6px rgba(0, 32, 91, 0.08);
+  transition: all 0.25s ease;
+}
+
+/* Dark mode wrapper */
+[data-theme="dark"] .mobile-tab-btn .icon-wrapper {
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Hover effect */
+.mobile-tab-btn:hover .icon-wrapper {
+  transform: scale(1.1);
+  box-shadow: 0 4px 14px rgba(0, 32, 91, 0.2);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] .mobile-tab-btn:hover .icon-wrapper {
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 14px rgba(255, 255, 255, 0.1);
+}
+
+/* Active tab */
+.mobile-tab-btn.active .icon-wrapper {
+  background: linear-gradient(135deg, #6b5bff, #00d4ff);
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(107, 91, 255, 0.4);
+  transform: scale(1.15);
+}
+
+/* Active indicator */
+.mobile-tab-btn.active::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  width: 12px;
+  height: 3px;
+  border-radius: 2px;
+  background: #ffc72c;
+  transform: translateX(-50%);
+  animation: slideIn 0.3s ease forwards;
+}
+
+@keyframes slideIn {
+  0% { width: 0; opacity: 0; }
+  100% { width: 12px; opacity: 1; }
+}
+
+/* Icon pointer-events */
+.mobile-tab-btn > * { pointer-events: none; }
+
+/* ===============================
+   Responsive Adjustments
+   =============================== */
+@media (max-width: 1280px) {
+  .sidebar-panel { width: 200px; }
+}
+
+@media (max-width: 768px) {
+  .stratizen-layout { flex-direction: column; padding: 0.5rem; }
+
+  .sidebar-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 240px;
+    transform: translateX(-100%);
+    z-index: 50;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
     border-radius: 0;
   }
+
+  .stratizen-layout.sidebar-open .sidebar-panel {
+    transform: translateX(0);
+  }
+
+  .main-panel { padding: 0; width: 100%; }
+  .main-scrollable { padding-bottom: 5.5rem; } /* space for tab bar */
+
+  /* Show mobile tab bar */
+  .mobile-tab-bar { display: flex; }
+}
+
+@media (min-width: 769px) {
+  .mobile-tab-bar { display: none; }
+}
+
+
+/* ===============================
+   Mobile Tab Bar
+   =============================== */
+.mobile-tab-bar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: transparent;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.15);
+  border-radius: 20px 20px 0 0;
+  padding: 0 8px;
+  gap: 6px;
+  overflow: hidden;
+  z-index: 100;
+  transition: all 0.3s ease;
+}
+
+/* Dark mode */
+[data-theme="dark"] .mobile-tab-bar {
+  background: rgba(31, 38, 49, 0.85);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.35);
+}
+
+/* Mobile tab button */
+.mobile-tab-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text);
+  position: relative;
+  transition: all 0.25s ease;
+}
+
+/* Icon wrapper */
+.mobile-tab-btn .icon-wrapper {
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 6px rgba(0, 32, 91, 0.08);
+  transition: all 0.25s ease;
+}
+
+/* Dark mode wrapper */
+[data-theme="dark"] .mobile-tab-btn .icon-wrapper {
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Hover effect */
+.mobile-tab-btn:hover .icon-wrapper {
+  transform: scale(1.1);
+  box-shadow: 0 4px 14px rgba(0, 32, 91, 0.2);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] .mobile-tab-btn:hover .icon-wrapper {
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 14px rgba(255, 255, 255, 0.1);
+}
+
+/* Active tab */
+.mobile-tab-btn.active .icon-wrapper {
+  background: linear-gradient(135deg, #6b5bff, #00d4ff);
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(107, 91, 255, 0.4);
+  transform: scale(1.15);
+}
+
+/* Active indicator */
+.mobile-tab-btn.active::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  width: 12px;
+  height: 3px;
+  border-radius: 2px;
+  background: #ffc72c;
+  transform: translateX(-50%);
+  animation: slideIn 0.3s ease forwards;
+}
+
+@keyframes slideIn {
+  0% { width: 0; opacity: 0; }
+  100% { width: 12px; opacity: 1; }
+}
+
+/* Icon pointer-events */
+.mobile-tab-btn > * { pointer-events: none; }
+
+/* ===============================
+   Responsive Adjustments
+   =============================== */
+@media (max-width: 1280px) {
+  .sidebar-panel { width: 200px; }
+}
+
+@media (max-width: 768px) {
+  .stratizen-layout { flex-direction: column; padding: 0.5rem; }
+
+  .sidebar-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 240px;
+    transform: translateX(-100%);
+    z-index: 50;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    border-radius: 0;
+  }
+
+  .stratizen-layout.sidebar-open .sidebar-panel {
+    transform: translateX(0);
+  }
+
+  .main-panel { padding: 0; width: 100%; }
+  .main-scrollable { padding-bottom: 5.5rem; } /* space for tab bar */
+
+  /* Show mobile tab bar */
+  .mobile-tab-bar { display: flex; }
+}
+
+@media (min-width: 769px) {
+  .mobile-tab-bar { display: none; }
 }

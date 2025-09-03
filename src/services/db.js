@@ -1,10 +1,9 @@
 /* ------------------------------------------------------------------ */
 /* src/services/db.js                                                  */
-/* - Implements unified per-user subcollection: users/{uid}/events       */
-/* - Exposes sync-friendly helpers (get, listen, add, update, delete)    */
+/* Implements unified per-user subcollection: users/{uid}/events       */
+/* Exposes sync-friendly helpers (get, listen, add, update, delete)    */
 /* ------------------------------------------------------------------ */
 
-// File: src/services/db.js
 import {
   doc,
   setDoc,
@@ -18,44 +17,47 @@ import {
   addDoc,
   onSnapshot,
   orderBy,
+  serverTimestamp,
 } from "firebase/firestore";
-import { db } from "./firebase"; // your initialized Firestore
+import { db } from "./firebase"; // production Firestore
 
 // -----------------------------
-// User profile helpers (unchanged)
+// User profile helpers
 // -----------------------------
 export const createUserProfile = async (user, extraData = {}) => {
   if (!user?.uid || !user?.email) throw new Error("Invalid user object");
+
   const userRef = doc(db, "users", user.uid);
+
   const profileData = {
     uid: user.uid,
     email: user.email,
     username: extraData.username || user.email.split("@")[0],
-    displayName: user.displayName || extraData.username || user.email.split("@")[0],
-    role: "student",
-    bio: "",
-    profilePicture: "",
-    coverPhoto: "",
-    phone: "",
-    gender: "",
-    dob: "",
-    location: "",
-    school: "",
-    course: "",
-    yearOfStudy: "",
-    interests: [],
-    skills: [],
-    xp: 0,
-    level: 1,
-    reputation: 0,
-    badges: [],
-    messagesCount: 0,
-    forumPostsCount: 0,
-    marketplaceItemsCount: 0,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    ...extraData,
+    fullName: extraData.fullName || user.displayName || "",
+    phone: extraData.phone || "",
+    year: extraData.year || "",
+    school: extraData.school || "",
+    group: extraData.group || "",
+    bio: extraData.bio || "",
+    interests: extraData.interests || "",
+    residence: extraData.residence || "",
+    profilePicture: extraData.profilePicture || "",
+
+    // System / gamification defaults
+    role: extraData.role || "student",
+    xp: extraData.xp || 0,
+    level: extraData.level || 1,
+    reputation: extraData.reputation || 0,
+    badges: extraData.badges || [],
+    messagesCount: extraData.messagesCount || 0,
+    forumPostsCount: extraData.forumPostsCount || 0,
+    marketplaceItemsCount: extraData.marketplaceItemsCount || 0,
+
+    // Timestamps
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
   };
+
   await setDoc(userRef, profileData);
   return profileData;
 };
@@ -70,7 +72,7 @@ export const getUserProfile = async (userId) => {
 export const updateUserProfile = async (userId, updates) => {
   if (!userId) throw new Error("userId is required");
   const userRef = doc(db, "users", userId);
-  await updateDoc(userRef, { ...updates, updatedAt: new Date().toISOString() });
+  await updateDoc(userRef, { ...updates, updatedAt: serverTimestamp() });
 };
 
 export const deleteUserProfile = async (userId) => {
@@ -83,119 +85,54 @@ export const getUsersByRole = async (role) => {
   const usersRef = collection(db, "users");
   const q = query(usersRef, where("role", "==", role));
   const res = await getDocs(q);
-  return res.docs.map(d => ({ uid: d.id, ...d.data() }));
+  return res.docs.map((d) => ({ uid: d.id, ...d.data() }));
 };
 
-/* ============================
-   EVENTS LOGIC (USER SUBCOLLECTIONS)
-============================ */
-import { serverTimestamp } from "firebase/firestore";
+// -----------------------------
+// EVENTS LOGIC (user subcollections)
+// -----------------------------
 
-/**
- * Add a new event to a user's subcollection: users/{uid}/events
- * @param {string} userId
- * @param {object} eventData
- * @returns {Promise<string>} The created document ID
- */
 export async function addUserEvent(userId, eventData) {
   if (!userId) throw new Error("No userId provided");
   if (!eventData) throw new Error("No event data provided");
 
-  try {
-    const ref = await addDoc(collection(db, "users", userId, "events"), {
-      ...eventData,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-    });
-    return ref.id;
-  } catch (err) {
-    console.error("Error adding user event:", err);
-    throw err;
-  }
+  const ref = await addDoc(collection(db, "users", userId, "events"), {
+    ...eventData,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  });
+  return ref.id;
 }
 
-/**
- * Update an existing event in a user's subcollection
- * @param {string} userId
- * @param {string} eventId
- * @param {object} updates
- */
 export async function updateUserEvent(userId, eventId, updates) {
-  if (!userId) throw new Error("No userId provided");
-  if (!eventId) throw new Error("No eventId provided");
-
-  try {
-    const ref = doc(db, "users", userId, "events", eventId);
-    await updateDoc(ref, { ...updates, updatedAt: serverTimestamp() });
-  } catch (err) {
-    console.error("Error updating user event:", err);
-    throw err;
-  }
+  if (!userId || !eventId) throw new Error("userId and eventId required");
+  const ref = doc(db, "users", userId, "events", eventId);
+  await updateDoc(ref, { ...updates, updatedAt: serverTimestamp() });
 }
 
-/**
- * Delete an event from a user's subcollection
- * @param {string} userId
- * @param {string} eventId
- */
 export async function deleteUserEvent(userId, eventId) {
-  if (!userId) throw new Error("No userId provided");
-  if (!eventId) throw new Error("No eventId provided");
-
-  try {
-    const ref = doc(db, "users", userId, "events", eventId);
-    await deleteDoc(ref);
-  } catch (err) {
-    console.error("Error deleting user event:", err);
-    throw err;
-  }
+  if (!userId || !eventId) throw new Error("userId and eventId required");
+  const ref = doc(db, "users", userId, "events", eventId);
+  await deleteDoc(ref);
 }
 
-/**
- * Listen in real-time for all events belonging to a user
- * @param {string} userId
- * @param {(events: object[]) => void} callback
- * @returns {() => void} Unsubscribe function
- */
 export function listenToUserEvents(userId, callback) {
   if (!userId) throw new Error("No userId provided");
 
-  const q = query(
-    collection(db, "users", userId, "events"),
-    orderBy("createdAt", "desc") // newest first
-  );
-
+  const q = query(collection(db, "users", userId, "events"), orderBy("createdAt", "desc"));
   const unsubscribe = onSnapshot(q, (snapshot) => {
-    const events = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    const events = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     callback(events);
   });
 
   return unsubscribe;
 }
 
-/**
- * Fetch all events for a user once
- * @param {string} userId
- * @returns {Promise<object[]>}
- */
 export async function getUserEventsOnce(userId) {
   if (!userId) throw new Error("No userId provided");
 
-  try {
-    const snapshot = await getDocs(
-      query(collection(db, "users", userId, "events"), orderBy("createdAt", "desc"))
-    );
-    return snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-  } catch (err) {
-    console.error("Error fetching user events:", err);
-    throw err;
-  }
+  const snapshot = await getDocs(query(collection(db, "users", userId, "events"), orderBy("createdAt", "desc")));
+  return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 }
 
 export { db };

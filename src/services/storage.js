@@ -76,23 +76,23 @@ export async function getImageUrl(path) {
 }
 
 /**
- * User-specific wrappers
+ * User-specific wrappers (always use profilePicture)
  */
-export function uploadUserImage(uid, file, imageKey = "profilePicture", onProgress) {
-  return uploadImage(`users/${uid}/${imageKey}`, file, onProgress);
+export function uploadUserImage(uid, file, onProgress) {
+  return uploadImage(`users/${uid}/profilePicture`, file, onProgress);
 }
 
-export function deleteUserImage(uid, imageKey = "profilePicture") {
-  return deleteImage(`users/${uid}/${imageKey}`);
+export function deleteUserImage(uid) {
+  return deleteImage(`users/${uid}/profilePicture`);
 }
 
-export function getUserImageUrl(uid, imageKey = "profilePicture") {
-  return getImageUrl(`users/${uid}/${imageKey}`);
+export function getUserImageUrl(uid) {
+  return getImageUrl(`users/${uid}/profilePicture`);
 }
 
-export async function saveProfilePhotoAndUpdateDB(uid, file, imageKey = "profilePicture") {
-  const imageUrl = await uploadUserImage(uid, file, imageKey);
-  await updateUserProfile(uid, { [imageKey]: imageUrl });
+export async function saveProfilePhotoAndUpdateDB(uid, file) {
+  const imageUrl = await uploadUserImage(uid, file);
+  await updateUserProfile(uid, { profilePicture: imageUrl });
   return imageUrl;
 }
 

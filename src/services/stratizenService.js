@@ -20,9 +20,11 @@ import {
   increment,
   writeBatch,
 } from "firebase/firestore";
-import { getUserProfile } from "./db"; // <-- reuse existing user logic
+import { getUserProfile } from "./db"; // reuse existing user logic
 
-/* Helpers */
+/* -----------------
+   Helper: Ensure defaults
+----------------- */
 const ensurePostDefaults = (data = {}) => ({
   reactions: {
     like: [],
@@ -42,10 +44,9 @@ const ensurePostDefaults = (data = {}) => ({
   commentsCount: data.commentsCount ?? 0,
 });
 
-/* =============================
+/* ==============================
    POSTS
-============================= */
-
+============================== */
 export async function createPost(
   userId,
   content,
@@ -55,24 +56,20 @@ export async function createPost(
   visibility = "public"
 ) {
   if (!userId) throw new Error("No userId provided");
+
   const hasText = Boolean(content?.trim());
   const hasMedia =
     (typeof mediaOrUrl === "string" && mediaOrUrl) ||
     (Array.isArray(mediaOrUrl) && mediaOrUrl.length > 0);
 
-  if (!hasText && !hasMedia) {
-    throw new Error("Post must have text or media");
-  }
+  if (!hasText && !hasMedia) throw new Error("Post must have text or media");
 
   let media = [];
-  if (typeof mediaOrUrl === "string" && mediaOrUrl) {
-    media = [{ url: mediaOrUrl, type: "image" }];
-  } else if (Array.isArray(mediaOrUrl)) {
-    media = mediaOrUrl;
-  }
+  if (typeof mediaOrUrl === "string") media = [{ url: mediaOrUrl, type: "image" }];
+  else if (Array.isArray(mediaOrUrl)) media = mediaOrUrl;
 
   const payload = {
-    authorId: userId, // normalized storage
+    authorId: userId,
     content: content?.trim() || "",
     media,
     tags,
@@ -93,17 +90,8 @@ export function listenToPosts(callback) {
     const posts = await Promise.all(
       snapshot.docs.map(async (docSnap) => {
         const data = docSnap.data();
-        let author = null;
-
-        if (data?.authorId) {
-          author = await getUserProfile(data.authorId); // { id, username, photoURL }
-        }
-
-        return {
-          id: docSnap.id,
-          ...ensurePostDefaults(data),
-          author,
-        };
+        const author = data?.authorId ? await getUserProfile(data.authorId) : null;
+        return { id: docSnap.id, ...ensurePostDefaults(data), author };
       })
     );
     callback(posts);
@@ -120,17 +108,12 @@ export async function updatePost(postId, updates) {
 
 export async function deletePost(postId) {
   if (!postId) throw new Error("No postId provided");
-  const ref = doc(db, "posts", postId);
-  await deleteDoc(ref);
+  await deleteDoc(doc(db, "posts", postId));
 }
 
-/* =============================
+/* ==============================
    REACTIONS (posts & comments)
-============================= */
-
-/**
- * Resolve Firestore doc reference for a post or a comment
- */
+============================== */
 function getTargetRef(postId, commentId = null) {
   if (!postId) throw new Error("Missing postId");
   return commentId
@@ -138,20 +121,15 @@ function getTargetRef(postId, commentId = null) {
     : doc(db, "posts", postId);
 }
 
-/**
- * Add or switch a reaction
- */
 export async function addReaction(postId, userId, type = "like", commentId = null) {
   if (!userId) throw new Error("Missing userId");
   const targetRef = getTargetRef(postId, commentId);
 
   const snap = await getDoc(targetRef);
-  const data = ensurePostDefaults(snap.data() || {}); // works for both posts & comments
-
-  const userPreviousType =
-    Object.keys(data.reactions).find((t) =>
-      Array.isArray(data.reactions[t]) && data.reactions[t].includes(userId)
-    ) || null;
+  const data = ensurePostDefaults(snap.data() || {});
+  const userPreviousType = Object.keys(data.reactions).find(
+    (t) => Array.isArray(data.reactions[t]) && data.reactions[t].includes(userId)
+  );
 
   const updates = {};
   if (userPreviousType && userPreviousType !== type) {
@@ -165,37 +143,24 @@ export async function addReaction(postId, userId, type = "like", commentId = nul
   await updateDoc(targetRef, updates);
 }
 
-/**
- * Remove a reaction
- */
 export async function removeReaction(postId, userId, type, commentId = null) {
   if (!userId || !type) throw new Error("Missing userId or type");
-  const targetRef = getTargetRef(postId, commentId);
-
-  await updateDoc(targetRef, {
+  await updateDoc(getTargetRef(postId, commentId), {
     [`reactions.${type}`]: arrayRemove(userId),
     [`reactionCounts.${type}`]: increment(-1),
   });
 }
 
-/**
- * Listen to reactions on a post or a comment
- */
 export function listenToReactions(postId, callback, commentId = null) {
-  const targetRef = getTargetRef(postId, commentId);
-  return onSnapshot(targetRef, (snap) => {
+  return onSnapshot(getTargetRef(postId, commentId), (snap) => {
     const data = ensurePostDefaults(snap.data() || {});
-    callback({
-      users: data.reactions,
-      counts: data.reactionCounts,
-    });
+    callback({ users: data.reactions, counts: data.reactionCounts });
   });
 }
 
-/* =============================
+/* ==============================
    COMMENTS
-============================= */
-
+============================== */
 export async function addComment(postId, userId, text) {
   if (!postId || !userId) throw new Error("Missing postId or userId");
   if (!text?.trim()) throw new Error("Empty comment");
@@ -204,11 +169,7 @@ export async function addComment(postId, userId, text) {
   const commentRef = doc(collection(db, "posts", postId, "comments"));
 
   const batch = writeBatch(db);
-  batch.set(commentRef, {
-    userId, // normalized storage
-    text: text.trim(),
-    createdAt: serverTimestamp(),
-  });
+  batch.set(commentRef, { userId, text: text.trim(), createdAt: serverTimestamp() });
   batch.update(postRef, { commentsCount: increment(1) });
 
   await batch.commit();
@@ -217,12 +178,10 @@ export async function addComment(postId, userId, text) {
 
 export async function deleteComment(postId, commentId) {
   if (!postId || !commentId) throw new Error("Missing postId or commentId");
-  const postRef = doc(db, "posts", postId);
-  const commentRef = doc(db, "posts", postId, "comments", commentId);
 
   const batch = writeBatch(db);
-  batch.delete(commentRef);
-  batch.update(postRef, { commentsCount: increment(-1) });
+  batch.delete(doc(db, "posts", postId, "comments", commentId));
+  batch.update(doc(db, "posts", postId), { commentsCount: increment(-1) });
 
   await batch.commit();
 }
@@ -230,18 +189,12 @@ export async function deleteComment(postId, commentId) {
 export function listenToComments(postId, callback) {
   if (!postId) throw new Error("No postId provided");
 
-  const q = query(
-    collection(db, "posts", postId, "comments"),
-    orderBy("createdAt", "asc")
-  );
-
+  const q = query(collection(db, "posts", postId, "comments"), orderBy("createdAt", "asc"));
   return onSnapshot(q, async (snapshot) => {
     const comments = await Promise.all(
       snapshot.docs.map(async (docSnap) => {
         const data = docSnap.data();
-        const author = data?.userId
-          ? await getUserProfile(data.userId) // { id, username, photoURL }
-          : null;
+        const author = data?.userId ? await getUserProfile(data.userId) : null;
         return { id: docSnap.id, ...data, author };
       })
     );
