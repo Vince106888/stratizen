@@ -10,7 +10,7 @@ import ProfileSkills from "../components/Profile/ProfileSkills";
 import ProfileMessaging from "../components/Profile/ProfileMessaging";
 import ProfilePreferences from "../components/Profile/ProfilePreferences";
 
-import { useTheme } from "../context/ThemeContext"; // ✅ Correct import
+import { useTheme } from "../context/ThemeContext";
 
 import { getUserProfile, createUserProfile } from "../services/db";
 
@@ -55,7 +55,7 @@ const initialProfilePageForm = {
 };
 
 export default function ProfilePage() {
-  const { theme } = useTheme(); // ✅ Access theme
+  const { theme } = useTheme();
 
   const [user, setUser] = useState(null);
   const [form, setForm] = useState(initialProfilePageForm);
@@ -63,7 +63,7 @@ export default function ProfilePage() {
   const [error, setError] = useState("");
   const [dataLoaded, setDataLoaded] = useState(false);
   const [selectedTab, setSelectedTab] = useState(
-    Number(localStorage.getItem("profileActiveTab")) || 0
+    Number(localStorage.getItem("profileActiveTab")) || 0,
   );
 
   const navigate = useNavigate();
@@ -88,7 +88,7 @@ export default function ProfilePage() {
             xp: 50,
           });
         }
-        setForm((prev) => ({ ...initialProfilePageForm, ...profile }));
+        setForm({ ...initialProfilePageForm, ...profile });
       } catch (err) {
         console.error("Profile load error:", err);
         setError("Unable to load profile data.");
@@ -112,19 +112,27 @@ export default function ProfilePage() {
           theme === "dark" ? "dark-mode" : ""
         }`}
       >
-        ⏳ Loading profile...
+        Loading profile...
       </div>
     );
   }
 
   // ---------------- MAIN RENDER ----------------
   return (
-    <div className={`profilepage-container ${theme === "dark" ? "dark-mode" : ""}`}>
+    <div
+      className={`profilepage-container ${theme === "dark" ? "dark-mode" : ""}`}
+    >
       {/* Greeting Title */}
       <h1 className="profilepage-title">
-        Welcome to your profile{user?.displayName ? `, ${user.displayName}` : ""} 👋
+        Welcome to your profile
+        {user?.displayName ? `, ${user.displayName}` : ""}
       </h1>
 
+      {error && (
+        <p className="profilepage-error" role="alert">
+          {error}
+        </p>
+      )}
       {/* Tab Navigation (Headless UI Tabs) */}
       <TabGroup
         selectedIndex={selectedTab}
@@ -151,7 +159,11 @@ export default function ProfilePage() {
             <ProfileOverview form={form} onChange={handleFormChange} />
           </TabPanel>
           <TabPanel>
-            <ProfileLinks form={form} onChange={handleFormChange} userId={user?.uid} />
+            <ProfileLinks
+              form={form}
+              onChange={handleFormChange}
+              userId={user?.uid}
+            />
           </TabPanel>
           <TabPanel>{user && <ProfileTimetable userId={user.uid} />}</TabPanel>
           <TabPanel>

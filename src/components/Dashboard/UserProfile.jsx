@@ -4,14 +4,10 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getUserProfile } from "../../services/db";
 import { useNavigate } from "react-router-dom";
 import "../../styles/Dashboard/UserProfile.css";
-import { useTheme } from "../../context/ThemeContext"; // ✅ Theme context
 
 export default function UserProfile({ stats = {} }) {
   const auth = getAuth();
   const navigate = useNavigate();
-  const { theme } = useTheme(); // ✅ Get current theme
-
-  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [profileData, setProfileData] = useState({
     username: "",
@@ -39,7 +35,7 @@ export default function UserProfile({ stats = {} }) {
         setProfileData((prev) => ({
           ...prev,
           ...Object.fromEntries(
-            Object.entries(data).map(([k, v]) => [k, v || ""])
+            Object.entries(data).map(([k, v]) => [k, v || ""]),
           ),
         }));
       }
@@ -59,7 +55,6 @@ export default function UserProfile({ stats = {} }) {
       if (!currentUser) {
         navigate("/login");
       } else {
-        setUser(currentUser);
         fetchProfile(currentUser.uid);
       }
     });
@@ -150,13 +145,16 @@ export default function UserProfile({ stats = {} }) {
       <div className="level-rank flex justify-between items-center mt-3 text-sm md:text-base font-medium">
         <div className="level">Level {level}</div>
         <div className="rank" title={`Rank #${stats.rank ?? "N/A"}`}>
-          🏅 #{stats.rank ?? "N/A"}
+          Rank #{stats.rank ?? "N/A"}
         </div>
       </div>
 
       {/* ----------------- Error Message ----------------- */}
       {errorMessage && (
-        <p className="error-text text-red-600 dark:text-red-300 mt-2" role="alert">
+        <p
+          className="error-text text-red-600 dark:text-red-300 mt-2"
+          role="alert"
+        >
           {errorMessage}
         </p>
       )}
