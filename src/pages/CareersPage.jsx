@@ -25,7 +25,7 @@ export default function CareersPage() {
       const data = await getRoles();
       if (Array.isArray(data)) setRoles(data);
       else setError(true);
-    } catch (err) {
+    } catch {
       setError(true);
     }
     setLoading(false);

@@ -19,8 +19,6 @@ const radarColors = ["#2563eb", "#10b981", "#f59e0b", "#ec4899", "#8b5cf6"];
 export default function SkillRadarChart({
   title,
   data = [],
-  width = 500,
-  height = 500,
   fillOpacity = 0.7,
 }) {
   const { theme } = useTheme();
@@ -38,10 +36,7 @@ export default function SkillRadarChart({
           : "0 6px 20px rgba(0,0,0,0.12)",
       }}
     >
-      <h3
-        className="skill-radar-chart-title"
-        style={{ color: radarColors[0] }}
-      >
+      <h3 className="skill-radar-chart-title" style={{ color: radarColors[0] }}>
         {title}
       </h3>
 

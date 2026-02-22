@@ -1,15 +1,18 @@
 // src/components/Dashboard/ChatbotModal.jsx
-import React, { useState, useRef, useEffect } from 'react';
-import { X, Send } from 'lucide-react';
-import '../../styles/Dashboard/ChatbotModal.css';
+import React, { useState, useRef, useEffect } from "react";
+import { X, Send } from "lucide-react";
+import "../../styles/Dashboard/ChatbotModal.css";
 
 // NOTE: In production, the API key must be secured in a backend!
-const OPENAI_API_KEY = 'YOUR_OPENAI_API_KEY_HERE';
+const OPENAI_API_KEY = "YOUR_OPENAI_API_KEY_HERE";
 
 export default function ChatbotModal({ onClose }) {
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const [messages, setMessages] = useState([
-    { sender: 'bot', text: 'Hi! I am Stratizen Bot. How can I assist you today?' },
+    {
+      sender: "bot",
+      text: "Hi! I am Stratizen Bot. How can I assist you today?",
+    },
   ]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -17,50 +20,60 @@ export default function ChatbotModal({ onClose }) {
 
   // Auto-scroll to newest message
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
   const sendMessage = async () => {
     if (!input.trim()) return;
-    const userMessage = { sender: 'user', text: input.trim() };
+    const userMessage = { sender: "user", text: input.trim() };
     setMessages((prev) => [...prev, userMessage]);
-    setInput('');
+    setInput("");
     setLoading(true);
     setError(null);
 
     try {
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${OPENAI_API_KEY}`,
+      const response = await fetch(
+        "https://api.openai.com/v1/chat/completions",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${OPENAI_API_KEY}`,
+          },
+          body: JSON.stringify({
+            model: "gpt-4o-mini",
+            messages: [
+              {
+                role: "system",
+                content:
+                  "You are a helpful AI assistant for Stratizen platform.",
+              },
+              ...messages.map((m) => ({
+                role: m.sender === "user" ? "user" : "assistant",
+                content: m.text,
+              })),
+              { role: "user", content: userMessage.text },
+            ],
+            max_tokens: 500,
+            temperature: 0.7,
+          }),
         },
-        body: JSON.stringify({
-          model: 'gpt-4o-mini',
-          messages: [
-            { role: 'system', content: 'You are a helpful AI assistant for Stratizen platform.' },
-            ...messages.map((m) => ({ role: m.sender === 'user' ? 'user' : 'assistant', content: m.text })),
-            { role: 'user', content: userMessage.text },
-          ],
-          max_tokens: 500,
-          temperature: 0.7,
-        }),
-      });
+      );
 
-      if (!response.ok) throw new Error('OpenAI API error');
+      if (!response.ok) throw new Error("OpenAI API error");
       const data = await response.json();
       const botReply = data.choices[0].message.content;
 
-      setMessages((prev) => [...prev, { sender: 'bot', text: botReply }]);
-    } catch (err) {
-      setError('Failed to get response. Please try again.');
+      setMessages((prev) => [...prev, { sender: "bot", text: botReply }]);
+    } catch {
+      setError("Failed to get response. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
     }
@@ -77,7 +90,11 @@ export default function ChatbotModal({ onClose }) {
       <div className="chatbot-modal" onClick={(e) => e.stopPropagation()}>
         <header className="chatbot-header">
           <h2>Stratizen Bot</h2>
-          <button onClick={onClose} className="close-btn" aria-label="Close chatbot">
+          <button
+            onClick={onClose}
+            className="close-btn"
+            aria-label="Close chatbot"
+          >
             <X size={20} />
           </button>
         </header>

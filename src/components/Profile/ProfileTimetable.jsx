@@ -15,7 +15,13 @@ import "../../styles/Profile/ProfileTimetable.css";
 import { useTheme } from "../../context/ThemeContext";
 
 const daysOfWeek = [
-  "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
 ];
 
 const encouragementQuotes = [
@@ -50,13 +56,15 @@ export default function ProfileTimetable() {
   const [statusMessage, setStatusMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [calendarDate, setCalendarDate] = useState(new Date());
-  const [selectedDayEvents, setSelectedDayEvents] = useState([]);
 
   // Random Quote (non-repeating)
   const getRandomQuote = useCallback(() => {
     let newQuote;
     do {
-      newQuote = encouragementQuotes[Math.floor(Math.random() * encouragementQuotes.length)];
+      newQuote =
+        encouragementQuotes[
+          Math.floor(Math.random() * encouragementQuotes.length)
+        ];
     } while (newQuote === quote);
     return newQuote;
   }, [quote]);
@@ -64,7 +72,7 @@ export default function ProfileTimetable() {
   // Get day name from Date
   const dayNameFromDate = useCallback(
     (date) => daysOfWeek[date.getDay() === 0 ? 6 : date.getDay() - 1],
-    []
+    [],
   );
 
   // Firebase Auth
@@ -81,7 +89,10 @@ export default function ProfileTimetable() {
 
   // Rotate Quotes
   useEffect(() => {
-    const interval = setInterval(() => setQuote(getRandomQuote()), 5 * 60 * 1000);
+    const interval = setInterval(
+      () => setQuote(getRandomQuote()),
+      5 * 60 * 1000,
+    );
     return () => clearInterval(interval);
   }, [getRandomQuote]);
 
@@ -103,8 +114,8 @@ export default function ProfileTimetable() {
         e.date instanceof Date
           ? e.date
           : e.date?.toDate
-          ? e.date.toDate()
-          : new Date(e.date);
+            ? e.date.toDate()
+            : new Date(e.date);
 
       return {
         ...e,
@@ -122,8 +133,9 @@ export default function ProfileTimetable() {
     return allEvents.some(
       (ev) =>
         ev.date.toDateString() === newEvent.date.toDateString() &&
-        ((newEvent.startHour >= ev.startHour && newEvent.startHour < ev.endHour) ||
-          (newEvent.endHour > ev.startHour && newEvent.endHour <= ev.endHour))
+        ((newEvent.startHour >= ev.startHour &&
+          newEvent.startHour < ev.endHour) ||
+          (newEvent.endHour > ev.startHour && newEvent.endHour <= ev.endHour)),
     );
   };
 
@@ -143,7 +155,12 @@ export default function ProfileTimetable() {
             : new Date(eventData.date),
       };
 
-      if (hasConflict(normalized, normalizedEvents.filter(ev => ev.id !== eventData.id))) {
+      if (
+        hasConflict(
+          normalized,
+          normalizedEvents.filter((ev) => ev.id !== eventData.id),
+        )
+      ) {
         setStatusMessage("⚠️ This event overlaps with another one.");
         return;
       }
@@ -154,13 +171,15 @@ export default function ProfileTimetable() {
         if (eventData.id) {
           await updateUserEvent(user.uid, eventData.id, eventData);
           updatedEvents = events.map((ev) =>
-            ev.id === eventData.id ? { ...ev, ...eventData } : ev
+            ev.id === eventData.id ? { ...ev, ...eventData } : ev,
           );
         } else {
           const newEventId = await addUserEvent(user.uid, eventData);
           updatedEvents = [...events, { ...eventData, id: newEventId }];
         }
-        setEvents(Array.from(new Map(updatedEvents.map((ev) => [ev.id, ev])).values()));
+        setEvents(
+          Array.from(new Map(updatedEvents.map((ev) => [ev.id, ev])).values()),
+        );
         setStatusMessage("✔️ Event saved.");
       } catch (err) {
         console.error(err);
@@ -169,7 +188,7 @@ export default function ProfileTimetable() {
         setTimeout(() => setStatusMessage(""), 2500);
       }
     },
-    [events, user?.uid, normalizedEvents]
+    [events, user?.uid, normalizedEvents],
   );
 
   // Delete Event
@@ -188,7 +207,7 @@ export default function ProfileTimetable() {
         setTimeout(() => setStatusMessage(""), 2500);
       }
     },
-    [events, user?.uid]
+    [events, user?.uid],
   );
 
   // Add / Edit Event
@@ -210,7 +229,9 @@ export default function ProfileTimetable() {
   // Loading State
   if (loading) {
     return (
-      <div className={`profile-timetable-container ${isDark ? "dark-mode" : ""}`}>
+      <div
+        className={`profile-timetable-container ${isDark ? "dark-mode" : ""}`}
+      >
         <p className="loading-text">⏳ Loading your timetable...</p>
       </div>
     );
@@ -220,7 +241,9 @@ export default function ProfileTimetable() {
     <div className={`profile-timetable-container ${isDark ? "dark-mode" : ""}`}>
       <header className="timetable-header">
         <h3 className="timetable-title">Your Weekly Timetable</h3>
-        <p className="quote" aria-live="polite">{quote}</p>
+        <p className="quote" aria-live="polite">
+          {quote}
+        </p>
       </header>
 
       <div className="timetable-controls">
@@ -250,7 +273,6 @@ export default function ProfileTimetable() {
             dayNameFromDate={dayNameFromDate}
             onDayClick={(date, dayEvents) => {
               if (dayEvents.length > 0) {
-                setSelectedDayEvents(dayEvents);
                 handleAddNewEvent({ date });
               } else {
                 handleAddNewEvent({ date });
@@ -275,10 +297,7 @@ export default function ProfileTimetable() {
       )}
 
       {showForm && (
-        <div
-          className="modal-overlay"
-          onClick={() => setShowForm(false)}
-        >
+        <div className="modal-overlay" onClick={() => setShowForm(false)}>
           <div
             className={`modal-content ${isDark ? "dark-mode" : ""}`}
             role="dialog"

@@ -22,7 +22,7 @@ export default function ProfileMessaging({ userId }) {
           setConversations(convos);
           setLoading(false);
         }
-      } catch (err) {
+      } catch {
         if (isMounted) {
           setError("Failed to load messages.");
           setLoading(false);
@@ -52,7 +52,8 @@ export default function ProfileMessaging({ userId }) {
       <h3>Recent Conversations</h3>
       <ul className="conversation-list">
         {conversations.slice(0, 5).map((conv) => {
-          const { conversationId, lastMessage, participantName, unreadCount } = conv;
+          const { conversationId, lastMessage, participantName, unreadCount } =
+            conv;
 
           return (
             <li
@@ -61,11 +62,15 @@ export default function ProfileMessaging({ userId }) {
               onClick={() => navigate(`/messages/${conversationId}`)}
               role="button"
               tabIndex={0}
-              onKeyDown={(e) => e.key === "Enter" && navigate(`/messages/${conversationId}`)}
+              onKeyDown={(e) =>
+                e.key === "Enter" && navigate(`/messages/${conversationId}`)
+              }
             >
               <div className="participant-name">{participantName}</div>
               <div className="last-message">{lastMessage}</div>
-              {unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}
+              {unreadCount > 0 && (
+                <span className="unread-badge">{unreadCount}</span>
+              )}
             </li>
           );
         })}

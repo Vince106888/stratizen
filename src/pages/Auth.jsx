@@ -10,10 +10,7 @@ import { auth } from "../services/firebase";
 import "../styles/Auth.css";
 import strathLogo from "../assets/SU-Logo.png";
 
-import { getFirestore, doc, setDoc } from "firebase/firestore";
 import { createUserProfile } from "../services/db";
-
-const firestore = getFirestore();
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -104,7 +101,11 @@ const Auth = () => {
     setMessage("");
     try {
       if (isSignup) {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password,
+        );
         const user = userCredential.user;
 
         console.log("Signed up user:", user);
@@ -204,7 +205,8 @@ const Auth = () => {
                 aria-label="Toggle password visibility"
                 tabIndex={0}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") toggleVisibility("password");
+                  if (e.key === "Enter" || e.key === " ")
+                    toggleVisibility("password");
                 }}
               >
                 {visibility.password ? "🙈" : "👁️"}
@@ -259,7 +261,8 @@ const Auth = () => {
                 aria-label="Toggle password visibility"
                 tabIndex={0}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") toggleVisibility("password");
+                  if (e.key === "Enter" || e.key === " ")
+                    toggleVisibility("password");
                 }}
               >
                 {visibility.password ? "🙈" : "👁️"}
@@ -285,7 +288,8 @@ const Auth = () => {
                 aria-label="Toggle confirm password visibility"
                 tabIndex={0}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") toggleVisibility("confirmPassword");
+                  if (e.key === "Enter" || e.key === " ")
+                    toggleVisibility("confirmPassword");
                 }}
               >
                 {visibility.confirmPassword ? "🙈" : "👁️"}
