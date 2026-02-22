@@ -3,15 +3,32 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
-// Firebase configuration object (Production)
+const requiredKeys = [
+  "apiKey",
+  "authDomain",
+  "projectId",
+  "storageBucket",
+  "messagingSenderId",
+  "appId",
+];
+
+// Firebase configuration object (from environment)
 const firebaseConfig = {
-  apiKey: "REDACTED_FIREBASE_API_KEY",
-  authDomain: "p2p-student-platform.firebaseapp.com",
-  projectId: "p2p-student-platform",
-  storageBucket: "p2p-student-platform.firebasestorage.app",
-  messagingSenderId: "23452791627",
-  appId: "1:23452791627:web:de87fcbd0ba47949b9aece",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
+
+const missingKeys = requiredKeys.filter((key) => !firebaseConfig[key]);
+if (missingKeys.length > 0) {
+  throw new Error(
+    `Missing Firebase environment variables: ${missingKeys.join(", ")}. ` +
+      "Create a .env file from .env.example.",
+  );
+}
 
 // Initialize Firebase app
 const app = initializeApp(firebaseConfig);

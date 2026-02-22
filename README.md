@@ -12,12 +12,12 @@ It’s built to **connect students**, **decentralize resources**, and foster **a
 
 Stratizen enables:
 
-* 🔐 **User Authentication & Profile Management** — Secure sign-in and personalized profiles.
-* 💬 **Real-time & Offline Messaging** — Chat and collaborate anytime.
-* 🧠 **Discussion Forums & Study Groups** — Q\&A and knowledge sharing.
-* 🛒 **Student Marketplace** — Buy, sell, and trade services & products.
-* 🚀 **Innovation Hub** — Support for student-led projects.
-* 🗂️ **Resource Library** — Shared academic materials.
+- 🔐 **User Authentication & Profile Management** — Secure sign-in and personalized profiles.
+- 💬 **Real-time & Offline Messaging** — Chat and collaborate anytime.
+- 🧠 **Discussion Forums & Study Groups** — Q\&A and knowledge sharing.
+- 🛒 **Student Marketplace** — Buy, sell, and trade services & products.
+- 🚀 **Innovation Hub** — Support for student-led projects.
+- 🗂️ **Resource Library** — Shared academic materials.
 
 ---
 
@@ -27,12 +27,12 @@ Stratizen enables:
 
 This version includes:
 
-* 🔐 **Firebase Auth** (Email/Password)
-* 🧠 **StudyHub** — Forum & Q\&A
-* 🛒 **Marketplace** — Basic listings
-* 💬 **Messages** — Direct chat
-* 🗂️ **Resource Library** — Upload & view files
-* 📱 **Responsive UI** (desktop + mobile)
+- 🔐 **Firebase Auth** (Email/Password)
+- 🧠 **StudyHub** — Forum & Q\&A
+- 🛒 **Marketplace** — Basic listings
+- 💬 **Messages** — Direct chat
+- 🗂️ **Resource Library** — Upload & view files
+- 📱 **Responsive UI** (desktop + mobile)
 
 > Decentralization, DAO governance, NFT-based passes, and tokenized rewards are **planned for future releases**.
 
@@ -40,12 +40,12 @@ This version includes:
 
 ## 🔧 Tech Stack
 
-* **Frontend:** React + Vite
-* **Styling:** Tailwind CSS
-* **Backend/Auth/DB:** Firebase (Auth, Firestore, Storage)
-* **Offline:** Dexie.js (IndexedDB)
-* **Real-Time Messaging:** Socket.io (lab testing)
-* **State Management:** React Context API
+- **Frontend:** React + Vite
+- **Styling:** Tailwind CSS
+- **Backend/Auth/DB:** Firebase (Auth, Firestore, Storage)
+- **Offline:** Dexie.js (IndexedDB)
+- **Real-Time Messaging:** Socket.io (lab testing)
+- **State Management:** React Context API
 
 ---
 
@@ -86,6 +86,9 @@ npm install
 VITE_FIREBASE_API_KEY=...
 VITE_FIREBASE_AUTH_DOMAIN=...
 VITE_FIREBASE_PROJECT_ID=...
+VITE_FIREBASE_STORAGE_BUCKET=...
+VITE_FIREBASE_MESSAGING_SENDER_ID=...
+VITE_FIREBASE_APP_ID=...
 VITE_SOCKET_SERVER_URL=http://localhost:5000
 ```
 
@@ -105,14 +108,14 @@ npm run build
 
 ## 🧪 How to Test Stratizen MVP
 
-1. Visit: [https://stratizen.web.app](https://stratizen.web.app) *(after deployment)*
+1. Visit: [https://stratizen.web.app](https://stratizen.web.app) _(after deployment)_
 2. Sign up with your **Strathmore email**
 3. Test features:
+   - Post in StudyHub
+   - Upload a resource
+   - Add a marketplace listing
+   - Send a message
 
-   * Post in StudyHub
-   * Upload a resource
-   * Add a marketplace listing
-   * Send a message
 4. Give feedback via the [Feedback Form](#)
 
 ---
@@ -121,11 +124,11 @@ npm run build
 
 📅 **Next Releases**
 
-* IPFS storage for decentralized resources
-* DAO governance & tokenized rewards
-* NFT-based campus passes
-* Mobile-first PWA deployment
-* Multi-campus network
+- IPFS storage for decentralized resources
+- DAO governance & tokenized rewards
+- NFT-based campus passes
+- Mobile-first PWA deployment
+- Multi-campus network
 
 ---
 
@@ -133,9 +136,9 @@ npm run build
 
 Stratizen is more than a platform — it’s a **student movement** to:
 
-* Decentralize access to academic & economic resources
-* Enable peer-driven problem solving
-* Build scalable, self-governing student communities
+- Decentralize access to academic & economic resources
+- Enable peer-driven problem solving
+- Build scalable, self-governing student communities
 
 ---
 
@@ -145,9 +148,9 @@ We welcome contributions from students & the open-source community!
 
 **Branching Model**
 
-* `main` — Development
-* `release/mvp-v1` — Stable release for testing
-* `feature/*` — New features
+- `main` — Development
+- `release/mvp-v1` — Stable release for testing
+- `feature/*` — New features
 
 ---
 
@@ -159,5 +162,5 @@ MIT License — free to use, build, and improve.
 
 ## 📫 Contact
 
-* **Email:** [vincent.nyamao@strathmore.edu](mailto:vincent.nyamao@strathmore.edu)
-* **GitHub:** [Vince106888](https://github.com/Vince106888)
+- **Email:** [vincent.nyamao@strathmore.edu](mailto:vincent.nyamao@strathmore.edu)
+- **GitHub:** [Vince106888](https://github.com/Vince106888)

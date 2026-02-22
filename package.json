@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
+    "secrets:check": "node scripts/check-secrets.mjs",
     "preview": "vite preview",
     "format": "prettier --write .",
     "prepare": "husky"
@@ -38,20 +39,24 @@
     "@vitejs/plugin-react": "^4.3.5",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.23.0",
+    "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.1.0",
     "husky": "^9.1.6",
     "lint-staged": "^15.2.2",
-    "postcss": "^8.5.3",
+    "postcss": "^8.5.6",
     "prettier": "^3.3.3",
-    "tailwindcss": "^4.1.4",
+    "tailwindcss": "^4.1.13",
     "vite": "^6.3.2"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,json,css,md}": [
-      "prettier --write",
-      "eslint --fix"
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,css,md,html}": [
+      "prettier --write"
     ]
   }
 }
